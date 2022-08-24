@@ -31,6 +31,24 @@ export default [
   },
   {
     component: 'CNavGroup',
+    name: 'Doctor',
+    to: '/doctor',
+    icon: 'cil-puzzle',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'DoctorProfile',
+        to: '/doctor/profile',
+      },
+      {
+        component: 'CNavItem',
+        name: 'DoctorList',
+        to: '/doctor/list',
+      },
+    ],
+  },
+  {
+    component: 'CNavGroup',
     name: 'Base',
     to: '/base',
     icon: 'cil-puzzle',

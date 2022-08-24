@@ -34,6 +34,29 @@ const routes = [
         name: 'Typography',
         component: () => import('@/views/theme/Typography.vue'),
       },
+
+      {
+        path: '/doctor',
+        name: 'Doctor',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        redirect: '/doctor/profile',
+        children: [
+          {
+            path: '/doctor/profile',
+            name: 'DoctorProfile',
+            component: () => import('@/views/doctor/viewDoctorProfile.vue'),
+          },
+          {
+            path: '/doctor/list',
+            name: 'DoctorList',
+            component: () => import('@/views/doctor/listDoctor.vue'),
+          },
+        ],
+      },
       {
         path: '/base',
         name: 'Base',

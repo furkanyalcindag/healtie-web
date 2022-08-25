@@ -36,23 +36,18 @@ const routes = [
       },
 
       {
-        path: '/doctor',
-        name: 'Doctor',
+        path: '/admin',
+        name: 'Admin',
         component: {
           render() {
             return h(resolveComponent('router-view'))
           },
         },
-        redirect: '/doctor/profile',
+        redirect: '/admin/doctor/list',
         children: [
           {
-            path: '/doctor/profile',
-            name: 'DoctorProfile',
-            component: () => import('@/views/doctor/viewDoctorProfile.vue'),
-          },
-          {
-            path: '/doctor/list',
-            name: 'DoctorList',
+            path: '/admin/doctor/list',
+            name: 'AdminDoctorList',
             component: () => import('@/views/doctor/listDoctor.vue'),
           },
         ],

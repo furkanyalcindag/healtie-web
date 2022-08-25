@@ -31,19 +31,14 @@ export default [
   },
   {
     component: 'CNavGroup',
-    name: 'Doctor',
-    to: '/doctor',
+    name: 'Admin',
+    to: '/admin',
     icon: 'cil-puzzle',
     items: [
       {
         component: 'CNavItem',
-        name: 'DoctorProfile',
-        to: '/doctor/profile',
-      },
-      {
-        component: 'CNavItem',
         name: 'DoctorList',
-        to: '/doctor/list',
+        to: '/admin/doctor/list',
       },
     ],
   },

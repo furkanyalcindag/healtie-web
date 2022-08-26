@@ -101,8 +101,14 @@
                   <CCol>
                     <CListGroupItem>
                       <CFormCheck
-                        label="* Uygulama Kullanım Koşullarını kabul ediyorum  ve Comitfy Şirketi Kişisel Veri Gizlilik Politikası ve Aydınlatma Metni kapsamında Healtie tarafından kişisel sağlık verilerimin;  hekim/uzman ile sohbet başlatmak ve/veya hekim/uzmana mesaj göndermek ve sağlık verilerimin Healtie tarafından saklanması amaçları ile sınırlı olarak işlenmesine ve yurtdışına aktarılmasına açık rıza veriyorum.
-"
+                        label="* Uygulama Kullanım Koşullarını kabul
+                      ediyorum ve Comitfy Şirketi Kişisel Veri Gizlilik
+                      Politikası ve Aydınlatma Metni kapsamında Healtie
+                      tarafından kişisel sağlık verilerimin; hekim/uzman ile
+                      sohbet başlatmak ve/veya hekim/uzmana mesaj göndermek ve
+                      sağlık verilerimin Healtie tarafından saklanması amaçları
+                      ile sınırlı olarak işlenmesine ve yurtdışına aktarılmasına
+                      açık rıza veriyorum."
                         class="float-end mb-1 text-muted-small"
                       />
                     </CListGroupItem>

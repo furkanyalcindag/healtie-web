@@ -262,9 +262,36 @@ const routes = [
       },
 
       {
-        path: '/management',
-        redirect: '/management/role',
-        name: 'Management',
+        path: '/admin',
+        name: 'Admin',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        redirect: '/admin/doctor/list',
+        children: [
+          {
+            path: '/admin/doctor/list',
+            name: 'AdminDoctorList',
+            component: () => import('@/views/admin/listDoctor.vue'),
+          },
+          {
+            path: '/admin/login-admin',
+            name: 'Login Admin',
+            component: () => import('@/views/admin/LoginAdmin.vue'),
+          },
+          {
+            path: '/admin/register-admin',
+            name: 'Register Admin',
+            component: () => import('@/views/admin/RegisterAdmin.vue'),
+          },
+        ],
+      },
+      {
+        path: '/doctor',
+        redirect: '/doctor/register-doctor',
+        name: 'Doctor',
         component: {
           render() {
             return h(resolveComponent('router-view'))
@@ -272,9 +299,19 @@ const routes = [
         },
         children: [
           {
-            path: 'role',
-            name: 'Role',
-            component: () => import('@/views/management/Role.vue'),
+            path: '/doctor/profile',
+            name: 'Profile Doctor',
+            component: () => import('@/views/doctor/ProfileDoctor.vue'),
+          },
+          {
+            path: 'login-doctor',
+            name: 'Login Doctor',
+            component: () => import('@/views/doctor/LoginDoctor.vue'),
+          },
+          {
+            path: 'register-doctor',
+            name: 'Register Doctor',
+            component: () => import('@/views/doctor/RegisterDoctor.vue'),
           },
           {
             path: 'category',

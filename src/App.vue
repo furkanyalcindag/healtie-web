@@ -1,4 +1,5 @@
 <template>
+  <div ref="modal-container"></div>
   <router-view />
 </template>
 

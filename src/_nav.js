@@ -37,19 +37,21 @@ export default [
     items: [
       {
         component: 'CNavItem',
-        name: 'DoctorList',
+        name: 'AdminDoctorList',
         to: '/admin/doctor/list',
       },
     ],
   },
   {
     component: 'CNavGroup',
+
     name: 'Management',
     to: '/management',
     icon: 'cil-puzzle',
     items: [
       {
         component: 'CNavItem',
+
         name: 'Category',
         to: '/management/category',
       },
@@ -62,6 +64,20 @@ export default [
         component: 'CNavItem',
         name: 'User',
         to: '/management/user',
+
+      },
+    ],
+  },
+  {
+    component: 'CNavGroup',
+    name: 'Doctor',
+    to: '/doctor',
+    icon: 'cil-puzzle',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'Doctor Profile',
+        to: '/doctor/profile',
       },
     ],
   },

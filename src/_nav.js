@@ -44,6 +44,29 @@ export default [
   },
   {
     component: 'CNavGroup',
+    name: 'Management',
+    to: '/management',
+    icon: 'cil-puzzle',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'Category',
+        to: '/management/category',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Role',
+        to: '/management/role',
+      },
+      {
+        component: 'CNavItem',
+        name: 'User',
+        to: '/management/user',
+      },
+    ],
+  },
+  {
+    component: 'CNavGroup',
     name: 'Base',
     to: '/base',
     icon: 'cil-puzzle',

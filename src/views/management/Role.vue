@@ -1,5 +1,120 @@
 <template>
-  <CRow>
+  <div>
+    <CRow>
+      <CCol class="justify-content-start">
+        <CCard>
+          <CCardHeader>
+            <!-- <CIcon icon="cil-user" /> -->
+            <CRow>
+              <CCol lg="3" class="text-left mt-3">
+                <h2>Rol Listesi</h2>
+              </CCol>
+              <CCol lg="9" class="text-right mt-3">
+                <CButton
+                  color="primary"
+                  class="float-end"
+                  shape="rounded-pill"
+                  @click="
+                    () => {
+                      openedModals[0] = true
+                    }
+                  "
+                  >Ekle
+                </CButton>
+              </CCol>
+            </CRow>
+          </CCardHeader>
+          <CCardBody class="p-0">
+            <easy-data-table
+              class="m-4"
+              show-index
+              v-model:itemsSelected="itemsSelected"
+              :headers="headers"
+              :items="items"
+              :theme-color="themeColor"
+              buttons-pagination
+              :rows-per-page="rowsPerPage"
+            >
+              <template #item-operations>
+                <div>
+                  <CButtonGroup role="group" size="sm">
+                    <CButton
+                      color="warning"
+                      class="ms-2 text-white align-items-center"
+                      shape="rounded-pill"
+                      size="sm"
+                      v-c-tooltip="{
+                        content: 'Düzenle',
+                        placement: 'top',
+                      }"
+                      @click="
+                        () => {
+                          openedModals[2] = true
+                        }
+                      "
+                    >
+                      <CIcon icon="cil-pencil" />
+                    </CButton>
+                    <CButton
+                      color="danger"
+                      class="ms-2 text-white align-items-center"
+                      shape="rounded-pill"
+                      size="sm"
+                      v-c-tooltip="{
+                        content: 'Sil',
+                        placement: 'top',
+                      }"
+                      @click="
+                        () => {
+                          openedModals[1] = true
+                        }
+                      "
+                    >
+                      <CIcon icon="cil-trash" />
+                    </CButton>
+                    <CButton
+                      color="success"
+                      class="ms-2 text-white align-items-center"
+                      shape="rounded-pill"
+                      size="sm"
+                      v-c-tooltip="{
+                        content: 'Kullanıcılar',
+                        placement: 'top',
+                      }"
+                      @click="
+                        () => {
+                          openedModals[4] = true
+                        }
+                      "
+                    >
+                      <CIcon icon="cil-user" />
+                    </CButton>
+                    <CButton
+                      color="info"
+                      class="ms-2 text-white align-items-center"
+                      shape="rounded-pill"
+                      size="sm"
+                      v-c-tooltip="{
+                        content: 'Kullanıcı Ekle',
+                        placement: 'top',
+                      }"
+                      @click="
+                        () => {
+                          openedModals[3] = true
+                        }
+                      "
+                    >
+                      <CIcon icon="cil-user-plus" />
+                    </CButton>
+                  </CButtonGroup>
+                </div>
+              </template>
+            </easy-data-table>
+          </CCardBody>
+        </CCard>
+      </CCol>
+    </CRow>
+
     <CModal size="lg" :visible="openedModals[0]" @close="closeModal(0)">
       <CModalHeader>
         <CModalTitle>Rol Ekle</CModalTitle>
@@ -28,7 +143,12 @@
         </CForm>
       </CModalBody>
     </CModal>
-    <CModal size="md" :visible="openedModals[1]" @close="closeModal(1)">
+    <CModal
+      size="md"
+      :visible="openedModals[1]"
+      @close="closeModal(1)"
+      backdrop="static"
+    >
       <CModalHeader>
         <CModalTitle>Rol <span class="text-danger">Sil</span></CModalTitle>
       </CModalHeader>
@@ -38,12 +158,17 @@
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton color="secondary" @click="closeModal(0)">Kapat</CButton>
+          <CButton color="secondary" @click="closeModal(1)">Kapat</CButton>
           <CButton color="danger" type="submit">SİL</CButton>
         </CModalFooter>
       </CModalBody>
     </CModal>
-    <CModal size="lg" :visible="openedModals[2]" @close="closeModal(2)">
+    <CModal
+      size="lg"
+      :visible="openedModals[2]"
+      @close="closeModal(2)"
+      backdrop="static"
+    >
       <CModalHeader>
         <CModalTitle>Rol Bilgilerini Düzenle</CModalTitle>
       </CModalHeader>
@@ -67,13 +192,19 @@
           <CModalFooter class="pe-0">
             <CButton color="secondary" @click="closeModal(2)">Kapat</CButton>
             <CButton color="success" type="submit"
-              >Değişiklikleri Kaydet</CButton
-            >
+              >Değişiklikleri Kaydet
+            </CButton>
           </CModalFooter>
         </CForm>
       </CModalBody>
     </CModal>
-    <CModal size="lg" :visible="openedModals[3]" @close="closeModal(3)">
+    <CModal
+      size="lg"
+      :visible="openedModals[3]"
+      @close="closeModal(3)"
+      :no-close-on-backdrop="true"
+      backdrop="static"
+    >
       <CModalHeader>
         <CModalTitle>Kullanıcı Ekle</CModalTitle>
       </CModalHeader>
@@ -83,7 +214,6 @@
           @submit.prevent="checkValidation()"
           needs-validation
           novalidate
-          :validated="validationChecked"
         >
           <CCol md="6">
             <CFormLabel for="add-user-firstName">İsim</CFormLabel>
@@ -133,7 +263,12 @@
         </CForm>
       </CModalBody>
     </CModal>
-    <CModal size="lg" :visible="openedModals[4]" @close="closeModal(4)">
+    <CModal
+      size="lg"
+      :visible="openedModals[4]"
+      @close="closeModal(4)"
+      backdrop="static"
+    >
       <CModalHeader>
         <CModalTitle>Kullanıcı Bilgilerini Göster</CModalTitle>
       </CModalHeader>
@@ -152,32 +287,6 @@
             <template #item-operations>
               <div>
                 <CButtonGroup role="group" size="sm">
-                  <CModal
-                    size="md"
-                    :visible="openedModals[5]"
-                    @close="closeModal(5)"
-                  >
-                    <CModalHeader>
-                      <CModalTitle
-                        >User <span class="text-danger">Sil</span></CModalTitle
-                      >
-                    </CModalHeader>
-                    <CModalBody>
-                      <h5>
-                        Bu işlemi geri alamazsınız. Kullanıcı bilgilerini
-                        <span class="text-danger fw-bolder">
-                          silmek istiyor musunuz?
-                        </span>
-                      </h5>
-                      <CModalFooter class="pe-0">
-                        <CButton color="secondary" @click="closeModal(5)"
-                          >Kapat</CButton
-                        >
-                        <CButton color="danger" type="submit">SİL</CButton>
-                      </CModalFooter>
-                    </CModalBody>
-                  </CModal>
-
                   <CButton
                     color="danger"
                     class="ms-2 text-white align-items-center"
@@ -189,7 +298,7 @@
                     }"
                     @click="
                       () => {
-                        openedModals[1] = true
+                        openedModals.deleteUserModal = true
                       }
                     "
                   >
@@ -201,128 +310,38 @@
           </easy-data-table>
 
           <CButton color="secondary" class="float-md-end" @click="closeModal(4)"
-            >Kapat</CButton
-          >
+            >Kapat
+          </CButton>
         </CCardBody>
       </CModalBody>
     </CModal>
-    <CCol class="justify-content-start">
-      <CCard>
-        <CCardHeader>
-          <!-- <CIcon icon="cil-user" /> -->
-          <CRow>
-            <CCol lg="3" class="text-left mt-3">
-              <h2>Rol Listesi</h2>
-            </CCol>
-            <CCol lg="9" class="text-right mt-3">
-              <CButton
-                color="primary"
-                class="float-end"
-                shape="rounded-pill"
-                @click="
-                  () => {
-                    openedModals[0] = true
-                  }
-                "
-                >Ekle</CButton
-              >
-            </CCol>
-          </CRow>
-        </CCardHeader>
-        <CCardBody class="p-0">
-          <easy-data-table
-            class="m-4"
-            show-index
-            v-model:itemsSelected="itemsSelected"
-            :headers="headers"
-            :items="items"
-            :theme-color="themeColor"
-            buttons-pagination
-            :rows-per-page="rowsPerPage"
-          >
-            <template #item-operations>
-              <div>
-                <CButtonGroup role="group" size="sm">
-                  <CButton
-                    color="warning"
-                    class="ms-2 text-white align-items-center"
-                    shape="rounded-pill"
-                    size="sm"
-                    v-c-tooltip="{
-                      content: 'Düzenle',
-                      placement: 'top',
-                    }"
-                    @click="
-                      () => {
-                        openedModals[2] = true
-                      }
-                    "
-                  >
-                    <CIcon icon="cil-pencil" />
-                  </CButton>
-                  <CButton
-                    color="danger"
-                    class="ms-2 text-white align-items-center"
-                    shape="rounded-pill"
-                    size="sm"
-                    v-c-tooltip="{
-                      content: 'Sil',
-                      placement: 'top',
-                    }"
-                    @click="
-                      () => {
-                        openedModals[1] = true
-                      }
-                    "
-                  >
-                    <CIcon icon="cil-trash" />
-                  </CButton>
-                  <CButton
-                    color="success"
-                    class="ms-2 text-white align-items-center"
-                    shape="rounded-pill"
-                    size="sm"
-                    v-c-tooltip="{
-                      content: 'Kullanıcılar',
-                      placement: 'top',
-                    }"
-                    @click="
-                      () => {
-                        openedModals[4] = true
-                      }
-                    "
-                  >
-                    <CIcon icon="cil-user" />
-                  </CButton>
-                  <CButton
-                    color="info"
-                    class="ms-2 text-white align-items-center"
-                    shape="rounded-pill"
-                    size="sm"
-                    v-c-tooltip="{
-                      content: 'Kullanıcı Ekle',
-                      placement: 'top',
-                    }"
-                    @click="
-                      () => {
-                        openedModals[3] = true
-                      }
-                    "
-                  >
-                    <CIcon icon="cil-user-plus" />
-                  </CButton>
-                </CButtonGroup>
-              </div>
-            </template>
-          </easy-data-table>
-        </CCardBody>
-      </CCard>
-    </CCol>
-  </CRow>
+
+    <CModal
+      size="md"
+      v-model:visible="openedModals.deleteUserModal"
+      @close="closeModal(5)"
+      backdrop="static"
+    >
+      <CModalHeader>
+        <CModalTitle>User <span class="text-danger">Sil</span></CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <h5>
+          Bu işlemi geri alamazsınız. Kullanıcı bilgilerini
+          <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
+        </h5>
+        <CModalFooter class="pe-0">
+          <CButton color="secondary" @click="closeModal(5)">Kapat</CButton>
+          <CButton color="danger" type="submit">SİL</CButton>
+        </CModalFooter>
+      </CModalBody>
+    </CModal>
+  </div>
 </template>
 
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
+
 export default {
   name: 'Colors',
   components: {

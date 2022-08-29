@@ -500,10 +500,10 @@
                 style="width: 60px; height: 100px"
               />
             </template>
-            <template #item-doctor="{ doctor, profileImage }">
+            <template #item-firstName="{ firstName, lastName }">
               <div>
-                <CAvatar shape="rounded" :src="profileImage" size="md" />
-                {{ doctor }}
+                <!-- <CAvatar shape="rounded" :src="profileImage" size="md" /> -->
+                {{ firstName }} {{ lastName }}
               </div>
             </template>
             <template #item-address="{ address }">
@@ -680,7 +680,7 @@ export default {
       ],
       items: [
         {
-          firstName: 'Stephen',
+          firstName: 'StephenUZUNCAISIM',
           lastName: 'Jhon',
           profileImage:
             'https://ts2.mm.bing.net/th?q=Eba%27ya%20konulacak%20profil%20resmi',

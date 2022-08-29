@@ -1,6 +1,12 @@
 <template>
   <CRow>
-    <CModal size="lg" :visible="openedModals[0]" @close="closeModal(0)">
+    <!-- Doctor profile -->
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.updateDoctorProfile"
+      @close="closeModal('updateDoctorProfile')"
+    >
       <CModalHeader>
         <CModalTitle>Profilimi Düzenle</CModalTitle>
       </CModalHeader>
@@ -45,7 +51,6 @@
             <CFormInput
               id="update-doctor-phone"
               type="tel"
-              :pattern="'[0-9]{3}-[0-9]{2}-[0-9]{3}'"
               required
               feedbackInvalid="Lütfen bir telefon numarası giriniz"
               v-model="editedProfileData.phone"
@@ -80,7 +85,9 @@
             ></CFormTextarea>
           </CCol>
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(0, true)"
+            <CButton
+              color="secondary"
+              @click="closeModal('updateDoctorProfile', true)"
               >İptal</CButton
             >
             <CButton color="success" type="submit"
@@ -90,7 +97,13 @@
         </CForm>
       </CModalBody>
     </CModal>
-    <CModal size="lg" :visible="openedModals[1]" @close="closeModal(1)">
+    <!-- Doctor info -->
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.updateDoctorInfo"
+      @close="closeModal('updateDoctorInfo')"
+    >
       <CModalHeader>
         <CModalTitle>Doktora Bilgilerimi Düzenle</CModalTitle>
       </CModalHeader>
@@ -127,18 +140,18 @@
             </CFormSelect>
           </CCol>
           <CCol md="6">
-            <CFormLabel for="update-doctor-firstname">Klinik</CFormLabel>
+            <CFormLabel for="update-doctor-clinicName">Klinik</CFormLabel>
             <CFormInput
-              id="update-doctor-firstname"
+              id="update-doctor-clinicName"
               required
               feedbackInvalid="Lütfen bir isim giriniz"
               v-model="editedDoctorData.clinicName"
             />
           </CCol>
           <CCol md="6">
-            <CFormLabel for="update-doctor-firstname">İsim</CFormLabel>
+            <CFormLabel for="update-doctor-diplomaNo">İsim</CFormLabel>
             <CFormInput
-              id="update-doctor-firstname"
+              id="update-doctor-diplomaNo"
               type="number"
               required
               feedbackInvalid="Lütfen bir isim giriniz"
@@ -146,7 +159,9 @@
             />
           </CCol>
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(1, true)"
+            <CButton
+              color="secondary"
+              @click="closeModal('updateDoctorInfo', true)"
               >İptal</CButton
             >
             <CButton color="success" type="submit"
@@ -156,7 +171,13 @@
         </CForm>
       </CModalBody>
     </CModal>
-    <CModal size="lg" :visible="openedModals[2]" @close="closeModal(2)">
+    <!-- Academic info -->
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.updateAcademicInfo"
+      @close="closeModal('updateAcademicInfo')"
+    >
       <CModalHeader>
         <CModalTitle>Akademik Bilgilerimi Düzenle</CModalTitle>
       </CModalHeader>
@@ -191,17 +212,17 @@
                 <CTableHeaderCell scope="row">+</CTableHeaderCell>
                 <CTableDataCell>
                   <CFormInput
-                    id="update-doctor-firstname"
+                    id="update-doctor-academic-schoolName"
                     required
-                    feedbackInvalid="Lütfen bir isim giriniz"
+                    feedbackInvalid="Lütfen bir okul ismi giriniz"
                     v-model="addedAcademicData.schoolName"
                   />
                 </CTableDataCell>
                 <CTableDataCell>
                   <CFormInput
-                    id="update-doctor-firstname"
+                    id="update-doctor-academic-profession"
                     required
-                    feedbackInvalid="Lütfen bir isim giriniz"
+                    feedbackInvalid="Lütfen bir uzmanlık alanı giriniz"
                     v-model="addedAcademicData.profession"
                   />
                 </CTableDataCell>
@@ -209,7 +230,8 @@
                   <CFormInput
                     id="update-doctor-firstname"
                     required
-                    feedbackInvalid="Lütfen bir isim giriniz"
+                    type="date"
+                    feedbackInvalid="Lütfen bir başlangıç tarihi giriniz"
                     v-model="addedAcademicData.startYear"
                   />
                 </CTableDataCell>
@@ -217,6 +239,7 @@
                   <CFormInput
                     id="update-doctor-firstname"
                     required
+                    type="date"
                     feedbackInvalid="Lütfen bir isim giriniz"
                     v-model="addedAcademicData.graduateYear"
                   />
@@ -246,7 +269,7 @@
                   <CFormInput
                     id="update-doctor-firstname"
                     required
-                    feedbackInvalid="Lütfen bir isim giriniz"
+                    feedbackInvalid="Lütfen bir okul ismi giriniz"
                     v-model="school.schoolName"
                   />
                 </CTableDataCell>
@@ -254,15 +277,16 @@
                   <CFormInput
                     id="update-doctor-firstname"
                     required
-                    feedbackInvalid="Lütfen bir isim giriniz"
+                    feedbackInvalid="Lütfen bir uzmanlık alanı giriniz"
                     v-model="school.profession"
                   />
                 </CTableDataCell>
                 <CTableDataCell>
                   <CFormInput
                     id="update-doctor-firstname"
+                    type="date"
                     required
-                    feedbackInvalid="Lütfen bir isim giriniz"
+                    feedbackInvalid="Lütfen bir başlangıç tarihi giriniz"
                     v-model="school.startYear"
                   />
                 </CTableDataCell>
@@ -270,7 +294,8 @@
                   <CFormInput
                     id="update-doctor-firstname"
                     required
-                    feedbackInvalid="Lütfen bir isim giriniz"
+                    type="date"
+                    feedbackInvalid="Lütfen bir tarih giriniz"
                     v-model="school.graduateYear"
                   />
                 </CTableDataCell>
@@ -293,7 +318,9 @@
             </CTableBody>
           </CTable>
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(2, true)"
+            <CButton
+              color="secondary"
+              @click="closeModal('updateAcademicInfo', true)"
               >İptal</CButton
             >
             <CButton color="success" type="submit"
@@ -303,7 +330,36 @@
         </CForm>
       </CModalBody>
     </CModal>
-    <CModal size="lg" :visible="openedModals[3]" @close="closeModal(3)">
+    <CModal
+      backdrop="static"
+      size="lg"
+      ref="deleteAcademicDataModal"
+      :visible="openedModals.deleteAcademicData"
+      @close="closeModal('deleteAcademicData')"
+    >
+      <CModalHeader>
+        <CModalTitle>Makale <span class="text-danger">Sil</span></CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <h5>
+          Bu işlemi geri alamazsınız. Makale bilgilerini
+          <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
+        </h5>
+        <CModalFooter class="pe-0">
+          <CButton color="secondary" @click="closeModal('deleteAcademicData')"
+            >Kapat</CButton
+          >
+          <CButton color="danger" type="submit">SİL</CButton>
+        </CModalFooter>
+      </CModalBody>
+    </CModal>
+    <!-- Certificate info -->
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.updateCertificateInfo"
+      @close="closeModal('updateCertificateInfo')"
+    >
       <CModalHeader>
         <CModalTitle>Sertifika Bilgilerimi Düzenle</CModalTitle>
       </CModalHeader>
@@ -362,6 +418,7 @@
                   <CFormInput
                     id="update-doctor-firstname"
                     required
+                    type="date"
                     feedbackInvalid="Lütfen bir tarih giriniz"
                     v-model="addedCertificateData.takenDate"
                   />
@@ -415,6 +472,7 @@
                   <CFormInput
                     id="update-doctor-firstname"
                     required
+                    type="date"
                     feedbackInvalid="Lütfen bir tarih giriniz"
                     v-model="certificate.takenDate"
                   />
@@ -438,7 +496,9 @@
             </CTableBody>
           </CTable>
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(3, true)"
+            <CButton
+              color="secondary"
+              @click="closeModal('updateCertificateInfo', true)"
               >İptal</CButton
             >
             <CButton color="success" type="submit"
@@ -446,6 +506,484 @@
             >
           </CModalFooter>
         </CForm>
+      </CModalBody>
+    </CModal>
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.deleteCertificate"
+      @close="closeModal('deleteCertificate')"
+    >
+      <CModalHeader>
+        <CModalTitle
+          >Sertifika <span class="text-danger">Sil</span></CModalTitle
+        >
+      </CModalHeader>
+      <CModalBody>
+        <h5>
+          Bu işlemi geri alamazsınız. Sertifika bilgilerini
+          <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
+        </h5>
+        <CModalFooter class="pe-0">
+          <CButton color="secondary" @click="closeModal('deleteCertificate')"
+            >Kapat</CButton
+          >
+          <CButton color="danger" type="submit">SİL</CButton>
+        </CModalFooter>
+      </CModalBody>
+    </CModal>
+    <!-- Experience info -->
+    <CModal
+      backdrop="static"
+      size="xl"
+      :visible="openedModals.updateExperienceInfo"
+      @close="closeModal('updateExperienceInfo')"
+    >
+      <CModalHeader>
+        <CModalTitle>Tecrübe Bilgilerimi Düzenle</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CForm
+          class="row g-3"
+          @submit.prevent="checkValidation()"
+          needs-validation
+          novalidate
+          :validated="validationChecked"
+        >
+          <CTable
+            responsive
+            hover
+            class="bg-white mb-0"
+            style="border-color: #321fdb"
+          >
+            <CTableHead>
+              <CTableRow>
+                <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Ünvan</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Çalıştığı yer</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Açıklama</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Başladığı tarih</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Bitiş tarihi</CTableHeaderCell>
+                <CTableHeaderCell scope="col">İşlemler</CTableHeaderCell>
+              </CTableRow>
+            </CTableHead>
+            <CTableBody>
+              <CTableRow>
+                <CTableHeaderCell scope="row">+</CTableHeaderCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir ünvan giriniz(Ex. Programmer)"
+                    v-model="addedExperienceData.title"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir yer giriniz(Ex. Comitfy)"
+                    v-model="addedExperienceData.workedPlace"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <!-- <div>
+                    <div class="d-inline-block text-truncate">
+                      <CTooltip
+                        :content="addedExperienceData.description"
+                        placement="top"
+                      >
+                        <template #toggler="{ on }">
+                          <CFormInput
+                            id="update-doctor-firstname"
+                            required
+                            v-on="on"
+                            feedbackInvalid="Lütfen bir açıklama giriniz"
+                            v-model="addedExperienceData.description"
+                          />
+                        </template>
+                      </CTooltip>
+                    </div>
+                  </div> -->
+                  <CFormTextarea
+                    id="update-doctor-firstname"
+                    style="max-width: 400px"
+                    rows="0"
+                    required
+                    feedbackInvalid="Lütfen bir açıklama giriniz"
+                    v-model="addedExperienceData.description"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    type="date"
+                    feedbackInvalid="Lütfen başlangıç tarihini giriniz"
+                    v-model="addedExperienceData.startDate"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    type="date"
+                    feedbackInvalid="Lütfen bir tarih giriniz"
+                    v-model="addedExperienceData.endDate"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CButton
+                    color="success"
+                    class="ms-2 text-white align-items-center"
+                    shape="rounded-pill"
+                    size="sm"
+                    v-c-tooltip="{
+                      content: 'Ekle',
+                      placement: 'top',
+                    }"
+                    @click="addExperienceData(experience)"
+                  >
+                    <CIcon icon="cil-plus" />
+                  </CButton>
+                </CTableDataCell>
+              </CTableRow>
+              <CTableRow
+                v-for="(experience, index) in editedExperienceData"
+                :key="index"
+              >
+                <CTableHeaderCell scope="row">{{ index + 1 }}</CTableHeaderCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir ünvan giriniz(Ex. Programmer)"
+                    v-model="experience.title"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir yer giriniz(Ex. Comitfy)"
+                    v-model="experience.workedPlace"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <!-- <div>
+                    <div class="d-inline-block text-truncate">
+                      <CTooltip
+                        :content="experience.description"
+                        placement="top"
+                      >
+                        <template #toggler="{ on }">
+                          <CFormInput
+                            id="update-doctor-firstname"
+                            required
+                            v-on="on"
+                            feedbackInvalid="Lütfen bir açıklama giriniz"
+                            v-model="experience.description"
+                          />
+                        </template>
+                      </CTooltip>
+                    </div>
+                  </div> -->
+                  <CFormTextarea
+                    id="update-doctor-firstname"
+                    style="max-width: 400px"
+                    rows="0"
+                    required
+                    feedbackInvalid="Lütfen bir açıklama giriniz"
+                    v-model="experience.description"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    type="date"
+                    feedbackInvalid="Lütfen başlangıç tarihini giriniz"
+                    v-model="experience.startDate"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    type="date"
+                    feedbackInvalid="Lütfen bir tarih giriniz"
+                    v-model="experience.endDate"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CButton
+                    color="danger"
+                    class="ms-2 text-white align-items-center"
+                    shape="rounded-pill"
+                    size="sm"
+                    v-c-tooltip="{
+                      content: 'Sil',
+                      placement: 'top',
+                    }"
+                    @click="deleteExperienceData(experience)"
+                  >
+                    <CIcon icon="cil-trash" />
+                  </CButton>
+                </CTableDataCell>
+              </CTableRow>
+            </CTableBody>
+          </CTable>
+          <CModalFooter class="pe-0">
+            <CButton
+              color="secondary"
+              @click="closeModal('updateExperienceInfo', true)"
+              >İptal</CButton
+            >
+            <CButton color="success" type="submit"
+              >Değişiklikleri Kaydet</CButton
+            >
+          </CModalFooter>
+        </CForm>
+      </CModalBody>
+    </CModal>
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.deleteExperience"
+      @close="closeModal('deleteExperience')"
+    >
+      <CModalHeader>
+        <CModalTitle
+          >Sertifika <span class="text-danger">Sil</span></CModalTitle
+        >
+      </CModalHeader>
+      <CModalBody>
+        <h5>
+          Bu işlemi geri alamazsınız. Sertifika bilgilerini
+          <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
+        </h5>
+        <CModalFooter class="pe-0">
+          <CButton color="secondary" @click="closeModal('deleteExperience')"
+            >Kapat</CButton
+          >
+          <CButton color="danger" type="submit">SİL</CButton>
+        </CModalFooter>
+      </CModalBody>
+    </CModal>
+    <!-- Article info -->
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.updateArticleInfo"
+      @close="closeModal('updateArticleInfo')"
+    >
+      <CModalHeader>
+        <CModalTitle>Makale Bilgilerimi Düzenle</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CForm
+          class="row g-3"
+          @submit.prevent="checkValidation()"
+          needs-validation
+          novalidate
+          :validated="validationChecked"
+        >
+          <CTable
+            responsive
+            hover
+            class="bg-white mb-0"
+            style="border-color: #321fdb"
+          >
+            <CTableHead>
+              <CTableRow>
+                <CTableHeaderCell scope="col">#</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Ünvan</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Çalıştığı yer</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Açıklama</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Başladığı tarih</CTableHeaderCell>
+                <CTableHeaderCell scope="col">Bitiş tarihi</CTableHeaderCell>
+                <CTableHeaderCell scope="col">İşlemler</CTableHeaderCell>
+              </CTableRow>
+            </CTableHead>
+            <CTableBody>
+              <CTableRow>
+                <CTableHeaderCell scope="row">+</CTableHeaderCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir ünvan giriniz(Ex. Programmer)"
+                    v-model="addedExperienceData.title"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir yer giriniz(Ex. Comitfy)"
+                    v-model="addedExperienceData.workedPlace"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <div>
+                    <div class="d-inline-block text-truncate">
+                      <CTooltip
+                        :content="addedExperienceData.description"
+                        placement="top"
+                      >
+                        <template #toggler="{ on }">
+                          <CFormInput
+                            id="update-doctor-firstname"
+                            required
+                            v-on="on"
+                            feedbackInvalid="Lütfen bir açıklama giriniz"
+                            v-model="addedExperienceData.description"
+                          />
+                        </template>
+                      </CTooltip>
+                    </div>
+                  </div>
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen başlangıç tarihini giriniz"
+                    v-model="addedExperienceData.startDate"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir tarih giriniz"
+                    v-model="addedExperienceData.endDate"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CButton
+                    color="success"
+                    class="ms-2 text-white align-items-center"
+                    shape="rounded-pill"
+                    size="sm"
+                    v-c-tooltip="{
+                      content: 'Ekle',
+                      placement: 'top',
+                    }"
+                    @click="addCertificateData(certificate)"
+                  >
+                    <CIcon icon="cil-plus" />
+                  </CButton>
+                </CTableDataCell>
+              </CTableRow>
+              <CTableRow
+                v-for="(experience, index) in editedExperienceData"
+                :key="index"
+              >
+                <CTableHeaderCell scope="row">{{ index + 1 }}</CTableHeaderCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir ünvan giriniz(Ex. Programmer)"
+                    v-model="experience.title"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir yer giriniz(Ex. Comitfy)"
+                    v-model="experience.workedPlace"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <div>
+                    <div class="d-inline-block text-truncate">
+                      <CTooltip
+                        :content="experience.description"
+                        placement="top"
+                      >
+                        <template #toggler="{ on }">
+                          <CFormInput
+                            id="update-doctor-firstname"
+                            required
+                            v-on="on"
+                            feedbackInvalid="Lütfen bir açıklama giriniz"
+                            v-model="experience.description"
+                          />
+                        </template>
+                      </CTooltip>
+                    </div>
+                  </div>
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen başlangıç tarihini giriniz"
+                    v-model="experience.startDate"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CFormInput
+                    id="update-doctor-firstname"
+                    required
+                    feedbackInvalid="Lütfen bir tarih giriniz"
+                    v-model="experience.endDate"
+                  />
+                </CTableDataCell>
+                <CTableDataCell>
+                  <CButton
+                    color="danger"
+                    class="ms-2 text-white align-items-center"
+                    shape="rounded-pill"
+                    size="sm"
+                    v-c-tooltip="{
+                      content: 'Sil',
+                      placement: 'top',
+                    }"
+                    @click="addArticleData(togo)"
+                  >
+                    <CIcon icon="cil-trash" />
+                  </CButton>
+                </CTableDataCell>
+              </CTableRow>
+            </CTableBody>
+          </CTable>
+          <CModalFooter class="pe-0">
+            <CButton
+              color="secondary"
+              @click="closeModal('updateArticleInfo', true)"
+              >İptal</CButton
+            >
+            <CButton color="success" type="submit"
+              >Değişiklikleri Kaydet</CButton
+            >
+          </CModalFooter>
+        </CForm>
+      </CModalBody>
+    </CModal>
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.deleteArticle"
+      @close="closeModal('deleteArticle')"
+    >
+      <CModalHeader>
+        <CModalTitle>Makale <span class="text-danger">Sil</span></CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <h5>
+          Bu işlemi geri alamazsınız. Makale bilgilerini
+          <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
+        </h5>
+        <CModalFooter class="pe-0">
+          <CButton color="secondary" @click="closeModal('deleteArticle')"
+            >Kapat</CButton
+          >
+          <CButton color="danger" type="submit">SİL</CButton>
+        </CModalFooter>
       </CModalBody>
     </CModal>
     <CCol class="justify-content-start">
@@ -530,7 +1068,7 @@
                       }"
                       @click="
                         () => {
-                          openedModals[0] = true
+                          openedModals.updateDoctorProfile = true
                         }
                       "
                     >
@@ -580,7 +1118,7 @@
                       }"
                       @click="
                         () => {
-                          openedModals[1] = true
+                          openedModals.updateDoctorInfo = true
                         }
                       "
                     >
@@ -655,7 +1193,7 @@
                       }"
                       @click="
                         () => {
-                          openedModals[0] = true
+                          openedModals.updateDoctorProfile = true
                         }
                       "
                     >
@@ -697,7 +1235,7 @@
                           }"
                           @click="
                             () => {
-                              openedModals[2] = true
+                              openedModals.updateAcademicInfo = true
                             }
                           "
                         >
@@ -769,7 +1307,7 @@
                           }"
                           @click="
                             () => {
-                              openedModals[3] = true
+                              openedModals.updateCertificateInfo = true
                             }
                           "
                         >
@@ -841,7 +1379,7 @@
                           }"
                           @click="
                             () => {
-                              openedModals[1] = true
+                              openedModals.updateExperienceInfo = true
                             }
                           "
                         >
@@ -875,26 +1413,41 @@
                         </CTableRow>
                       </CTableHead>
                       <CTableBody>
-                        <CTableRow>
-                          <CTableHeaderCell scope="row">1</CTableHeaderCell>
-                          <CTableDataCell>Mark</CTableDataCell>
-                          <CTableDataCell>Otto</CTableDataCell>
+                        <CTableRow
+                          v-for="(experience, index) in experienceData"
+                          :key="index"
+                        >
+                          <CTableHeaderCell scope="row">{{
+                            index + 1
+                          }}</CTableHeaderCell>
+                          <CTableDataCell>{{
+                            experience.title
+                          }}</CTableDataCell>
+                          <CTableDataCell>{{
+                            experience.workedPlace
+                          }}</CTableDataCell>
                           <CTableDataCell>
-                            <div>
-                              <div
-                                style="max-width: 100px"
-                                class="d-inline-block text-truncate"
-                                v-c-tooltip="{
-                                  content: `${'AÇIKLAMA'}`,
-                                  placement: 'top',
-                                }"
-                              >
-                                AçıklamaASDJADSADAJSDASDJ
-                              </div>
-                            </div>
+                            <CTooltip
+                              :content="experience.description"
+                              placement="top"
+                            >
+                              <template #toggler="{ on }">
+                                <div
+                                  v-on="on"
+                                  style="max-width: 150px"
+                                  class="d-inline-block text-truncate"
+                                >
+                                  {{ experience.description }}
+                                </div>
+                              </template>
+                            </CTooltip>
                           </CTableDataCell>
-                          <CTableDataCell>@twitter</CTableDataCell>
-                          <CTableDataCell>@twitter</CTableDataCell>
+                          <CTableDataCell>{{
+                            experience.startDate
+                          }}</CTableDataCell>
+                          <CTableDataCell>{{
+                            experience.endDate
+                          }}</CTableDataCell>
                         </CTableRow>
                       </CTableBody>
                     </CTable>
@@ -907,26 +1460,22 @@
                     <CCardHeader>
                       <CCol lg="3" class="text-left mt-3 text-white">
                         <CButton
-                          color="warning"
+                          color="success"
                           class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
                           shape="rounded-pill"
                           size="sm"
                           v-c-tooltip="{
-                            content: 'Düzenle',
+                            content: 'Ekle',
                             placement: 'top',
                           }"
-                          @click="
-                            () => {
-                              openedModals[1] = true
-                            }
-                          "
+                          @click="() => {}"
                         >
-                          <CIcon icon="cil-pencil" />
+                          <CIcon icon="cil-plus" />
                         </CButton>
                         <h5>Makaleleri</h5>
                       </CCol>
                     </CCardHeader>
-                    <CTable
+                    <!-- <CTable
                       responsive
                       hover
                       class="border border-2 bg-white mb-0"
@@ -951,29 +1500,155 @@
                         </CTableRow>
                       </CTableHead>
                       <CTableBody>
-                        <CTableRow>
-                          <CTableHeaderCell scope="row">1</CTableHeaderCell>
-                          <CTableDataCell>Mark</CTableDataCell>
-                          <CTableDataCell>Otto</CTableDataCell>
+                        <CTableRow
+                          v-for="(experience, index) in experienceData"
+                          :key="index"
+                        >
+                          <CTableHeaderCell scope="row">{{
+                            index + 1
+                          }}</CTableHeaderCell>
+                          <CTableDataCell>{{
+                            experience.title
+                          }}</CTableDataCell>
+                          <CTableDataCell>{{
+                            experience.workedPlace
+                          }}</CTableDataCell>
                           <CTableDataCell>
-                            <div>
-                              <div
-                                style="max-width: 100px"
-                                class="d-inline-block text-truncate"
-                                v-c-tooltip="{
-                                  content: `${'AÇIKLAMA'}`,
-                                  placement: 'top',
-                                }"
-                              >
-                                AçıklamaASDJADSADAJSDASDJ
-                              </div>
-                            </div>
+                            <CTooltip
+                              :content="experience.description"
+                              placement="top"
+                            >
+                              <template #toggler="{ on }">
+                                <div
+                                  v-on="on"
+                                  style="max-width: 150px"
+                                  class="d-inline-block text-truncate"
+                                >
+                                  {{ experience.description }}
+                                </div>
+                              </template>
+                            </CTooltip>
                           </CTableDataCell>
-                          <CTableDataCell>@twitter</CTableDataCell>
-                          <CTableDataCell>@twitter</CTableDataCell>
+                          <CTableDataCell>{{
+                            experience.startDate
+                          }}</CTableDataCell>
+                          <CTableDataCell>{{
+                            experience.endDate
+                          }}</CTableDataCell>
                         </CTableRow>
                       </CTableBody>
-                    </CTable>
+                    </CTable> -->
+
+                    <CCardBody class="bg-white p-0">
+                      <easy-data-table
+                        v-if="items != null"
+                        show-index
+                        style="
+                          --easy-table-body-row-font-size: 16px;
+                          --easy-table-header-font-size: 16px;
+                        "
+                        :headers="headers"
+                        v-model:items="items"
+                        :theme-color="themeColor"
+                        buttons-pagination
+                        :rows-per-page="rowsPerPage"
+                      >
+                        <template #item-title="{ data }">
+                          <CTooltip :content="data.title" placement="top">
+                            <template #toggler="{ on }">
+                              <div
+                                v-on="on"
+                                style="max-width: 200px"
+                                class="d-inline-block text-truncate"
+                              >
+                                {{ data.title }}
+                              </div>
+                            </template>
+                          </CTooltip>
+                        </template>
+                        <template #item-publishedDate="{ data }">
+                          {{ data.publishedDate }}
+                        </template>
+                        <template #item-statictics="{ data }">
+                          <div class="position-relative d-inline-block">
+                            <CTooltip
+                              :content="String(data.likeCount)"
+                              placement="top"
+                            >
+                              <template #toggler="{ on }">
+                                <CIcon
+                                  icon="cil-heart"
+                                  size="xxl"
+                                  class="text-danger"
+                                  v-on="on"
+                                  style="cursor: pointer"
+                                />
+                              </template>
+                            </CTooltip>
+                          </div>
+                          <div class="position-relative d-inline-block">
+                            <CTooltip
+                              :content="String(data.saveCount)"
+                              placement="top"
+                            >
+                              <template #toggler="{ on }">
+                                <CIcon
+                                  icon="cil-bookmark"
+                                  size="xxl"
+                                  class="text-info"
+                                  v-on="on"
+                                  style="cursor: pointer"
+                                />
+                              </template>
+                            </CTooltip>
+                          </div>
+                          <div class="position-relative d-inline-block">
+                            <CTooltip
+                              :content="String(data.commentCount)"
+                              placement="top"
+                            >
+                              <template #toggler="{ on }">
+                                <CIcon
+                                  icon="cil-speech"
+                                  size="xxl"
+                                  class="text-dark"
+                                  v-on="on"
+                                  style="cursor: pointer"
+                                />
+                              </template>
+                            </CTooltip>
+                          </div>
+                        </template>
+                        <template #item-operations="{ data }">
+                          <CButton
+                            color="warning"
+                            class="ms-2 text-white align-items-center"
+                            shape="rounded-pill"
+                            size="sm"
+                            v-c-tooltip="{
+                              content: 'Düzenle',
+                              placement: 'top',
+                            }"
+                            @click="() => {}"
+                          >
+                            <CIcon icon="cil-pencil" />
+                          </CButton>
+                          <CButton
+                            color="danger"
+                            class="ms-2 text-white align-items-center"
+                            shape="rounded-pill"
+                            size="sm"
+                            v-c-tooltip="{
+                              content: 'Sil',
+                              placement: 'top',
+                            }"
+                            @click="deleteArticleData(data)"
+                          >
+                            <CIcon icon="cil-trash" />
+                          </CButton>
+                        </template>
+                      </easy-data-table>
+                    </CCardBody>
                   </CCard>
                 </CCol>
               </CRow>
@@ -989,10 +1664,14 @@
 import avatar from '@/assets/images/avatars/8.jpg'
 export default {
   name: 'Colors',
+  components: {
+    EasyDataTable: window['vue3-easy-data-table'],
+  },
   data() {
     return {
       avatar: avatar,
       profileData: {
+        uuid: null,
         firstName: 'AHMET',
         lastName: 'KOÇ',
         email: 'kullanıcı@gmail.com',
@@ -1003,6 +1682,7 @@ export default {
       },
       editedProfileData: {},
       doctorData: {
+        uuid: null,
         title: 'Uzman',
         branch: 'Beyin Cerrahı',
         clinicName: 'Beyin ve sinir cerrahisi',
@@ -1056,12 +1736,456 @@ export default {
       ],
       editedCertificateData: [],
       addedCertificateData: [],
+      experienceData: [
+        {
+          uuid: null,
+          title: 'A okulu',
+          workedPlace: 'Programmer',
+          description:
+            'MERHABALAR BEN ÇEKİRGE. BUGÜN SİZLERLE BERABER NASIL TAVUK KIZARTILIR TARİFİNİ VERECEĞİM. İLK BAŞTA TAVUĞU ALIP KIZARTIN AFİYET OLSUN!',
+          startDate: '06-12-2014',
+          endDate: '06-12-2017',
+        },
+        {
+          uuid: null,
+          title: 'A okulu',
+          workedPlace: 'Programmer',
+          description:
+            'MERHABALAR BEN ÇEKİRGE. BUGÜN SİZLERLE BERABER NASIL TAVUK KIZARTILIR TARİFİNİ VERECEĞİM. İLK BAŞTA TAVUĞU ALIP KIZARTIN AFİYET OLSUN!',
+          startDate: '06-12-2014',
+          endDate: '06-12-2017',
+        },
+        {
+          uuid: null,
+          title: 'A okulu',
+          workedPlace: 'Programmer',
+          description:
+            'MERHABALAR BEN ÇEKİRGE. BUGÜN SİZLERLE BERABER NASIL TAVUK KIZARTILIR TARİFİNİ VERECEĞİM. İLK BAŞTA TAVUĞU ALIP KIZARTIN AFİYET OLSUN!',
+          startDate: '06-12-2014',
+          endDate: '06-12-2017',
+        },
+      ],
+      editedExperienceData: [],
+      addedExperienceData: [],
+      articleData: [
+        {
+          totalPage: 0,
+          data: {
+            title: 'ABCdiler neden yumak şeyleri sever?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: 567578,
+            saveCount: 12500,
+            commentCount: 1250,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: -1,
+            saveCount: -1,
+            commentCount: -1,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: -1,
+            saveCount: -1,
+            commentCount: -1,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: 567578,
+            saveCount: 12500,
+            commentCount: 1250,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: -1,
+            saveCount: -1,
+            commentCount: -1,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: -1,
+            saveCount: -1,
+            commentCount: -1,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: 567578,
+            saveCount: 12500,
+            commentCount: 1250,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: -1,
+            saveCount: -1,
+            commentCount: -1,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: -1,
+            saveCount: -1,
+            commentCount: -1,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: 567578,
+            saveCount: 12500,
+            commentCount: 1250,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: -1,
+            saveCount: -1,
+            commentCount: -1,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+        {
+          totalPage: 0,
+          data: {
+            title: 'kediler neden mama yerine noodleyi tercih eder?',
+            author: 'Hasan bey',
+            publishedDate: 'M.Ö 124',
+            likeCount: -1,
+            saveCount: -1,
+            commentCount: -1,
+            tags: [
+              {
+                name: 'kedi',
+              },
+              {
+                name: 'mama',
+              },
+              {
+                name: 'hayvanlar',
+              },
+            ],
+            categories: [
+              {
+                name: 'Veteriner',
+              },
+              {
+                name: 'Hayvanlar',
+              },
+              {
+                name: 'Kediler',
+              },
+            ],
+          },
+        },
+      ],
+      rowsPerPage: 10,
+      themeColor: '#321fdb',
+      headers: [
+        { text: 'Başlık', value: 'title', sortable: true },
+        { text: 'Yayınlanma Tarihi', value: 'publishedDate', sortable: true },
+        { text: 'İstatistikler', value: 'statictics', sortable: true },
+        { text: 'İşlemler', value: 'operations' },
+      ],
+      items: [],
       // experience+articles normal data/ edited data / added data eklenecek
       openedModals: {
         updateDoctorProfile: false,
         updateDoctorInfo: false,
         updateAcademicInfo: false,
         updateCertificateInfo: false,
+        updateExperienceInfo: false,
+        updateArticleInfo: false,
+        deleteAcademicData: false,
+        deleteCertificate: false,
+        deleteExperience: false,
+        deleteArticle: false,
       },
       validationChecked: false,
     }
@@ -1080,7 +2204,7 @@ export default {
       this.validationChecked = false
       if (resetData) {
         switch (index) {
-          case 0:
+          case 'updateDoctorProfile':
             {
               let cachedProfileData = JSON.parse(
                 JSON.stringify(this.profileData),
@@ -1088,14 +2212,14 @@ export default {
               this.editedProfileData = cachedProfileData
             }
             break
-          case 1:
+          case 'updateDoctorInfo':
             {
               let cachedDoctorData = JSON.parse(JSON.stringify(this.doctorData))
               this.editedDoctorData = cachedDoctorData
             }
             break
 
-          case 2:
+          case 'updateAcademicInfo':
             {
               let cachedAcademicData = JSON.parse(
                 JSON.stringify(this.academicData),
@@ -1106,7 +2230,7 @@ export default {
             }
             break
 
-          case 3:
+          case 'updateCertificateInfo':
             {
               let cachedCertificateData = JSON.parse(
                 JSON.stringify(this.certificateData),
@@ -1116,24 +2240,54 @@ export default {
               this.addedCertificateData = cachedAddCertificateData
             }
             break
+
+          case 'updateExperienceInfo':
+            {
+              let cachedExperienceData = JSON.parse(
+                JSON.stringify(this.experienceData),
+              )
+              let cachedAddExperienceData = {}
+              this.editedExperienceData = cachedExperienceData
+              this.addedExperienceData = cachedAddExperienceData
+            }
+            break
         }
       }
-    },
-    deleteAcademicData(data) {
-      console.log(data)
-      // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
-    },
-    deleteCertificateData(data) {
-      console.log(data)
-      // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
     },
     addAcademicData(data) {
       console.log(data)
       // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
     },
+    deleteAcademicData(data) {
+      console.log(data)
+      this.openedModals.deleteAcademicData = true
+      // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
+    },
     addCertificateData(data) {
       console.log(data)
       // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
+    },
+    deleteCertificateData(data) {
+      console.log(data)
+      this.openedModals.deleteCertificate = true
+      // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
+    },
+    addExperienceData(data) {
+      console.log(data)
+      // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
+    },
+    deleteExperienceData(data) {
+      console.log(data)
+      this.openedModals.deleteExperience = true
+      // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
+    },
+    addArticleData(togo) {
+      console.log(togo)
+      // link togo article ekleme sayfasına dönüş yapılacak
+    },
+    deleteArticleData(data) {
+      console.log(data)
+      this.openedModals.deleteArticle = true
     },
   },
   created() {
@@ -1148,6 +2302,11 @@ export default {
 
     let cachedCertificateData = JSON.parse(JSON.stringify(this.certificateData))
     this.editedCertificateData = cachedCertificateData
+
+    let cachedExperienceData = JSON.parse(JSON.stringify(this.experienceData))
+    this.editedExperienceData = cachedExperienceData
+
+    this.items = this.articleData
   },
 }
 </script>
@@ -1158,5 +2317,8 @@ export default {
 }
 .d-list-item {
   display: list-item;
+}
+.pagination {
+  margin: 0;
 }
 </style>

@@ -80,11 +80,15 @@ import {
   cilXCircle,
   cilHamburgerMenu,
   cilPlus,
+  cilHeart,
+  cilBookmark,
 } from '@coreui/icons'
 
 export const iconsSet = Object.assign(
   {},
   {
+    cilBookmark,
+    cilHeart,
     cilPlus,
     cilHamburgerMenu,
     cilArrowBottom,

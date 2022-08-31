@@ -64,7 +64,6 @@ export default [
         component: 'CNavItem',
         name: 'User',
         to: '/management/user',
-
       },
     ],
   },
@@ -78,6 +77,11 @@ export default [
         component: 'CNavItem',
         name: 'Doctor Profile',
         to: '/doctor/profile',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Doctor Article',
+        to: '/doctor/article',
       },
     ],
   },

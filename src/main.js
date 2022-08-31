@@ -24,7 +24,6 @@ app.component('DocsExample', DocsExample)
 app.component('EasyDataTable', Vue3EasyDataTable)
 
 if (store.getters['auth/checkIfLoggedIn']) {
-  console.log(store.getters['auth/checkIfLoggedIn'])
   router.push({ name: 'Home' })
 } else {
   console.log('GO LOGIN')

@@ -7,10 +7,11 @@ axios.defaults.baseURL = 'https://healtie.herokuapp.com/'
 
 axios.interceptors.request.use(
   (request) => {
+    request.headers['Accept-Language'] = 'TR'
     //console.log('Adding token to header', request)
     const isLoggedIn = store.getters['auth/checkIfLoggedIn']
     if (isLoggedIn) {
-      request.headers.token = localStorage.getItem('token')
+      request.headers.Authorization = 'Bearer' + localStorage.getItem('token')
     } else {
       router.push({ name: 'Login Admin' })
     }
@@ -29,8 +30,6 @@ axios.interceptors.request.use(
 // Response interceptor
 axios.interceptors.response.use(
   (response) => {
-    // res is the result of the response
-    console.log(response)
     return response
   },
   (err) => {
@@ -38,8 +37,6 @@ axios.interceptors.response.use(
       case 401:
         // Response to successful interception
         console.log('Response Interceptor:')
-        // console.log(response.data)
-
         store.dispatch('auth/attemptRestore')
         // ROLE CHECK IS NEEDED
         router.push({ name: 'Login Admin' })

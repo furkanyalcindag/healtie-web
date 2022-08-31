@@ -64,7 +64,6 @@ export default [
         component: 'CNavItem',
         name: 'User',
         to: '/management/user',
-
       },
     ],
   },

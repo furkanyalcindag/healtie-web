@@ -83,6 +83,7 @@ import {
   cilPlus,
   cilHeart,
   cilBookmark,
+  cilCommentBubble,
 } from '@coreui/icons'
 
 export const iconsSet = Object.assign(
@@ -95,6 +96,7 @@ export const iconsSet = Object.assign(
     cilArrowBottom,
     cilArrowRight,
     cilArrowTop,
+    cilCommentBubble,
     cilBan,
     cilBasket,
     cilBell,

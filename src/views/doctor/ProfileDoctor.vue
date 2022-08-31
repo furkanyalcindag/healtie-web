@@ -986,6 +986,217 @@
         </CModalFooter>
       </CModalBody>
     </CModal>
+    <CModal
+      backdrop="static"
+      size="lg"
+      :visible="openedModals.showComment"
+      @close="closeModal('showComment')"
+    >
+      <CModalHeader>
+        <CModalTitle>Makalenin Yorumları</CModalTitle>
+      </CModalHeader>
+
+      <CModalBody>
+        <CForm
+          class="row g-3"
+          @submit.prevent="checkValidation()"
+          needs-validation
+          novalidate
+          :validated="validationChecked"
+        >
+          <div class="p-4 md:w-2/3 lg:w-[55%] xl:1/3 mx-auto">
+            <div class="container bootstrap snippets bootdey">
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="blog-comment">
+                    <hr />
+                    <ul class="comments">
+                      <li class="clearfix">
+                        <img
+                          src="https://bootdey.com/img/Content/user_1.jpg"
+                          class="avatar"
+                          alt=""
+                        />
+                        <div class="post-comments">
+                          <p class="meta">
+                            Dec 18, 2014 <a href="#">JohnDoe</a> says :
+                            <i class="pull-right"
+                              ><a><small>Cevapla</small></a></i
+                            >
+                            <CButton
+                              color="info"
+                              class="ms-2 text-white align-items-center"
+                              shape="rounded-pill"
+                              size="sm"
+                              v-c-tooltip="{
+                                content: 'Cevapla',
+                                placement: 'top',
+                              }"
+                              @click="() => (openedModals.addComment = true)"
+                            >
+                              <CIcon icon="cil-comment-bubble" />
+                            </CButton>
+                          </p>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Etiam a sapien odio, sit amet
+                          </p>
+                        </div>
+                      </li>
+                      <li class="clearfix">
+                        <img
+                          src="https://bootdey.com/img/Content/user_2.jpg"
+                          class="avatar"
+                          alt=""
+                        />
+                        <div class="post-comments">
+                          <p class="meta">
+                            Dec 19, 2014 <a href="#">JohnDoe</a> says :
+                            <i class="pull-right"
+                              ><a><small>Cevapla</small></a></i
+                            >
+                            <CButton
+                              color="info"
+                              class="ms-2 text-white align-items-center"
+                              shape="rounded-pill"
+                              size="sm"
+                              v-c-tooltip="{
+                                content: 'Cevapla',
+                                placement: 'top',
+                              }"
+                              @click="() => (openedModals.addComment = true)"
+                            >
+                              <CIcon icon="cil-comment-bubble" />
+                            </CButton>
+                          </p>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Etiam a sapien odio, sit amet
+                          </p>
+                        </div>
+
+                        <ul class="comments">
+                          <li class="clearfix">
+                            <img
+                              src="https://bootdey.com/img/Content/user_3.jpg"
+                              class="avatar"
+                              alt=""
+                            />
+                            <div class="post-comments">
+                              <p class="meta">
+                                Dec 20, 2014 <a href="#">JohnDoe</a> says :
+                                <i class="pull-right"
+                                  ><a><small>Cevapla</small></a></i
+                                >
+                                <CButton
+                                  color="info"
+                                  class="ms-2 text-white align-items-center"
+                                  shape="rounded-pill"
+                                  size="sm"
+                                  v-c-tooltip="{
+                                    content: 'Cevapla',
+                                    placement: 'top',
+                                  }"
+                                  @click="
+                                    () => (openedModals.addComment = true)
+                                  "
+                                >
+                                  <CIcon icon="cil-comment-bubble" />
+                                </CButton>
+                              </p>
+                              <p>
+                                Lorem ipsum dolor sit amet, consectetur
+                                adipiscing elit. Etiam a sapien odio, sit amet
+                              </p>
+                            </div>
+                          </li>
+                        </ul>
+                      </li>
+                      <li class="clearfix">
+                        <img
+                          src="https://bootdey.com/img/Content/user_1.jpg"
+                          class="avatar"
+                          alt=""
+                        />
+                        <div class="post-comments">
+                          <p class="meta">
+                            Dec 18, 2014 <a href="#">JohnDoe</a> says :
+                            <i class="pull-right"
+                              ><a><small>Cevapla</small></a></i
+                            >
+                            <CButton
+                              color="info"
+                              class="ms-2 text-white align-items-center"
+                              shape="rounded-pill"
+                              size="sm"
+                              v-c-tooltip="{
+                                content: 'Cevapla',
+                                placement: 'top',
+                              }"
+                              @click="() => (openedModals.addComment = true)"
+                            >
+                              <CIcon icon="cil-comment-bubble" />
+                            </CButton>
+                          </p>
+                          <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing
+                            elit. Etiam a sapien odio, sit amet
+                          </p>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CForm>
+        <div class="d-grid gap-2 col-6 mx-auto">
+          <CButton color="light">Daha Fazla</CButton>
+        </div>
+      </CModalBody>
+
+      <CModalFooter class="pe-0">
+        <CButton color="secondary" @click="closeModal('showComment', true)"
+          >Kapat</CButton
+        >
+      </CModalFooter>
+    </CModal>
+    <CModal
+      size="lg"
+      :visible="openedModals.addComment"
+      @close="closeModal('addComment')"
+    >
+      <CModalHeader>
+        <CModalTitle>Yorum Yap</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CForm
+          class="row g-3"
+          @submit.prevent="checkValidation()"
+          needs-validation
+          novalidate
+          :validated="validationChecked"
+        >
+          <CCol xs="12">
+            <CFormLabel for="add-comment">Yorum İçeriği</CFormLabel>
+            <CFormTextarea
+              id="add-comment"
+              rows="3"
+              required
+              feedbackInvalid="Lütfen bir yorum giriniz"
+            ></CFormTextarea>
+          </CCol>
+          <CModalFooter class="pe-0">
+            <CButton color="secondary" @click="closeModal('addComment')"
+              >Kapat</CButton
+            >
+            <CButton color="success" type="submit">Kaydet</CButton>
+          </CModalFooter>
+        </CForm>
+      </CModalBody>
+    </CModal>
+
     <CCol class="justify-content-start">
       <CCard>
         <CCardHeader class="pb-0">
@@ -1200,15 +1411,6 @@
                       <CIcon icon="cil-pencil" />
                     </CButton>
                   </CCallout>
-                  <!-- <CCard>
-                    <CCardBody>
-                      <CCardTitle>Doktora bilgileri</CCardTitle>
-                      <CCardText>
-                        With supporting text below as a natural lead-in to
-                        additional content.
-                      </CCardText>
-                    </CCardBody>
-                  </CCard> -->
                 </CCol>
               </CRow>
             </CCol>
@@ -1475,69 +1677,6 @@
                         <h5>Makaleleri</h5>
                       </CCol>
                     </CCardHeader>
-                    <!-- <CTable
-                      responsive
-                      hover
-                      class="border border-2 bg-white mb-0"
-                      style="border-color: #321fdb"
-                    >
-                      <CTableHead>
-                        <CTableRow>
-                          <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                          <CTableHeaderCell scope="col">Ünvan</CTableHeaderCell>
-                          <CTableHeaderCell scope="col"
-                            >Çalıştığı yer</CTableHeaderCell
-                          >
-                          <CTableHeaderCell scope="col"
-                            >Açıklama</CTableHeaderCell
-                          >
-                          <CTableHeaderCell scope="col"
-                            >İşe başlama tarihi</CTableHeaderCell
-                          >
-                          <CTableHeaderCell scope="col"
-                            >İş bitiş tarihi</CTableHeaderCell
-                          >
-                        </CTableRow>
-                      </CTableHead>
-                      <CTableBody>
-                        <CTableRow
-                          v-for="(experience, index) in experienceData"
-                          :key="index"
-                        >
-                          <CTableHeaderCell scope="row">{{
-                            index + 1
-                          }}</CTableHeaderCell>
-                          <CTableDataCell>{{
-                            experience.title
-                          }}</CTableDataCell>
-                          <CTableDataCell>{{
-                            experience.workedPlace
-                          }}</CTableDataCell>
-                          <CTableDataCell>
-                            <CTooltip
-                              :content="experience.description"
-                              placement="top"
-                            >
-                              <template #toggler="{ on }">
-                                <div
-                                  v-on="on"
-                                  style="max-width: 150px"
-                                  class="d-inline-block text-truncate"
-                                >
-                                  {{ experience.description }}
-                                </div>
-                              </template>
-                            </CTooltip>
-                          </CTableDataCell>
-                          <CTableDataCell>{{
-                            experience.startDate
-                          }}</CTableDataCell>
-                          <CTableDataCell>{{
-                            experience.endDate
-                          }}</CTableDataCell>
-                        </CTableRow>
-                      </CTableBody>
-                    </CTable> -->
 
                     <CCardBody class="bg-white p-0">
                       <easy-data-table
@@ -1645,6 +1784,19 @@
                             @click="deleteArticleData(data)"
                           >
                             <CIcon icon="cil-trash" />
+                          </CButton>
+                          <CButton
+                            color="info"
+                            class="ms-2 text-white align-items-center"
+                            shape="rounded-pill"
+                            size="sm"
+                            v-c-tooltip="{
+                              content: 'Yorumlar',
+                              placement: 'top',
+                            }"
+                            @click="showCommentData(data)"
+                          >
+                            <CIcon icon="cil-comment-bubble" />
                           </CButton>
                         </template>
                       </easy-data-table>
@@ -2186,6 +2338,8 @@ export default {
         deleteCertificate: false,
         deleteExperience: false,
         deleteArticle: false,
+        showComment: false,
+        addComment: false,
       },
       validationChecked: false,
     }
@@ -2289,6 +2443,14 @@ export default {
       console.log(data)
       this.openedModals.deleteArticle = true
     },
+    showCommentData(data) {
+      console.log(data)
+      this.openedModals.showComment = true
+    },
+    addCommentData(data) {
+      console.log(data)
+      this.openedModals.addComment = true
+    },
   },
   created() {
     let cachedProfileData = JSON.parse(JSON.stringify(this.profileData))
@@ -2320,5 +2482,99 @@ export default {
 }
 .pagination {
   margin: 0;
+}
+body {
+  background: #eee;
+}
+
+hr {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 0;
+  border-top: 1px solid #ffffff;
+}
+a {
+  color: #82b440;
+  text-decoration: none;
+}
+.blog-comment::before,
+.blog-comment::after,
+.blog-comment-form::before,
+.blog-comment-form::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.blog-comment {
+  padding-left: 15%;
+  padding-right: 15%;
+}
+
+.blog-comment ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.blog-comment img {
+  opacity: 1;
+  filter: Alpha(opacity=100);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+}
+
+.blog-comment img.avatar {
+  position: relative;
+  float: left;
+  margin-left: 0;
+  margin-top: 0;
+  width: 65px;
+  height: 65px;
+}
+
+.blog-comment .post-comments {
+  border: 1px solid #eee;
+  margin-bottom: 20px;
+  margin-left: 85px;
+  margin-right: 0px;
+  padding: 10px 20px;
+  position: relative;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;
+  background: #fff;
+  color: #6b6e80;
+  position: relative;
+}
+
+.blog-comment .meta {
+  font-size: 13px;
+  color: #aaaaaa;
+  padding-bottom: 8px;
+  margin-bottom: 10px !important;
+  border-bottom: 1px solid #eee;
+}
+
+.blog-comment ul.comments ul {
+  list-style-type: none;
+  padding: 0;
+  margin-left: 85px;
+}
+
+.blog-comment-form {
+  padding-left: 15%;
+  padding-right: 15%;
+  padding-top: 40px;
+}
+
+.blog-comment h3,
+.blog-comment-form h3 {
+  margin-bottom: 40px;
+  font-size: 26px;
+  line-height: 30px;
+  font-weight: 800;
 }
 </style>

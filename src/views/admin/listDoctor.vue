@@ -524,7 +524,7 @@
               <div>
                 <CButtonGroup role="group" size="sm">
                   <CModal
-                    size="md"
+                    size="lg"
                     :visible="openedModals[1]"
                     @close="closeModal(1)"
                   >

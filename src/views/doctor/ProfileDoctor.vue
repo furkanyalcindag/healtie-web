@@ -66,6 +66,15 @@
               v-model="editedProfileData.email"
             />
           </CCol>
+          <CCol md="12">
+            <CFormLabel for="add-notification-image">Resim Yükle</CFormLabel>
+            <CInputGroup class="mb-3">
+              <CFormInput type="file" id="inputGroupFile02" />
+              <CInputGroupText component="label" required for="inputGroupFile02"
+                >Yükle</CInputGroupText
+              >
+            </CInputGroup>
+          </CCol>
           <CCol xs="12">
             <CFormLabel for="update-doctor-address">Adres</CFormLabel>
             <CFormTextarea

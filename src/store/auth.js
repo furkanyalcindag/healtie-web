@@ -4,13 +4,13 @@ export default {
   namespaced: true,
   state: {},
   mutations: {
-    SET_AUTH_DATA_LOCALLY(state, data) {
+    LOG_IN(state, data) {
       localStorage.setItem('token', data['jwt-token'])
     },
 
     CHECK_ROLES() {},
 
-    RESTORE_AUTH_DATA_LOCALLY() {
+    LOG_OUT() {
       if (localStorage.getItem('token')) {
         localStorage.removeItem('token')
       }
@@ -33,7 +33,7 @@ export default {
       const response = await axios(config)
         .then((response) => {
           store.dispatch('auth/attemptRestore')
-          store.dispatch('auth/attempt', response)
+          store.dispatch('auth/attempt', response.data)
           // ROLE CONTROL IS NEEDED HERE
           router.push({ name: 'Home' })
           return { authorized: true, response: response }
@@ -47,11 +47,11 @@ export default {
     },
 
     async attempt({ commit }, data) {
-      commit('SET_AUTH_DATA_LOCALLY', data)
+      commit('LOG_IN', data)
     },
 
     async attemptRestore({ commit }) {
-      commit('RESTORE_AUTH_DATA_LOCALLY')
+      commit('LOG_OUT')
     },
   },
 

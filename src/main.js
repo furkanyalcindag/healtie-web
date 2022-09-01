@@ -23,6 +23,7 @@ app.component('DocsCallout', DocsCallout)
 app.component('DocsExample', DocsExample)
 app.component('EasyDataTable', Vue3EasyDataTable)
 
+// CHECK IF USER LOGGED IN ALREADY
 if (store.getters['auth/checkIfLoggedIn']) {
   router.push({ name: 'Home' })
 } else {

@@ -8,6 +8,7 @@ import CIcon from '@coreui/icons-vue'
 import { iconsSet as icons } from '@/assets/icons'
 import DocsCallout from '@/components/DocsCallout'
 import DocsExample from '@/components/DocsExample'
+import '@/interceptor/axios'
 import { LightEditor, LightEditorPlugin } from '@hannanmiah/light-editor'
 import '@hannanmiah/light-editor/dist/style.css'
 
@@ -25,5 +26,13 @@ app.component('DocsCallout', DocsCallout)
 app.component('DocsExample', DocsExample)
 app.component('EasyDataTable', Vue3EasyDataTable)
 app.component(LightEditor)
+
+// CHECK IF USER LOGGED IN ALREADY
+if (store.getters['auth/checkIfLoggedIn']) {
+  router.push({ name: 'Home' })
+} else {
+  console.log('GO LOGIN')
+  router.push({ name: 'Login Admin' })
+}
 
 app.mount('#app')

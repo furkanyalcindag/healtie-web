@@ -524,7 +524,7 @@
               <div>
                 <CButtonGroup role="group" size="sm">
                   <CModal
-                    size="md"
+                    size="lg"
                     :visible="openedModals[1]"
                     @close="closeModal(1)"
                   >
@@ -662,6 +662,7 @@
 
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
+import axios from 'axios'
 export default {
   name: 'Colors',
   components: {
@@ -714,12 +715,15 @@ export default {
     }
   },
   mounted() {
-    this.isMounted = true
+    ;(this.isMounted = true), this.login()
   },
   methods: {
     checkValidation() {
       // Response
       this.validationChecked = true
+    },
+    login() {
+      axios.get('https://jsonplaceholder.typicode.com/posts/1').catch(() => {})
     },
     closeModal(index) {
       this.openedModals[index] = false

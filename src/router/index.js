@@ -312,6 +312,16 @@ const routes = [
             name: 'Role',
             component: () => import('@/views/management/Role.vue'),
           },
+          {
+            path: 'settings',
+            name: 'Settings',
+            component: () => import('@/views/management/Settings.vue'),
+          },
+          {
+            path: 'notification',
+            name: 'Notification',
+            component: () => import('@/views/management/Notification.vue'),
+          },
         ],
       },
       {

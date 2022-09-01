@@ -235,7 +235,7 @@
                 </CModalBody>
               </CModal>
               <CModal
-                size="md"
+                size="lg"
                 :visible="openedModals[1]"
                 @close="closeModal(1)"
               >

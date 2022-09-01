@@ -460,6 +460,20 @@
                         <option value="1">Bir</option>
                       </CFormSelect>
                     </CCol>
+                    <CCol md="12">
+                      <CFormLabel for="add-notification-image"
+                        >Resim Yükle</CFormLabel
+                      >
+                      <CInputGroup class="mb-3">
+                        <CFormInput type="file" id="inputGroupFile02" />
+                        <CInputGroupText
+                          component="label"
+                          required
+                          for="inputGroupFile02"
+                          >Yükle</CInputGroupText
+                        >
+                      </CInputGroup>
+                    </CCol>
                     <CCol xs="12">
                       <CFormLabel for="update-doctor-address">Adres</CFormLabel>
                       <CFormTextarea
@@ -494,18 +508,26 @@
             buttons-pagination
             :rows-per-page="rowsPerPage"
           >
-            <template #loading>
+            <!--     <template #loading>
               <img
                 src="https://thumbs.gfycat.com/AngelicYellowIberianmole.webp"
                 style="width: 60px; height: 100px"
               />
             </template>
+            -->
             <template #item-firstName="{ firstName, lastName }">
-              <div>
-                <!-- <CAvatar shape="rounded" :src="profileImage" size="md" /> -->
-                {{ firstName }} {{ lastName }}
-              </div>
+              <div>{{ firstName }} {{ lastName }}</div>
             </template>
+
+            <template #item-profileImage="{ profileImage }">
+              <CAvatar
+                class="image-rounder"
+                shape="rounded"
+                :src="profileImage"
+                style="margin: 12px"
+              />
+            </template>
+
             <template #item-address="{ address }">
               <div style="max-width: 175px">
                 <CFormLabel
@@ -672,6 +694,7 @@ export default {
     return {
       avatar: avatar,
       headers: [
+        { text: 'Resim', value: 'profileImage' },
         { text: 'İsim', value: 'firstName', sortable: true },
         { text: 'Soyisim', value: 'lastName', sortable: true },
         { text: 'Branş', value: 'branch', sortable: true },
@@ -685,6 +708,7 @@ export default {
           lastName: 'Jhon',
           profileImage:
             'https://ts2.mm.bing.net/th?q=Eba%27ya%20konulacak%20profil%20resmi',
+
           branch: 'Kalp Damar',
           title: 'Uzm. Dr.',
 
@@ -736,5 +760,9 @@ export default {
 <style lang="css" scoped>
 .rounder {
   border-radius: 50%;
+}
+.image-rounder {
+  min-height: 30px !important;
+  min-width: 30px !important;
 }
 </style>

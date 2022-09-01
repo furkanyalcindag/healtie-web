@@ -78,6 +78,11 @@ export default [
         name: 'Doctor Profile',
         to: '/doctor/profile',
       },
+      {
+        component: 'CNavItem',
+        name: 'Doctor Article',
+        to: '/doctor/article',
+      },
     ],
   },
   {

@@ -340,6 +340,11 @@ const routes = [
             name: 'Register Doctor',
             component: () => import('@/views/doctor/RegisterDoctor.vue'),
           },
+          {
+            path: '/doctor/article',
+            name: 'Article Doctor',
+            component: () => import('@/views/doctor/ArticleDoctor.vue'),
+          },
         ],
       },
     ],

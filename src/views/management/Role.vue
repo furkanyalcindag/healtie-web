@@ -14,11 +14,7 @@
                   color="primary"
                   class="float-end"
                   shape="rounded-pill"
-                  @click="
-                    () => {
-                      openedModals[0] = true
-                    }
-                  "
+                  @click="openedModals.addRoleModal = true"
                   >Ekle
                 </CButton>
               </CCol>
@@ -29,13 +25,16 @@
               class="m-4"
               show-index
               v-model:itemsSelected="itemsSelected"
+              v-model:server-options="roleTable.serverOptions"
+              :server-items-length="roleTable.serverItemsLength"
               :headers="headers"
               :items="items"
               :theme-color="themeColor"
+              :loading="roleTable.loading"
+              :rows-items="roleTable.rowsItem"
               buttons-pagination
-              :rows-per-page="rowsPerPage"
             >
-              <template #item-operations>
+              <template #item-operations="item">
                 <div>
                   <CButtonGroup role="group" size="sm">
                     <CButton
@@ -47,11 +46,7 @@
                         content: 'Düzenle',
                         placement: 'top',
                       }"
-                      @click="
-                        () => {
-                          openedModals[2] = true
-                        }
-                      "
+                      @click="getClickedItemData('updateRoleModal', item)"
                     >
                       <CIcon icon="cil-pencil" />
                     </CButton>
@@ -64,11 +59,7 @@
                         content: 'Sil',
                         placement: 'top',
                       }"
-                      @click="
-                        () => {
-                          openedModals[1] = true
-                        }
-                      "
+                      @click="setSelectedRole(item)"
                     >
                       <CIcon icon="cil-trash" />
                     </CButton>
@@ -83,7 +74,7 @@
                       }"
                       @click="
                         () => {
-                          openedModals[4] = true
+                          openedModals.showUserModal = true
                         }
                       "
                     >
@@ -100,7 +91,7 @@
                       }"
                       @click="
                         () => {
-                          openedModals[3] = true
+                          openedModals.addUserModal = true
                         }
                       "
                     >
@@ -115,7 +106,12 @@
       </CCol>
     </CRow>
 
-    <CModal size="lg" :visible="openedModals[0]" @close="closeModal(0)">
+    <CModal
+      size="lg"
+      backdrop="static"
+      :visible="openedModals.addRoleModal"
+      @close="closeModal('addRoleModal')"
+    >
       <CModalHeader>
         <CModalTitle>Rol Ekle</CModalTitle>
       </CModalHeader>
@@ -132,21 +128,28 @@
             <CFormInput
               id="add-rol-name"
               required
+              v-model="addedItem.name"
               feedbackInvalid="Lütfen bir rol adı giriniz"
             />
           </CCol>
 
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(0)">Kapat</CButton>
-            <CButton color="success" type="submit">Kaydet</CButton>
+            <CButton color="secondary" @click="closeModal('addRoleModal', true)"
+              >İptal</CButton
+            >
+            <CButton
+              color="success"
+              @click="isAbleToPushButton ? addRole(addedItem) : null"
+              >Kaydet</CButton
+            >
           </CModalFooter>
         </CForm>
       </CModalBody>
     </CModal>
     <CModal
-      size="md"
-      :visible="openedModals[1]"
-      @close="closeModal(1)"
+      size="lg"
+      :visible="openedModals.deleteRoleModal"
+      @close="closeModal('deleteRoleModal')"
       backdrop="static"
     >
       <CModalHeader>
@@ -158,15 +161,23 @@
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton color="secondary" @click="closeModal(1)">Kapat</CButton>
-          <CButton color="danger" type="submit">SİL</CButton>
+          <CButton
+            color="secondary"
+            @click="closeModal('deleteRoleModal', true)"
+            >İptal</CButton
+          >
+          <CButton
+            color="danger"
+            @click="isAbleToPushButton ? deleteRole(selectedRole.uuid) : null"
+            >SİL</CButton
+          >
         </CModalFooter>
       </CModalBody>
     </CModal>
     <CModal
       size="lg"
-      :visible="openedModals[2]"
-      @close="closeModal(2)"
+      :visible="openedModals.updateRoleModal"
+      @close="closeModal('updateRoleModal')"
       backdrop="static"
     >
       <CModalHeader>
@@ -186,11 +197,14 @@
               id="update-rol-name"
               required
               feedbackInvalid="Lütfen bir rol ismi giriniz"
+              v-model="editedItem"
             />
           </CCol>
 
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(2)">Kapat</CButton>
+            <CButton color="secondary" @click="closeModal('updateRoleModal')"
+              >İptal</CButton
+            >
             <CButton color="success" type="submit"
               >Değişiklikleri Kaydet
             </CButton>
@@ -200,8 +214,8 @@
     </CModal>
     <CModal
       size="lg"
-      :visible="openedModals[3]"
-      @close="closeModal(3)"
+      :visible="openedModals.addUserModal"
+      @close="closeModal('addUserModal')"
       :no-close-on-backdrop="true"
       backdrop="static"
     >
@@ -257,7 +271,9 @@
           </CCol>
 
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(3)">Kapat</CButton>
+            <CButton color="secondary" @click="closeModal('addUserModal')"
+              >İptal</CButton
+            >
             <CButton color="success" type="submit">Kaydet</CButton>
           </CModalFooter>
         </CForm>
@@ -265,8 +281,8 @@
     </CModal>
     <CModal
       size="lg"
-      :visible="openedModals[4]"
-      @close="closeModal(4)"
+      :visible="openedModals.showUserModal"
+      @close="closeModal('showUserModal')"
       backdrop="static"
     >
       <CModalHeader>
@@ -309,17 +325,20 @@
             </template>
           </easy-data-table>
 
-          <CButton color="secondary" class="float-md-end" @click="closeModal(4)"
-            >Kapat
+          <CButton
+            color="secondary"
+            class="float-md-end"
+            @click="closeModal('showUserModal')"
+            >İptal
           </CButton>
         </CCardBody>
       </CModalBody>
     </CModal>
 
     <CModal
-      size="md"
+      size="lg"
       v-model:visible="openedModals.deleteUserModal"
-      @close="closeModal(5)"
+      @close="closeModal('deleteUserModal')"
       backdrop="static"
     >
       <CModalHeader>
@@ -331,7 +350,9 @@
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton color="secondary" @click="closeModal(5)">Kapat</CButton>
+          <CButton color="secondary" @click="closeModal('deleteUserModal')"
+            >İptal</CButton
+          >
           <CButton color="danger" type="submit">SİL</CButton>
         </CModalFooter>
       </CModalBody>
@@ -341,6 +362,7 @@
 
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Colors',
@@ -356,12 +378,85 @@ export default {
       ],
       items: [
         {
-          name: 'admin',
+          name: 'test',
         },
         {
-          name: 'doctor',
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
+        },
+        {
+          name: 'test',
         },
       ],
+      editedItem: {
+        uuid: null,
+        name: null,
+      },
+      addedItem: {
+        name: null,
+      },
       headers2: [
         { text: 'İsim', value: 'firstName', sortable: true },
         { text: 'Soyisim', value: 'lastName', sortable: true },
@@ -383,7 +478,6 @@ export default {
 
       themeColor: '#321fdb',
       itemsSelected: [],
-      rowsPerPage: 10,
       openedModals: {
         addRoleModal: false,
         deleteRoleModal: false,
@@ -392,21 +486,93 @@ export default {
         showUserModal: false,
         deleteUserModal: false,
       },
-      isMounted: false,
       validationChecked: false,
+      roleTable: {
+        serverItemsLength: 0,
+        serverOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        rowsItem: [10, 20, 50],
+        loading: true,
+      },
+      isAbleToPushButton: true,
     }
   },
-  mounted() {
-    this.isMounted = true
+  created() {
+    // GET ITEMS
+    // SET EDITED ITEMS
+    let cachedItemData = JSON.parse(JSON.stringify(this.items))
+    this.editedItem = cachedItemData
+
+    this.getRoles(this.roleTable.serverOptions)
+  },
+  watch: {
+    'roleTable.serverOptions'(newvalue) {
+      this.getRoles(newvalue)
+    },
   },
   methods: {
+    ...mapActions({
+      getAllRoles: 'role/getRoles',
+      deleteRoleAPI: 'role/deleteRole',
+      addRoleAPI: 'role/addRole',
+    }),
     checkValidation() {
       // Response
       this.validationChecked = true
     },
-    closeModal(index) {
-      this.openedModals[index] = false
+    closeModal(modalname, resetData) {
+      this.openedModals[modalname] = false
       this.validationChecked = false
+      if (resetData) {
+        switch (modalname) {
+          case 'addRoleModal':
+            {
+              let cachedAddedItemData = { name: null }
+              this.addedItem = cachedAddedItemData
+            }
+            break
+          case 'deleteRoleModal':
+            {
+              this.selectedRole = {}
+            }
+            break
+        }
+      }
+    },
+    getClickedItemData(modalname, data) {
+      switch (modalname) {
+        case 'updateRoleModal':
+          {
+            let cachedItemData = JSON.parse(JSON.stringify(data))
+            this.editedItem = cachedItemData.name
+            this.openedModals[modalname] = true
+          }
+          break
+      }
+    },
+    async deleteRole(uuid) {
+      this.isAbleToPushButton = false
+      await this.deleteRoleAPI(uuid)
+      this.isAbleToPushButton = true
+      this.selectedRole = {}
+    },
+    async addRole(data) {
+      this.isAbleToPushButton = false
+      await this.addRoleAPI(data)
+      this.isAbleToPushButton = true
+    },
+    async getRoles(newvalue) {
+      this.roleTable.loading = true
+      const response = await this.getAllRoles(newvalue)
+      this.items = response.data
+      this.roleTable.serverItemsLength = response.totalElements
+      this.roleTable.loading = false
+    },
+    setSelectedRole(data) {
+      this.openedModals.deleteRoleModal = true
+      this.selectedRole = data
     },
   },
 }

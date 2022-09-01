@@ -2356,6 +2356,7 @@ export default {
     closeModal(index, resetData) {
       this.openedModals[index] = false
       this.validationChecked = false
+      // true - false if he wants to reset data of current modal
       if (resetData) {
         switch (index) {
           case 'updateDoctorProfile':

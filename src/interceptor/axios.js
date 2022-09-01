@@ -3,7 +3,7 @@ import axios from 'axios'
 import router from '@/router'
 import store from '@/store'
 
-axios.defaults.baseURL = 'https://healtie.herokuapp.com/'
+axios.defaults.baseURL = process.env.VUE_APP_API_BASE_URL
 
 axios.interceptors.request.use(
   (request) => {
@@ -36,7 +36,7 @@ axios.interceptors.response.use(
     switch (err.response.status) {
       case 401:
         // Response to successful interception
-        console.log('Token is invalid.')
+        console.log('Response interceptor activated. Redirecting to login page')
         store.dispatch('auth/attemptRestore')
         // ROLE CHECK IS NEEDED
         router.push({ name: 'Login Admin' })

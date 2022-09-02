@@ -1,5 +1,19 @@
 <template>
   <div>
+    <CToaster class="position-fixed top-0 start-50 translate-middle-x">
+      <CToast
+        v-for="(toast, index) in toasts"
+        :key="index"
+        :color="toast.color"
+        :autohide="toast.autohide"
+        :class="toast.classes"
+      >
+        <div class="d-flex">
+          <CToastBody>{{ toast.content }}</CToastBody>
+          <CToastClose class="me-2 m-auto" white />
+        </div>
+      </CToast>
+    </CToaster>
     <CRow>
       <CCol class="justify-content-start">
         <CCard>
@@ -106,6 +120,7 @@
       </CCol>
     </CRow>
 
+    <!-- Add Role -->
     <CModal
       size="lg"
       backdrop="static"
@@ -118,7 +133,7 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation()"
+          @submit.prevent="checkValidation($event, 'addRoleModal', addedItem)"
           needs-validation
           novalidate
           :validated="validationChecked"
@@ -139,13 +154,14 @@
             >
             <CButton
               color="success"
-              @click="isAbleToPushButton ? addRole(addedItem) : null"
+              :type="isAbleToPushButton ? 'submit' : null"
               >Kaydet</CButton
             >
           </CModalFooter>
         </CForm>
       </CModalBody>
     </CModal>
+    <!-- Delete Role -->
     <CModal
       size="lg"
       :visible="openedModals.deleteRoleModal"
@@ -174,6 +190,7 @@
         </CModalFooter>
       </CModalBody>
     </CModal>
+    <!-- Update Role -->
     <CModal
       size="lg"
       :visible="openedModals.updateRoleModal"
@@ -186,7 +203,13 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation()"
+          @submit.prevent="
+            checkValidation(
+              $event,
+              'updateRoleModal',
+              JSON.parse(JSON.stringify(editedItem)),
+            )
+          "
           needs-validation
           novalidate
           :validated="validationChecked"
@@ -197,7 +220,7 @@
               id="update-rol-name"
               required
               feedbackInvalid="Lütfen bir rol ismi giriniz"
-              v-model="editedItem"
+              v-model="editedItem.name"
             />
           </CCol>
 
@@ -205,13 +228,16 @@
             <CButton color="secondary" @click="closeModal('updateRoleModal')"
               >İptal</CButton
             >
-            <CButton color="success" type="submit"
+            <CButton
+              color="success"
+              :type="isAbleToPushButton ? 'submit' : null"
               >Değişiklikleri Kaydet
             </CButton>
           </CModalFooter>
         </CForm>
       </CModalBody>
     </CModal>
+    <!-- Add user from role modal -->
     <CModal
       size="lg"
       :visible="openedModals.addUserModal"
@@ -279,6 +305,7 @@
         </CForm>
       </CModalBody>
     </CModal>
+    <!-- Show user from role modal -->
     <CModal
       size="lg"
       :visible="openedModals.showUserModal"
@@ -334,7 +361,7 @@
         </CCardBody>
       </CModalBody>
     </CModal>
-
+    <!-- Delete user from role modal -->
     <CModal
       size="lg"
       v-model:visible="openedModals.deleteUserModal"
@@ -376,80 +403,7 @@ export default {
         { text: 'Rol Adı', value: 'name', sortable: true },
         { text: 'İşlemler', value: 'operations' },
       ],
-      items: [
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-        {
-          name: 'test',
-        },
-      ],
+      items: [],
       editedItem: {
         uuid: null,
         name: null,
@@ -497,6 +451,7 @@ export default {
         loading: true,
       },
       isAbleToPushButton: true,
+      toasts: [],
     }
   },
   created() {
@@ -517,10 +472,32 @@ export default {
       getAllRoles: 'role/getRoles',
       deleteRoleAPI: 'role/deleteRole',
       addRoleAPI: 'role/addRole',
+      updateRoleAPI: 'role/updateRole',
     }),
-    checkValidation() {
+    checkValidation(event, modalname, data) {
       // Response
+      this.isAbleToPushButton = false
       this.validationChecked = true
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+        this.isAbleToPushButton = true
+        return
+      }
+      switch (modalname) {
+        case 'addRoleModal':
+          {
+            this.addRole(data)
+          }
+          break
+        case 'updateRoleModal':
+          {
+            this.updateRole(data)
+          }
+          break
+      }
+      this.isAbleToPushButton = true
     },
     closeModal(modalname, resetData) {
       this.openedModals[modalname] = false
@@ -546,7 +523,7 @@ export default {
         case 'updateRoleModal':
           {
             let cachedItemData = JSON.parse(JSON.stringify(data))
-            this.editedItem = cachedItemData.name
+            this.editedItem = cachedItemData
             this.openedModals[modalname] = true
           }
           break
@@ -554,25 +531,88 @@ export default {
     },
     async deleteRole(uuid) {
       this.isAbleToPushButton = false
-      await this.deleteRoleAPI(uuid)
-      this.isAbleToPushButton = true
-      this.selectedRole = {}
+      const response = await this.deleteRoleAPI(uuid)
+      if (response === true) {
+        this.isAbleToPushButton = true
+        this.selectedRole = {}
+      } else {
+        this.createToast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
     },
     async addRole(data) {
       this.isAbleToPushButton = false
-      await this.addRoleAPI(data)
-      this.isAbleToPushButton = true
+      const response = await this.addRoleAPI(data)
+      if (response === true) {
+        this.openedModals.addRoleModal = false
+        this.getRoles(this.roleTable.serverOptions)
+        this.addedItem = { name: null }
+        this.isAbleToPushButton = true
+        this.createToast(
+          'New role ' + data.name + ' added successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+      } else {
+        this.createToast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
     },
-    async getRoles(newvalue) {
+    async getRoles(pageOptions) {
       this.roleTable.loading = true
-      const response = await this.getAllRoles(newvalue)
+      const response = await this.getAllRoles(pageOptions)
       this.items = response.data
       this.roleTable.serverItemsLength = response.totalElements
       this.roleTable.loading = false
     },
+    // eslint-disable-next-line
+    async updateRole(newroleData) {
+      this.isAbleToPushButton = false
+      const response = await this.updateRoleAPI(newroleData)
+      if (response === true) {
+        this.createToast(
+          'Role updated successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+        this.getRoles(this.roleTable.serverOptions)
+        this.isAbleToPushButton = true
+        this.openedModals.updateRoleModal = false
+        this.editedItem = {}
+      } else {
+        this.createToast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+    },
     setSelectedRole(data) {
       this.openedModals.deleteRoleModal = true
       this.selectedRole = data
+    },
+    createToast(content, color, isautoHided, classes, delay) {
+      this.toasts.push({
+        content: content,
+        color: color,
+        autohide: isautoHided,
+        classes: classes,
+        delay: delay,
+      })
     },
   },
 }

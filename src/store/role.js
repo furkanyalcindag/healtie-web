@@ -48,16 +48,21 @@ export default {
         var config = {
           method: 'delete',
           url: uuid,
-          headers: {},
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
 
-        axios(config)
+        const response = await axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data))
+            return true
           })
           .catch(function (error) {
             console.log(error)
+            return false
           })
+        return response
       } else {
         // ROLE CHECK IS NEEDED HERE
         router.push({ name: 'Login Admin' })
@@ -67,13 +72,45 @@ export default {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        var data = JSON.stringify({
-          name: roleData.name,
-        })
+        var data = JSON.stringify(roleData)
 
         var config = {
           method: 'post',
           // url: 'https://healtie.herokuapp.com/',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+
+        const response = await axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data.name))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    // eslint-disable-next-line
+    async updateRole(state, roleData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        var axios = require('axios')
+        var data = JSON.stringify({
+          language: 'TR',
+          name: 'AAAAAAAAAAAAAAA',
+        })
+
+        var config = {
+          method: 'put',
+          url: roleData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },

@@ -576,7 +576,6 @@ export default {
       this.roleTable.serverItemsLength = response.totalElements
       this.roleTable.loading = false
     },
-    // eslint-disable-next-line
     async updateRole(newroleData) {
       this.isAbleToPushButton = false
       const response = await this.updateRoleAPI(newroleData)

@@ -15,85 +15,11 @@
                 shape="rounded-pill"
                 @click="
                   () => {
-                    openedModals[0] = true
+                    openedModals.addCategoryModal = true
                   }
                 "
                 >Ekle</CButton
               >
-              <CModal
-                size="lg"
-                :visible="openedModals[0]"
-                @close="closeModal(0)"
-              >
-                <CModalHeader>
-                  <CModalTitle>Kategori Ekle</CModalTitle>
-                </CModalHeader>
-                <CModalBody>
-                  <CForm
-                    class="row g-3"
-                    @submit.prevent="checkValidation()"
-                    needs-validation
-                    novalidate
-                    :validated="validationChecked"
-                  >
-                    <CCol md="6">
-                      <CFormLabel for="add-category-name"
-                        >Kategori Adı</CFormLabel
-                      >
-                      <CFormInput
-                        id="add-category-name"
-                        required
-                        feedbackInvalid="Lütfen bir kategori adı giriniz"
-                      />
-                    </CCol>
-
-                    <CModalFooter class="pe-0">
-                      <CButton color="secondary" @click="closeModal(0)"
-                        >Kapat</CButton
-                      >
-                      <CButton color="success" type="submit"> Kaydet</CButton>
-                    </CModalFooter>
-                  </CForm>
-                </CModalBody>
-              </CModal>
-
-              <CModal
-                size="lg"
-                :visible="openedModals[2]"
-                @close="closeModal(2)"
-              >
-                <CModalHeader>
-                  <CModalTitle>Kategori Düzenle</CModalTitle>
-                </CModalHeader>
-                <CModalBody>
-                  <CForm
-                    class="row g-3"
-                    @submit.prevent="checkValidation()"
-                    needs-validation
-                    novalidate
-                    :validated="validationChecked"
-                  >
-                    <CCol md="6">
-                      <CFormLabel for="update-category-name"
-                        >Kategori Adı</CFormLabel
-                      >
-                      <CFormInput
-                        id="update-category-name"
-                        required
-                        feedbackInvalid="Lütfen bir kategori adı giriniz"
-                      />
-                    </CCol>
-                    <CModalFooter class="pe-0">
-                      <CButton color="secondary" @click="closeModal(2)"
-                        >Kapat</CButton
-                      >
-                      <CButton color="success" type="submit"
-                        >Değişiklikleri Kaydet</CButton
-                      >
-                    </CModalFooter>
-                  </CForm>
-                </CModalBody>
-              </CModal>
             </CCol>
           </CRow>
         </CCardHeader>
@@ -101,42 +27,18 @@
           <easy-data-table
             class="m-4"
             show-index
+            v-model:server-options="categoryTable.serverOptions"
             v-model:itemsSelected="itemsSelected"
             :headers="headers"
             :items="items"
             :theme-color="themeColor"
             buttons-pagination
-            :rows-per-page="rowsPerPage"
+            :loading="categoryTable.loading"
+            :rows-items="categoryTable.rowsItem"
           >
             <template #item-operations>
               <div>
                 <CButtonGroup role="group" size="sm">
-                  <CModal
-                    size="md"
-                    :visible="openedModals[1]"
-                    @close="closeModal(1)"
-                  >
-                    <CModalHeader>
-                      <CModalTitle
-                        >Kategori
-                        <span class="text-danger">Sil</span></CModalTitle
-                      >
-                    </CModalHeader>
-                    <CModalBody>
-                      <h5>
-                        Bu işlemi geri alamazsınız. Kategori bilgilerini
-                        <span class="text-danger fw-bolder">
-                          silmek istiyor musunuz?
-                        </span>
-                      </h5>
-                      <CModalFooter class="pe-0">
-                        <CButton color="secondary" @click="closeModal(0)"
-                          >Kapat</CButton
-                        >
-                        <CButton color="danger" type="submit">SİL</CButton>
-                      </CModalFooter>
-                    </CModalBody>
-                  </CModal>
                   <CButton
                     color="warning"
                     class="ms-2 text-white align-items-center"
@@ -148,7 +50,7 @@
                     }"
                     @click="
                       () => {
-                        openedModals[2] = true
+                        openedModals.updateCategoryModal = true
                       }
                     "
                   >
@@ -165,7 +67,7 @@
                     }"
                     @click="
                       () => {
-                        openedModals[1] = true
+                        openedModals.deleteCategoryModal = true
                       }
                     "
                   >
@@ -178,11 +80,99 @@
         </CCardBody>
       </CCard>
     </CCol>
+    <!-- Add category -->
+    <CModal
+      size="lg"
+      :visible="openedModals.addCategoryModal"
+      @close="closeModal(0)"
+    >
+      <CModalHeader>
+        <CModalTitle>Kategori Ekle</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CForm
+          class="row g-3"
+          @submit.prevent="checkValidation()"
+          needs-validation
+          novalidate
+          :validated="validationChecked"
+        >
+          <CCol md="6">
+            <CFormLabel for="add-category-name">Kategori Adı</CFormLabel>
+            <CFormInput
+              id="add-category-name"
+              required
+              feedbackInvalid="Lütfen bir kategori adı giriniz"
+            />
+          </CCol>
+
+          <CModalFooter class="pe-0">
+            <CButton color="secondary" @click="closeModal(0)">Kapat</CButton>
+            <CButton color="success" type="submit"> Kaydet</CButton>
+          </CModalFooter>
+        </CForm>
+      </CModalBody>
+    </CModal>
+    <!-- Delete category -->
+    <CModal
+      size="lg"
+      :visible="openedModals.deleteCategoryModal"
+      @close="closeModal(1)"
+    >
+      <CModalHeader>
+        <CModalTitle>Kategori <span class="text-danger">Sil</span></CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <h5>
+          Bu işlemi geri alamazsınız. Kategori bilgilerini
+          <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
+        </h5>
+        <CModalFooter class="pe-0">
+          <CButton color="secondary" @click="closeModal(0)">Kapat</CButton>
+          <CButton color="danger" type="submit">SİL</CButton>
+        </CModalFooter>
+      </CModalBody>
+    </CModal>
+    <!-- Update category -->
+    <CModal
+      size="lg"
+      :visible="openedModals.updateCategoryModal"
+      @close="closeModal(2)"
+    >
+      <CModalHeader>
+        <CModalTitle>Kategori Düzenle</CModalTitle>
+      </CModalHeader>
+      <CModalBody>
+        <CForm
+          class="row g-3"
+          @submit.prevent="checkValidation()"
+          needs-validation
+          novalidate
+          :validated="validationChecked"
+        >
+          <CCol md="6">
+            <CFormLabel for="update-category-name">Kategori Adı</CFormLabel>
+            <CFormInput
+              id="update-category-name"
+              required
+              feedbackInvalid="Lütfen bir kategori adı giriniz"
+            />
+          </CCol>
+          <CModalFooter class="pe-0">
+            <CButton color="secondary" @click="closeModal(2)">Kapat</CButton>
+            <CButton color="success" type="submit"
+              >Değişiklikleri Kaydet</CButton
+            >
+          </CModalFooter>
+        </CForm>
+      </CModalBody>
+    </CModal>
   </CRow>
 </template>
 
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
+import { mapActions } from 'vuex'
 export default {
   name: 'Colors',
   components: {
@@ -212,28 +202,70 @@ export default {
       ],
       themeColor: '#321fdb',
       itemsSelected: [],
-      rowsPerPage: 10,
       openedModals: {
         addCategoryModal: false,
         deleteCategoryModal: false,
-        updateCAtegoryModal: false,
+        updateCategoryModal: false,
       },
-      isMounted: false,
+      categoryTable: {
+        serverItemsLength: 0,
+        serverOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        rowsItem: [10, 20, 50],
+        loading: true,
+      },
       validationChecked: false,
+      isAbleToPushButton: true,
     }
   },
-  mounted() {
-    this.isMounted = true
+  created() {
+    this.getCategories(this.categoryTable.serverOptions)
   },
   methods: {
-    checkValidation() {
+    ...mapActions({
+      getAllCategories: 'category/getCategories',
+    }),
+    // eslint-disable-next-line
+    checkValidation(event, modalname, data) {
       // Response
+      this.isAbleToPushButton = false
       this.validationChecked = true
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+        this.isAbleToPushButton = true
+        return
+      }
+      switch (modalname) {
+        default:
+          null
+      }
+      this.isAbleToPushButton = true
     },
-    closeModal(index) {
-      this.openedModals[index] = false
+    // eslint-disable-next-line
+    closeModal(modalname, resetData) {
+      this.openedModals[modalname] = false
       this.validationChecked = false
+      if (resetData) {
+        switch (modalname) {
+          default:
+            null
+        }
+      }
     },
+    async getCategories(pageOptions) {
+      this.categoryTable.loading = true
+      const response = await this.getAllCategories(pageOptions)
+      this.items = response.data
+      console.log(response)
+      this.categoryTable.serverItemsLength = response.totalElements
+      this.categoryTable.loading = false
+    },
+    // eslint-disable-next-line
+    addCategory(data) {},
   },
 }
 </script>

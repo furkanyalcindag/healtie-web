@@ -47,7 +47,7 @@
             :loading="categoryTable.loading"
             :rows-items="categoryTable.rowsItem"
           >
-            <template #item-operations>
+            <template #item-operations="item">
               <div>
                 <CButtonGroup role="group" size="sm">
                   <CButton
@@ -76,11 +76,7 @@
                       content: 'Sil',
                       placement: 'top',
                     }"
-                    @click="
-                      () => {
-                        openedModals.deleteCategoryModal = true
-                      }
-                    "
+                    @click="setSelectedCategory('deleteCategoryModal', item)"
                   >
                     <CIcon icon="cil-trash" />
                   </CButton>
@@ -105,7 +101,9 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            checkValidation($event, 'addCategoryModal', addedItem.data)
+            isAbleToPushButton
+              ? checkValidation($event, 'addCategoryModal', addedItem.data)
+              : null
           "
           needs-validation
           novalidate
@@ -186,6 +184,7 @@
               @click="closeModal('addCategoryModal', true)"
               >İptal</CButton
             >
+            {{ isAbleToPushButton ? 'true' : 'false' }}
             <CButton
               color="success"
               :type="isAbleToPushButton ? 'submit' : null"
@@ -214,7 +213,11 @@
           <CButton color="secondary" @click="closeModal('deleteCategoryModal')"
             >Kapat</CButton
           >
-          <CButton color="danger" :type="isAbleToPushButton ? 'submit' : null"
+          <CButton
+            color="danger"
+            @click="
+              isAbleToPushButton ? deleteCategory(selectedCategory.uuid) : null
+            "
             >SİL</CButton
           >
         </CModalFooter>
@@ -342,6 +345,7 @@ export default {
       validationChecked: false,
       isAbleToPushButton: true,
       toasts: [],
+      selectedCategory: {},
     }
   },
   watch: {
@@ -357,7 +361,16 @@ export default {
       getAllCategories: 'category/getCategories',
       getAllLanguages: 'language/getLanguages',
       addCategoryAPI: 'category/addCategory',
+      deleteCategoryAPI: 'category/deleteCategory',
     }),
+    setSelectedCategory(modalname, data) {
+      this.selectedCategory = data
+      switch (modalname) {
+        default:
+          break
+      }
+      this.openedModals[modalname] = true
+    },
     async addCategory_GetFilteredParentListOptionsData(searched) {
       this.addedItem.parentCategoryList.loading = true
       if (searched) {
@@ -458,7 +471,6 @@ export default {
         })
       }
     },
-    // eslint-disable-next-line
     async addCategory(data) {
       // Cleaning up data a little bit. Json parse for copying the object without connecting them together
       let cachedData = JSON.parse(JSON.stringify(data))
@@ -470,7 +482,7 @@ export default {
       cachedData.parentList = await JSON.parse(
         JSON.stringify(parentCategoryListUUIDS),
       )
-      // ITS NEEDED TO BE SETTED LANGUAGE.LANGUAGE HERE !! ******************************************************************PROBLEM************************************************************
+      // ITS NEEDED TO BE SETTED LANGUAGE.LANGUAGE HERE !! ******************************************************************PROBLEM********************************************************************
       // cachedData.language = cachedData.language.language
       cachedData.language = 'TR'
       const response = await this.addCategoryAPI(cachedData)
@@ -481,8 +493,8 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.getCategories(this.categoryTable.serverOptions)
         this.isAbleToPushButton = true
+        this.getCategories(this.categoryTable.serverOptions)
         this.closeModal('addCategoryModal', true)
       } else {
         this.createToast(
@@ -493,6 +505,29 @@ export default {
         )
         this.isAbleToPushButton = true
       }
+    },
+    async deleteCategory(uuid) {
+      this.isAbleToPushButton = false
+      const response = await this.deleteCategoryAPI(uuid)
+      if (response === true) {
+        this.isAbleToPushButton = true
+        this.selectedCategory = {}
+        this.createToast(
+          'Category deleted successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+      } else {
+        this.createToast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+      this.closeModal('deleteCategoryModal')
     },
     checkValidation(event, modalname, data) {
       // Response
@@ -515,7 +550,6 @@ export default {
           null
       }
     },
-    // eslint-disable-next-line
     closeModal(modalname, resetData) {
       this.openedModals[modalname] = false
       this.validationChecked = false

@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
   <div>
     <CToaster class="position-fixed top-0 start-50 translate-middle-x">
@@ -60,7 +61,7 @@
                         content: 'Düzenle',
                         placement: 'top',
                       }"
-                      @click="getClickedItemData('updateRoleModal', item)"
+                      @click="setSelectedRole('updateRoleModal', item)"
                     >
                       <CIcon icon="cil-pencil" />
                     </CButton>
@@ -73,7 +74,10 @@
                         content: 'Sil',
                         placement: 'top',
                       }"
-                      @click="setSelectedRole(item)"
+                      @click="
+                        setSelectedRole('deleteRoleModal', item),
+                          (openedModals.deleteRoleModal = true)
+                      "
                     >
                       <CIcon icon="cil-trash" />
                     </CButton>
@@ -133,7 +137,11 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation($event, 'addRoleModal', addedItem)"
+          @submit.prevent="
+            isAbleToPushButton
+              ? checkValidation($event, 'addRoleModal', addedItem)
+              : null
+          "
           needs-validation
           novalidate
           :validated="validationChecked"
@@ -455,11 +463,6 @@ export default {
     }
   },
   created() {
-    // GET ITEMS
-    // SET EDITED ITEMS
-    let cachedItemData = JSON.parse(JSON.stringify(this.items))
-    this.editedItem = cachedItemData
-
     this.getRoles(this.roleTable.serverOptions)
   },
   watch: {
@@ -518,17 +521,6 @@ export default {
         }
       }
     },
-    getClickedItemData(modalname, data) {
-      switch (modalname) {
-        case 'updateRoleModal':
-          {
-            let cachedItemData = JSON.parse(JSON.stringify(data))
-            this.editedItem = cachedItemData
-            this.openedModals[modalname] = true
-          }
-          break
-      }
-    },
     async deleteRole(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteRoleAPI(uuid)
@@ -544,15 +536,14 @@ export default {
         )
         this.isAbleToPushButton = true
       }
+      this.closeModal('deleteRoleModal')
     },
     async addRole(data) {
       this.isAbleToPushButton = false
       const response = await this.addRoleAPI(data)
       if (response === true) {
-        this.openedModals.addRoleModal = false
+        this.closeModal('addRoleModal', true)
         this.getRoles(this.roleTable.serverOptions)
-        this.addedItem = { name: null }
-        this.isAbleToPushButton = true
         this.createToast(
           'New role ' + data.name + ' added successfully',
           'success',
@@ -566,8 +557,8 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
+      this.isAbleToPushButton = true
     },
     async getRoles(pageOptions) {
       this.roleTable.loading = true
@@ -600,9 +591,17 @@ export default {
         this.isAbleToPushButton = true
       }
     },
-    setSelectedRole(data) {
-      this.openedModals.deleteRoleModal = true
+    setSelectedRole(modalname, data) {
       this.selectedRole = data
+      switch (modalname) {
+        case 'updateRoleModal':
+          {
+            let cachedItemData = JSON.parse(JSON.stringify(data))
+            this.editedItem = cachedItemData
+          }
+          break
+      }
+      this.openedModals[modalname] = true
     },
     createToast(content, color, isautoHided, classes, delay) {
       this.toasts.push({

@@ -70,6 +70,32 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
+    async deleteCategory(state, uuid) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        var axios = require('axios')
+
+        var config = {
+          method: 'delete',
+          url: 'category/' + uuid,
+          headers: {},
+        }
+
+        const response = await axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
   },
   getters: {},
 }

@@ -2,6 +2,7 @@ import { createStore } from 'vuex'
 import auth from './auth'
 import role from './role'
 import category from './category'
+import language from './APIlanguage'
 
 export default createStore({
   state: {
@@ -24,5 +25,6 @@ export default createStore({
     auth,
     role,
     category,
+    language,
   },
 })

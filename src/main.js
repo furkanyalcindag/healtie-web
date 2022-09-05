@@ -11,6 +11,8 @@ import DocsExample from '@/components/DocsExample'
 import '@/interceptor/axios'
 import { LightEditor, LightEditorPlugin } from '@hannanmiah/light-editor'
 import '@hannanmiah/light-editor/dist/style.css'
+import vSelect from 'vue-select'
+import 'vue-select/dist/vue-select.css'
 
 import Vue3EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
@@ -26,6 +28,7 @@ app.component('DocsCallout', DocsCallout)
 app.component('DocsExample', DocsExample)
 app.component('EasyDataTable', Vue3EasyDataTable)
 app.component(LightEditor)
+app.component('v-select', vSelect)
 
 // CHECK IF USER LOGGED IN ALREADY
 if (store.getters['auth/checkIfLoggedIn']) {

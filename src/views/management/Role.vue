@@ -44,9 +44,9 @@
               :headers="headers"
               :items="items"
               :theme-color="themeColor"
+              buttons-pagination
               :loading="roleTable.loading"
               :rows-items="roleTable.rowsItem"
-              buttons-pagination
             >
               <template #item-operations="item">
                 <div>

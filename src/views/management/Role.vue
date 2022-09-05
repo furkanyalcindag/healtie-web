@@ -1,5 +1,19 @@
 <template>
   <div>
+    <CToaster class="position-fixed top-0 start-50 translate-middle-x">
+      <CToast
+        v-for="(toast, index) in toasts"
+        :key="index"
+        :color="toast.color"
+        :autohide="toast.autohide"
+        :class="toast.classes"
+      >
+        <div class="d-flex">
+          <CToastBody>{{ toast.content }}</CToastBody>
+          <CToastClose class="me-2 m-auto" white />
+        </div>
+      </CToast>
+    </CToaster>
     <CRow>
       <CCol class="justify-content-start">
         <CCard>
@@ -14,11 +28,7 @@
                   color="primary"
                   class="float-end"
                   shape="rounded-pill"
-                  @click="
-                    () => {
-                      openedModals[0] = true
-                    }
-                  "
+                  @click="openedModals.addRoleModal = true"
                   >Ekle
                 </CButton>
               </CCol>
@@ -29,13 +39,16 @@
               class="m-4"
               show-index
               v-model:itemsSelected="itemsSelected"
+              v-model:server-options="roleTable.serverOptions"
+              :server-items-length="roleTable.serverItemsLength"
               :headers="headers"
               :items="items"
               :theme-color="themeColor"
+              :loading="roleTable.loading"
+              :rows-items="roleTable.rowsItem"
               buttons-pagination
-              :rows-per-page="rowsPerPage"
             >
-              <template #item-operations>
+              <template #item-operations="item">
                 <div>
                   <CButtonGroup role="group" size="sm">
                     <CButton
@@ -47,11 +60,7 @@
                         content: 'Düzenle',
                         placement: 'top',
                       }"
-                      @click="
-                        () => {
-                          openedModals[2] = true
-                        }
-                      "
+                      @click="getClickedItemData('updateRoleModal', item)"
                     >
                       <CIcon icon="cil-pencil" />
                     </CButton>
@@ -64,11 +73,7 @@
                         content: 'Sil',
                         placement: 'top',
                       }"
-                      @click="
-                        () => {
-                          openedModals[1] = true
-                        }
-                      "
+                      @click="setSelectedRole(item)"
                     >
                       <CIcon icon="cil-trash" />
                     </CButton>
@@ -83,7 +88,7 @@
                       }"
                       @click="
                         () => {
-                          openedModals[4] = true
+                          openedModals.showUserModal = true
                         }
                       "
                     >
@@ -100,7 +105,7 @@
                       }"
                       @click="
                         () => {
-                          openedModals[3] = true
+                          openedModals.addUserModal = true
                         }
                       "
                     >
@@ -115,14 +120,20 @@
       </CCol>
     </CRow>
 
-    <CModal size="lg" :visible="openedModals[0]" @close="closeModal(0)">
+    <!-- Add Role -->
+    <CModal
+      size="lg"
+      backdrop="static"
+      :visible="openedModals.addRoleModal"
+      @close="closeModal('addRoleModal')"
+    >
       <CModalHeader>
         <CModalTitle>Rol Ekle</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation()"
+          @submit.prevent="checkValidation($event, 'addRoleModal', addedItem)"
           needs-validation
           novalidate
           :validated="validationChecked"
@@ -132,21 +143,29 @@
             <CFormInput
               id="add-rol-name"
               required
+              v-model="addedItem.name"
               feedbackInvalid="Lütfen bir rol adı giriniz"
             />
           </CCol>
 
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(0)">Kapat</CButton>
-            <CButton color="success" type="submit">Kaydet</CButton>
+            <CButton color="secondary" @click="closeModal('addRoleModal', true)"
+              >İptal</CButton
+            >
+            <CButton
+              color="success"
+              :type="isAbleToPushButton ? 'submit' : null"
+              >Kaydet</CButton
+            >
           </CModalFooter>
         </CForm>
       </CModalBody>
     </CModal>
+    <!-- Delete Role -->
     <CModal
-      size="md"
-      :visible="openedModals[1]"
-      @close="closeModal(1)"
+      size="lg"
+      :visible="openedModals.deleteRoleModal"
+      @close="closeModal('deleteRoleModal')"
       backdrop="static"
     >
       <CModalHeader>
@@ -158,15 +177,24 @@
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton color="secondary" @click="closeModal(1)">Kapat</CButton>
-          <CButton color="danger" type="submit">SİL</CButton>
+          <CButton
+            color="secondary"
+            @click="closeModal('deleteRoleModal', true)"
+            >İptal</CButton
+          >
+          <CButton
+            color="danger"
+            @click="isAbleToPushButton ? deleteRole(selectedRole.uuid) : null"
+            >SİL</CButton
+          >
         </CModalFooter>
       </CModalBody>
     </CModal>
+    <!-- Update Role -->
     <CModal
       size="lg"
-      :visible="openedModals[2]"
-      @close="closeModal(2)"
+      :visible="openedModals.updateRoleModal"
+      @close="closeModal('updateRoleModal')"
       backdrop="static"
     >
       <CModalHeader>
@@ -175,7 +203,13 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation()"
+          @submit.prevent="
+            checkValidation(
+              $event,
+              'updateRoleModal',
+              JSON.parse(JSON.stringify(editedItem)),
+            )
+          "
           needs-validation
           novalidate
           :validated="validationChecked"
@@ -186,22 +220,28 @@
               id="update-rol-name"
               required
               feedbackInvalid="Lütfen bir rol ismi giriniz"
+              v-model="editedItem.name"
             />
           </CCol>
 
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(2)">Kapat</CButton>
-            <CButton color="success" type="submit"
+            <CButton color="secondary" @click="closeModal('updateRoleModal')"
+              >İptal</CButton
+            >
+            <CButton
+              color="success"
+              :type="isAbleToPushButton ? 'submit' : null"
               >Değişiklikleri Kaydet
             </CButton>
           </CModalFooter>
         </CForm>
       </CModalBody>
     </CModal>
+    <!-- Add user from role modal -->
     <CModal
       size="lg"
-      :visible="openedModals[3]"
-      @close="closeModal(3)"
+      :visible="openedModals.addUserModal"
+      @close="closeModal('addUserModal')"
       :no-close-on-backdrop="true"
       backdrop="static"
     >
@@ -257,16 +297,19 @@
           </CCol>
 
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal(3)">Kapat</CButton>
+            <CButton color="secondary" @click="closeModal('addUserModal')"
+              >İptal</CButton
+            >
             <CButton color="success" type="submit">Kaydet</CButton>
           </CModalFooter>
         </CForm>
       </CModalBody>
     </CModal>
+    <!-- Show user from role modal -->
     <CModal
       size="lg"
-      :visible="openedModals[4]"
-      @close="closeModal(4)"
+      :visible="openedModals.showUserModal"
+      @close="closeModal('showUserModal')"
       backdrop="static"
     >
       <CModalHeader>
@@ -309,17 +352,20 @@
             </template>
           </easy-data-table>
 
-          <CButton color="secondary" class="float-md-end" @click="closeModal(4)"
-            >Kapat
+          <CButton
+            color="secondary"
+            class="float-md-end"
+            @click="closeModal('showUserModal')"
+            >İptal
           </CButton>
         </CCardBody>
       </CModalBody>
     </CModal>
-
+    <!-- Delete user from role modal -->
     <CModal
-      size="md"
+      size="lg"
       v-model:visible="openedModals.deleteUserModal"
-      @close="closeModal(5)"
+      @close="closeModal('deleteUserModal')"
       backdrop="static"
     >
       <CModalHeader>
@@ -331,7 +377,9 @@
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton color="secondary" @click="closeModal(5)">Kapat</CButton>
+          <CButton color="secondary" @click="closeModal('deleteUserModal')"
+            >İptal</CButton
+          >
           <CButton color="danger" type="submit">SİL</CButton>
         </CModalFooter>
       </CModalBody>
@@ -341,6 +389,7 @@
 
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'Colors',
@@ -354,14 +403,14 @@ export default {
         { text: 'Rol Adı', value: 'name', sortable: true },
         { text: 'İşlemler', value: 'operations' },
       ],
-      items: [
-        {
-          name: 'admin',
-        },
-        {
-          name: 'doctor',
-        },
-      ],
+      items: [],
+      editedItem: {
+        uuid: null,
+        name: null,
+      },
+      addedItem: {
+        name: null,
+      },
       headers2: [
         { text: 'İsim', value: 'firstName', sortable: true },
         { text: 'Soyisim', value: 'lastName', sortable: true },
@@ -383,7 +432,6 @@ export default {
 
       themeColor: '#321fdb',
       itemsSelected: [],
-      rowsPerPage: 10,
       openedModals: {
         addRoleModal: false,
         deleteRoleModal: false,
@@ -392,21 +440,179 @@ export default {
         showUserModal: false,
         deleteUserModal: false,
       },
-      isMounted: false,
       validationChecked: false,
+      roleTable: {
+        serverItemsLength: 0,
+        serverOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        rowsItem: [10, 20, 50],
+        loading: true,
+      },
+      isAbleToPushButton: true,
+      toasts: [],
     }
   },
-  mounted() {
-    this.isMounted = true
+  created() {
+    // GET ITEMS
+    // SET EDITED ITEMS
+    let cachedItemData = JSON.parse(JSON.stringify(this.items))
+    this.editedItem = cachedItemData
+
+    this.getRoles(this.roleTable.serverOptions)
+  },
+  watch: {
+    'roleTable.serverOptions'(newvalue) {
+      this.getRoles(newvalue)
+    },
   },
   methods: {
-    checkValidation() {
+    ...mapActions({
+      getAllRoles: 'role/getRoles',
+      deleteRoleAPI: 'role/deleteRole',
+      addRoleAPI: 'role/addRole',
+      updateRoleAPI: 'role/updateRole',
+    }),
+    checkValidation(event, modalname, data) {
       // Response
+      this.isAbleToPushButton = false
       this.validationChecked = true
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+        this.isAbleToPushButton = true
+        return
+      }
+      switch (modalname) {
+        case 'addRoleModal':
+          {
+            this.addRole(data)
+          }
+          break
+        case 'updateRoleModal':
+          {
+            this.updateRole(data)
+          }
+          break
+      }
+      this.isAbleToPushButton = true
     },
-    closeModal(index) {
-      this.openedModals[index] = false
+    closeModal(modalname, resetData) {
+      this.openedModals[modalname] = false
       this.validationChecked = false
+      if (resetData) {
+        switch (modalname) {
+          case 'addRoleModal':
+            {
+              let cachedAddedItemData = { name: null }
+              this.addedItem = cachedAddedItemData
+            }
+            break
+          case 'deleteRoleModal':
+            {
+              this.selectedRole = {}
+            }
+            break
+        }
+      }
+    },
+    getClickedItemData(modalname, data) {
+      switch (modalname) {
+        case 'updateRoleModal':
+          {
+            let cachedItemData = JSON.parse(JSON.stringify(data))
+            this.editedItem = cachedItemData
+            this.openedModals[modalname] = true
+          }
+          break
+      }
+    },
+    async deleteRole(uuid) {
+      this.isAbleToPushButton = false
+      const response = await this.deleteRoleAPI(uuid)
+      if (response === true) {
+        this.isAbleToPushButton = true
+        this.selectedRole = {}
+      } else {
+        this.createToast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+    },
+    async addRole(data) {
+      this.isAbleToPushButton = false
+      const response = await this.addRoleAPI(data)
+      if (response === true) {
+        this.openedModals.addRoleModal = false
+        this.getRoles(this.roleTable.serverOptions)
+        this.addedItem = { name: null }
+        this.isAbleToPushButton = true
+        this.createToast(
+          'New role ' + data.name + ' added successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+      } else {
+        this.createToast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+    },
+    async getRoles(pageOptions) {
+      this.roleTable.loading = true
+      const response = await this.getAllRoles(pageOptions)
+      this.items = response.data
+      this.roleTable.serverItemsLength = response.totalElements
+      this.roleTable.loading = false
+    },
+    // eslint-disable-next-line
+    async updateRole(newroleData) {
+      this.isAbleToPushButton = false
+      const response = await this.updateRoleAPI(newroleData)
+      if (response === true) {
+        this.createToast(
+          'Role updated successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+        this.getRoles(this.roleTable.serverOptions)
+        this.isAbleToPushButton = true
+        this.openedModals.updateRoleModal = false
+        this.editedItem = {}
+      } else {
+        this.createToast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+    },
+    setSelectedRole(data) {
+      this.openedModals.deleteRoleModal = true
+      this.selectedRole = data
+    },
+    createToast(content, color, isautoHided, classes, delay) {
+      this.toasts.push({
+        content: content,
+        color: color,
+        autohide: isautoHided,
+        classes: classes,
+        delay: delay,
+      })
     },
   },
 }

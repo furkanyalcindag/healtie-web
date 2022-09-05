@@ -29,9 +29,9 @@ app.component(LightEditor)
 
 // CHECK IF USER LOGGED IN ALREADY
 if (store.getters['auth/checkIfLoggedIn']) {
+  // ROLE CHECK IS NEEDED HERE
   router.push({ name: 'Home' })
 } else {
-  console.log('GO LOGIN')
   router.push({ name: 'Login Admin' })
 }
 

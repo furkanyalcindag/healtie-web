@@ -36,7 +36,7 @@ axios.interceptors.response.use(
     switch (err.response.status) {
       case 401:
         // Response to successful interception
-        console.log('Response Interceptor:')
+        console.log('Token is invalid.')
         store.dispatch('auth/attemptRestore')
         // ROLE CHECK IS NEEDED
         router.push({ name: 'Login Admin' })

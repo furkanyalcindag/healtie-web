@@ -9,7 +9,6 @@
                 <CForm @submit.prevent="handleSubmit()">
                   <h1>Giriş Yap</h1>
                   <p class="text-medium-emphasis">Hesabınıza Giriş Yapın</p>
-                  {{ data }}
                   <CInputGroup class="mb-3">
                     <CInputGroupText>@</CInputGroupText>
                     <CFormInput
@@ -46,7 +45,11 @@
 
                   <CRow>
                     <CCol :xs="6">
-                      <CButton type="submit" color="secondary" class="px-4">
+                      <CButton
+                        :type="isAbleToLogin ? 'submit' : null"
+                        color="secondary"
+                        class="px-4"
+                      >
                         Giriş
                       </CButton>
                     </CCol>
@@ -90,6 +93,7 @@ export default {
       },
       isRememberUseActive: false,
       isFailedToLogin: false,
+      isAbleToLogin: true,
       failedToLoginText: '',
     }
   },
@@ -104,9 +108,11 @@ export default {
     }),
 
     async handleSubmit() {
+      this.isAbleToLogin = await false
       const response = await this.signIn(this.data)
 
       if (!response.authorized) {
+        this.isAbleToLogin = true
         this.failedToLoginText = 'Kullanıcı adınız veya şifre yanlış.'
         this.isFailedToLogin = true
       }

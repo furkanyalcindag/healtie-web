@@ -59,7 +59,7 @@
                       content: 'Düzenle',
                       placement: 'top',
                     }"
-                    @click="setSelectedCategory('updateCategoryModal', item)"
+                    @click="showModal('updateCategoryModal', item)"
                   >
                     <CIcon icon="cil-pencil" />
                   </CButton>
@@ -72,7 +72,7 @@
                       content: 'Sil',
                       placement: 'top',
                     }"
-                    @click="setSelectedCategory('deleteCategoryModal', item)"
+                    @click="showModal('deleteCategoryModal', item)"
                   >
                     <CIcon icon="cil-trash" />
                   </CButton>
@@ -98,7 +98,7 @@
           class="row g-3"
           @submit.prevent="
             isAbleToPushButton
-              ? checkValidation($event, 'addCategoryModal', addedItem.data)
+              ? submitToAPI($event, 'addCategoryModal', addedItem.data)
               : null
           "
           needs-validation
@@ -224,7 +224,7 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            checkValidation($event, 'updateCategoryModal', editedItem.data)
+            submitToAPI($event, 'updateCategoryModal', editedItem.data)
           "
           needs-validation
           novalidate
@@ -325,20 +325,7 @@ export default {
         { text: 'Toplam Makale Sayısı', value: 'articleCount' },
         { text: 'İşlemler', value: 'operations' },
       ],
-      items: [
-        {
-          name: 'Kalp Damar Hastalıkları',
-          articleCount: '15',
-        },
-        {
-          name: 'Psikoloji',
-          articleCount: '17',
-        },
-        {
-          name: 'Dermatoloji',
-          articleCount: '6',
-        },
-      ],
+      items: [],
       addedItem: {
         // Real data
         data: new createCategoryDTO(null, 'TR', []),
@@ -407,19 +394,6 @@ export default {
       deleteCategoryAPI: 'category/deleteCategory',
       updateCategoryAPI: 'category/updateCategory',
     }),
-    setSelectedCategory(modalname, data) {
-      this.selectedCategory = JSON.parse(JSON.stringify(data))
-      switch (modalname) {
-        case 'updateCategoryModal':
-          {
-            this.editedItem.data = JSON.parse(JSON.stringify(data))
-          }
-          break
-        default:
-          break
-      }
-      this.showModal(modalname)
-    },
     async get_Filtered_Parent_List_Options_Data(searched) {
       this.parentCategoryList.loading = true
       if (searched) {
@@ -474,7 +448,32 @@ export default {
       }
       this.languageList.loading = false
     },
-    async showModal(modalname) {
+    submitToAPI(event, modalname, data) {
+      // Response
+      this.isAbleToPushButton = false
+      this.validationChecked = true
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+        this.isAbleToPushButton = true
+        return
+      }
+      switch (modalname) {
+        case 'addCategoryModal':
+          {
+            this.addCategory(JSON.parse(JSON.stringify(data)))
+          }
+          break
+        case 'updateCategoryModal':
+          {
+            this.updateCategory(JSON.parse(JSON.stringify(data)))
+          }
+          break
+      }
+    },
+    async showModal(modalname, data) {
+      this.selectedCategory = data ? JSON.parse(JSON.stringify(data)) : {}
       switch (modalname) {
         case 'addCategoryModal':
           {
@@ -488,6 +487,7 @@ export default {
           break
         case 'updateCategoryModal':
           {
+            this.editedItem.data = JSON.parse(JSON.stringify(data))
             this.parentCategoryList.loading = true
             this.languageList.loading = true
             this.get_Filtered_Parent_List_Options_Data()
@@ -583,7 +583,7 @@ export default {
       this.isAbleToPushButton = true
       this.closeModal('deleteCategoryModal')
     },
-    // Used in edit and add category to make the data to look better. DTO can be used instead
+    // Used in edit and add category to make the data ready to sent to server otherwise it will give error. DTO can be used instead
     cleanCategorySelections(data) {
       let cachedData = JSON.parse(JSON.stringify(data))
       let parentCategoryListUUIDS = cachedData.parentList.map(
@@ -594,36 +594,7 @@ export default {
       cachedData.parentList = JSON.parse(
         JSON.stringify(parentCategoryListUUIDS),
       )
-      // ITS NEEDED TO BE SETTED LANGUAGE.LANGUAGE HERE !! ******************************************************************PROBLEM********************************************************************
-      // cachedData.language = cachedData.language.language
-      //cachedData.language = cachedData.language.name
       return cachedData
-    },
-    checkValidation(event, modalname, data) {
-      // Response
-      this.isAbleToPushButton = false
-      this.validationChecked = true
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
-        this.isAbleToPushButton = true
-        return
-      }
-      switch (modalname) {
-        case 'addCategoryModal':
-          {
-            this.addCategory(JSON.parse(JSON.stringify(data)))
-          }
-          break
-        case 'updateCategoryModal':
-          {
-            this.updateCategory(JSON.parse(JSON.stringify(data)))
-          }
-          break
-        default:
-          null
-      }
     },
     async getCategories(pageOptions) {
       this.categoryTable.loading = true

@@ -111,7 +111,6 @@ export default {
             return category.uuid
           },
         )
-        console.log(newCategoryData)
         var axios = require('axios')
         var data = JSON.stringify({
           language: newCategoryData.language,

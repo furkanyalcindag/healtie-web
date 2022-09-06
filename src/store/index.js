@@ -1,8 +1,8 @@
 import { createStore } from 'vuex'
-import auth from './auth'
-import role from './role'
-import category from './category'
-import language from './language'
+import auth from '@/service/auth'
+import role from '@/service/role'
+import category from '@/service/category'
+import language from '@/service/language'
 
 export default createStore({
   state: {

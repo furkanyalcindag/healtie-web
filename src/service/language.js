@@ -1,6 +1,6 @@
 /* eslint-disable */
 import router from '@/router'
-import store from '.'
+import store from '@/store/'
 
 export default {
   namespaced: true,

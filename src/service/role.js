@@ -1,26 +1,25 @@
 import router from '@/router'
-import store from '.'
+import store from '@/store/'
 
 export default {
   namespaced: true,
   state: {},
   mutations: {},
   actions: {
-    async getCategories(state, page, filter) {
+    async getRoles(state, page) {
       // CHECK IF USER LOGGED IN ALREADY
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        let filterBy = filter ? filter : []
         var data = JSON.stringify({
-          filters: filterBy,
+          filters: [],
           pageNumber: page.page - 1,
           pageSize: page.rowsPerPage,
         })
 
         var config = {
           method: 'post',
-          url: 'category/get-all-by-filter',
+          url: 'get-all-by-filter',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -41,17 +40,43 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    // eslint-disable-next-line
-    async getCategory(state, uuid) {},
-    async addCategory(state, categoryData) {
+    async deleteRole(state, uuid) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        var data = JSON.stringify(categoryData)
-        console.log(data)
+
+        var config = {
+          method: 'delete',
+          url: uuid,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+
+        const response = await axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async addRole(state, roleData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        var axios = require('axios')
+        var data = JSON.stringify(roleData)
+
         var config = {
           method: 'post',
-          url: 'category/',
+          // url: 'https://healtie.herokuapp.com/',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -73,54 +98,19 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async deleteCategory(state, uuid) {
-      if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        var axios = require('axios')
-
-        var config = {
-          method: 'delete',
-          url: 'category/' + uuid,
-          headers: {},
-        }
-
-        const response = await axios(config)
-          .then(function (response) {
-            console.log(JSON.stringify(response.data))
-            return true
-          })
-          .catch(function (error) {
-            console.log(error)
-            return false
-          })
-        return response
-      } else {
-        // ROLE CHECK IS NEEDED HERE
-        router.push({ name: 'Login Admin' })
-      }
-    },
     // eslint-disable-next-line
-    async updateCategory(state, newCategoryData) {
+    async updateRole(state, roleData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        newCategoryData.parentList = !newCategoryData.parentList
-          ? []
-          : newCategoryData.parentList
-        newCategoryData.parentList = newCategoryData.parentList.map(
-          (category) => {
-            return category.uuid
-          },
-        )
         var axios = require('axios')
         var data = JSON.stringify({
-          language: newCategoryData.language,
-          name: newCategoryData.name,
-          parentList: newCategoryData.parentList,
+          language: roleData.language,
+          name: roleData.name,
         })
 
         var config = {
           method: 'put',
-          url: 'category/' + newCategoryData.uuid,
+          url: roleData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },

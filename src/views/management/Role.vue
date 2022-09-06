@@ -1,20 +1,6 @@
 /* eslint-disable */
 <template>
   <div>
-    <CToaster class="position-fixed top-0 start-50 translate-middle-x">
-      <CToast
-        v-for="(toast, index) in toasts"
-        :key="index"
-        :color="toast.color"
-        :autohide="toast.autohide"
-        :class="toast.classes"
-      >
-        <div class="d-flex">
-          <CToastBody>{{ toast.content }}</CToastBody>
-          <CToastClose class="me-2 m-auto" white />
-        </div>
-      </CToast>
-    </CToaster>
     <CRow>
       <CCol class="justify-content-start">
         <CCard>
@@ -392,6 +378,7 @@
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
 import { mapActions } from 'vuex'
+import Toast from '@/models/create_TOAST_dto'
 
 export default {
   name: 'Colors',
@@ -496,6 +483,18 @@ export default {
       }
       this.isAbleToPushButton = true
     },
+    showModal(modalname, data) {
+      this.selectedRole = data ? JSON.parse(JSON.stringify(data)) : {}
+      switch (modalname) {
+        case 'updateRoleModal':
+          {
+            let cachedItemData = JSON.parse(JSON.stringify(data))
+            this.editedItem = cachedItemData
+          }
+          break
+      }
+      this.openedModals[modalname] = true
+    },
     closeModal(modalname, resetData) {
       this.openedModals[modalname] = false
       this.validationChecked = false
@@ -515,22 +514,12 @@ export default {
         }
       }
     },
-    async deleteRole(uuid) {
-      this.isAbleToPushButton = false
-      const response = await this.deleteRoleAPI(uuid)
-      if (response === true) {
-        this.isAbleToPushButton = true
-        this.selectedRole = {}
-      } else {
-        this.createToast(
-          'Something went wrong',
-          'danger',
-          true,
-          'text-white align-items-center',
-        )
-        this.isAbleToPushButton = true
-      }
-      this.closeModal('deleteRoleModal')
+    async getRoles(pageOptions) {
+      this.roleTable.loading = true
+      const response = await this.getAllRoles(pageOptions)
+      this.items = response.data
+      this.roleTable.serverItemsLength = response.totalElements
+      this.roleTable.loading = false
     },
     async addRole(data) {
       this.isAbleToPushButton = false
@@ -538,14 +527,14 @@ export default {
       if (response === true) {
         this.closeModal('addRoleModal', true)
         this.getRoles(this.roleTable.serverOptions)
-        this.createToast(
+        new Toast(
           'New role ' + data.name + ' added successfully',
           'success',
           true,
           'text-white align-items-center',
         )
       } else {
-        this.createToast(
+        new Toast(
           'Something went wrong',
           'danger',
           true,
@@ -554,18 +543,11 @@ export default {
       }
       this.isAbleToPushButton = true
     },
-    async getRoles(pageOptions) {
-      this.roleTable.loading = true
-      const response = await this.getAllRoles(pageOptions)
-      this.items = response.data
-      this.roleTable.serverItemsLength = response.totalElements
-      this.roleTable.loading = false
-    },
     async updateRole(newroleData) {
       this.isAbleToPushButton = false
       const response = await this.updateRoleAPI(newroleData)
       if (response === true) {
-        this.createToast(
+        new Toast(
           'Role updated successfully',
           'success',
           true,
@@ -573,10 +555,10 @@ export default {
         )
         this.getRoles(this.roleTable.serverOptions)
         this.isAbleToPushButton = true
-        this.openedModals.updateRoleModal = false
+        this.closeModal('updateRoleModal')
         this.editedItem = {}
       } else {
-        this.createToast(
+        new Toast(
           'Something went wrong',
           'danger',
           true,
@@ -585,26 +567,22 @@ export default {
         this.isAbleToPushButton = true
       }
     },
-    showModal(modalname, data) {
-      this.selectedRole = data ? JSON.parse(JSON.stringify(data)) : {}
-      switch (modalname) {
-        case 'updateRoleModal':
-          {
-            let cachedItemData = JSON.parse(JSON.stringify(data))
-            this.editedItem = cachedItemData
-          }
-          break
+    async deleteRole(uuid) {
+      this.isAbleToPushButton = false
+      const response = await this.deleteRoleAPI(uuid)
+      if (response === true) {
+        this.isAbleToPushButton = true
+        this.selectedRole = {}
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
       }
-      this.openedModals[modalname] = true
-    },
-    createToast(content, color, isautoHided, classes, delay) {
-      this.toasts.push({
-        content: content,
-        color: color,
-        autohide: isautoHided,
-        classes: classes,
-        delay: delay,
-      })
+      this.closeModal('deleteRoleModal')
     },
   },
 }

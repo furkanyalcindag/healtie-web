@@ -1,19 +1,5 @@
 <template>
   <CRow>
-    <CToaster class="position-fixed top-0 start-50 translate-middle-x">
-      <CToast
-        v-for="(toast, index) in toasts"
-        :key="index"
-        :color="toast.color"
-        :autohide="toast.autohide"
-        :class="toast.classes"
-      >
-        <div class="d-flex">
-          <CToastBody>{{ toast.content }}</CToastBody>
-          <CToastClose class="me-2 m-auto" white />
-        </div>
-      </CToast>
-    </CToaster>
     <CCol class="justify-content-start">
       <CCard>
         <CCardHeader>
@@ -106,7 +92,9 @@
           :validated="validationChecked"
         >
           <CCol md="6">
-            <CFormLabel for="add-category-name">Kategori Adı</CFormLabel>
+            <CFormLabel for="add-category-name"
+              >Kategori Adı<span class="text-danger">*</span></CFormLabel
+            >
             <CFormInput
               id="add-category-name"
               required
@@ -119,7 +107,6 @@
           <CFormLabel for="add-category-parent-category"
             >Üst kategorileri</CFormLabel
           >
-          {{ addedItem.data.parentList }}
           <v-select
             id="add-category-parent-category"
             v-model="addedItem.data.parentList"
@@ -141,7 +128,7 @@
           </v-select>
           <!-- For language selection -->
           <CFormLabel for="add-language-to-category"
-            >Üst kategorileri</CFormLabel
+            >Kategori Dili<span class="text-danger">*</span></CFormLabel
           >
           <v-select
             id="add-language-to-category"
@@ -313,6 +300,7 @@
 import avatar from '@/assets/images/avatars/8.jpg'
 import { mapActions } from 'vuex'
 import createCategoryDTO from '@/models/create_CATEGORY_dto'
+import Toast from '@/models/create_TOAST_dto'
 export default {
   name: 'Colors',
   components: {
@@ -339,7 +327,7 @@ export default {
       parentCategoryList: {
         // The parent category list inside selection in addCategory
         options: [],
-        // Parent category Selection server options for getting options in selection in addCategory
+        // Parent category Selection server options for getting options in selection in addCategoryModal
         parentListSearcherDefaultServerOptions: {
           page: 1,
           rowsPerPage: 50,
@@ -395,6 +383,30 @@ export default {
       deleteCategoryAPI: 'category/deleteCategory',
       updateCategoryAPI: 'category/updateCategory',
     }),
+    submitToAPI(event, modalname, data) {
+      // Response
+      this.isAbleToPushButton = false
+      this.validationChecked = true
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+        this.isAbleToPushButton = true
+        return
+      }
+      switch (modalname) {
+        case 'addCategoryModal':
+          {
+            this.addCategory(JSON.parse(JSON.stringify(data)))
+          }
+          break
+        case 'updateCategoryModal':
+          {
+            this.updateCategory(JSON.parse(JSON.stringify(data)))
+          }
+          break
+      }
+    },
     // This two For to filter the selection list by search value
     async get_Filtered_Parent_List_Options_Data(searched) {
       this.parentCategoryList.loading = true
@@ -450,31 +462,6 @@ export default {
       }
       this.languageList.loading = false
     },
-    // eslint-disable-next-line
-    submitToAPI(event, modalname, data) {
-      // Response
-      this.isAbleToPushButton = false
-      this.validationChecked = true
-      const form = event.currentTarget
-      if (form.checkValidity() === false) {
-        event.preventDefault()
-        event.stopPropagation()
-        this.isAbleToPushButton = true
-        return
-      }
-      switch (modalname) {
-        case 'addCategoryModal':
-          {
-            this.addCategory(JSON.parse(JSON.stringify(data)))
-          }
-          break
-        case 'updateCategoryModal':
-          {
-            this.updateCategory(JSON.parse(JSON.stringify(data)))
-          }
-          break
-      }
-    },
     async showModal(modalname, data) {
       this.selectedCategory = data ? JSON.parse(JSON.stringify(data)) : {}
       switch (modalname) {
@@ -518,12 +505,17 @@ export default {
         }
       }
     },
+    async getCategories(pageOptions) {
+      this.categoryTable.loading = true
+      const response = await this.getAllCategories(pageOptions)
+      this.items = response.data
+      this.categoryTable.serverItemsLength = response.totalElements
+      this.categoryTable.loading = false
+    },
     async addCategory(data) {
-      // Cleaning up data a little bit. Json parse for copying the object without connecting them together
-      // eslint-disable-next-line
       const response = await this.addCategoryAPI(data)
       if (response === true) {
-        this.createToast(
+        new Toast(
           'Category added successfully',
           'success',
           true,
@@ -532,7 +524,7 @@ export default {
         this.getCategories(this.categoryTable.serverOptions)
         this.closeModal('addCategoryModal', true)
       } else {
-        this.createToast(
+        new Toast(
           'Something went wrong',
           'danger',
           true,
@@ -545,7 +537,7 @@ export default {
       this.isAbleToPushButton = false
       const response = await this.updateCategoryAPI(newCategoryData)
       if (response === true) {
-        this.createToast(
+        new Toast(
           'Category updated successfully',
           'success',
           true,
@@ -553,9 +545,9 @@ export default {
         )
         this.getCategories(this.categoryTable.serverOptions)
         this.isAbleToPushButton = true
-        this.openedModals.updateCategoryModal = false
+        this.closeModal('updateCategoryModal')
       } else {
-        this.createToast(
+        new Toast(
           'Something went wrong',
           'danger',
           true,
@@ -569,38 +561,22 @@ export default {
       const response = await this.deleteCategoryAPI(uuid)
       if (response === true) {
         this.selectedCategory = {}
-        this.createToast(
+        new Toast(
           'Category deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
       } else {
-        this.createToast(
+        new Toast(
           'Something went wrong',
           'danger',
           true,
-          'text-white align-items-center',
+          'text-white -align-items-center',
         )
       }
       this.isAbleToPushButton = true
       this.closeModal('deleteCategoryModal')
-    },
-    async getCategories(pageOptions) {
-      this.categoryTable.loading = true
-      const response = await this.getAllCategories(pageOptions)
-      this.items = response.data
-      this.categoryTable.serverItemsLength = response.totalElements
-      this.categoryTable.loading = false
-    },
-    createToast(content, color, isautoHided, classes, delay) {
-      this.toasts.push({
-        content: content,
-        color: color,
-        autohide: isautoHided,
-        classes: classes,
-        delay: delay,
-      })
     },
   },
 }

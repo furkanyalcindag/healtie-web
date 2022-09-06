@@ -99,7 +99,6 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    // eslint-disable-next-line
     async updateCategory(state, newCategoryData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY

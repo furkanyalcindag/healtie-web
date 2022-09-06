@@ -147,8 +147,6 @@
             v-model="addedItem.data.language"
             :options="languageList.options"
             label="name"
-            @search="(search) => get_Filtered_Language_Options_Data(search)"
-            :loading="languageList.loading"
           >
             <template v-slot:no-options="{ search, searching }">
               <template v-if="searching">
@@ -225,7 +223,9 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation($event, 'updateCategoryModal')"
+          @submit.prevent="
+            checkValidation($event, 'updateCategoryModal', editedItem.data)
+          "
           needs-validation
           novalidate
           :validated="validationChecked"
@@ -245,7 +245,7 @@
           >
           <v-select
             id="add-category-parent-category"
-            v-model="addedItem.data.parentList"
+            v-model="editedItem.data.parentList"
             :options="parentCategoryList.options"
             label="name"
             multiple
@@ -267,10 +267,9 @@
           >
           <v-select
             id="add-language-to-category"
-            v-model="addedItem.data.language"
+            v-model="editedItem.data.language"
             :options="languageList.options"
             label="name"
-            @search="(search) => get_Filtered_Language_Options_Data(search)"
             :loading="languageList.loading"
           >
             <template v-slot:no-options="{ search, searching }">
@@ -285,7 +284,7 @@
               <input
                 class="form-control vs__search"
                 feedbackInvalid="Lütfen bir kategori adı giriniz"
-                :required="!addedItem.data.language"
+                :required="!editedItem.data.language"
                 v-bind="attributes"
                 v-on="events"
               />
@@ -342,7 +341,7 @@ export default {
       ],
       addedItem: {
         // Real data
-        data: new createCategoryDTO(null, null, []),
+        data: new createCategoryDTO(null, 'TR', []),
       },
       editedItem: {
         // Real data
@@ -362,7 +361,7 @@ export default {
       // Language Selection
       languageList: {
         // The language list inside selection in addCategory
-        options: [],
+        options: ['TR', 'EN'],
         // Language Selection server options for getting options in selection in addCategory
         languageSearcherDefaultServerOptions: {
           page: 1,
@@ -406,6 +405,7 @@ export default {
       getAllLanguages: 'language/getLanguages',
       addCategoryAPI: 'category/addCategory',
       deleteCategoryAPI: 'category/deleteCategory',
+      updateCategoryAPI: 'category/updateCategory',
     }),
     setSelectedCategory(modalname, data) {
       this.selectedCategory = JSON.parse(JSON.stringify(data))
@@ -413,7 +413,6 @@ export default {
         case 'updateCategoryModal':
           {
             this.editedItem.data = JSON.parse(JSON.stringify(data))
-            console.log(JSON.parse(JSON.stringify(this.editedItem.data)))
           }
           break
         default:
@@ -482,7 +481,7 @@ export default {
             this.parentCategoryList.loading = true
             this.languageList.loading = true
             this.get_Filtered_Parent_List_Options_Data()
-            this.get_Filtered_Language_Options_Data()
+            //this.get_Filtered_Language_Options_Data()
             this.parentCategoryList.loading = false
             this.languageList.loading = false
           }
@@ -492,7 +491,7 @@ export default {
             this.parentCategoryList.loading = true
             this.languageList.loading = true
             this.get_Filtered_Parent_List_Options_Data()
-            this.get_Filtered_Language_Options_Data()
+            //this.get_Filtered_Language_Options_Data()
             this.parentCategoryList.loading = false
             this.languageList.loading = false
           }
@@ -539,6 +538,29 @@ export default {
       }
       this.isAbleToPushButton = true
     },
+    async updateCategory(newCategoryData) {
+      this.isAbleToPushButton = false
+      const response = await this.updateCategoryAPI(newCategoryData)
+      if (response === true) {
+        this.createToast(
+          'Role updated successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+        this.getRoles(this.roleTable.serverOptions)
+        this.isAbleToPushButton = true
+        this.openedModals.updateCategoryModal = false
+      } else {
+        this.createToast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+    },
     async deleteCategory(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteCategoryAPI(uuid)
@@ -574,7 +596,7 @@ export default {
       )
       // ITS NEEDED TO BE SETTED LANGUAGE.LANGUAGE HERE !! ******************************************************************PROBLEM********************************************************************
       // cachedData.language = cachedData.language.language
-      cachedData.language = cachedData.language.name
+      //cachedData.language = cachedData.language.name
       return cachedData
     },
     checkValidation(event, modalname, data) {
@@ -592,6 +614,11 @@ export default {
         case 'addCategoryModal':
           {
             this.addCategory(JSON.parse(JSON.stringify(data)))
+          }
+          break
+        case 'updateCategoryModal':
+          {
+            this.updateCategory(JSON.parse(JSON.stringify(data)))
           }
           break
         default:

@@ -99,6 +99,45 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
+    // eslint-disable-next-line
+    async updateCategory(state, newCategoryData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        console.log(newCategoryData)
+        newCategoryData.parentList = !newCategoryData.parentList
+          ? []
+          : newCategoryData.parentList
+        var axios = require('axios')
+        var data = JSON.stringify({
+          language: newCategoryData.language,
+          name: newCategoryData.name,
+          parentList: newCategoryData.parentList,
+        })
+
+        var config = {
+          method: 'put',
+          url: 'category/' + newCategoryData.uuid,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+
+        const response = axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
   },
   getters: {},
 }

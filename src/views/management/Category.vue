@@ -119,13 +119,14 @@
           <CFormLabel for="add-category-parent-category"
             >Üst kategorileri</CFormLabel
           >
-          {{ addedItem.data }}
+          {{ addedItem.data.parentList }}
           <v-select
             id="add-category-parent-category"
             v-model="addedItem.data.parentList"
             :options="parentCategoryList.options"
             label="name"
             multiple
+            :reduce="(option) => option.uuid"
             @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
             :loading="parentCategoryList.loading"
           >
@@ -394,6 +395,7 @@ export default {
       deleteCategoryAPI: 'category/deleteCategory',
       updateCategoryAPI: 'category/updateCategory',
     }),
+    // This two For to filter the selection list by search value
     async get_Filtered_Parent_List_Options_Data(searched) {
       this.parentCategoryList.loading = true
       if (searched) {
@@ -448,6 +450,7 @@ export default {
       }
       this.languageList.loading = false
     },
+    // eslint-disable-next-line
     submitToAPI(event, modalname, data) {
       // Response
       this.isAbleToPushButton = false
@@ -517,8 +520,8 @@ export default {
     },
     async addCategory(data) {
       // Cleaning up data a little bit. Json parse for copying the object without connecting them together
-      let cachedData = this.cleanCategorySelections(data)
-      const response = await this.addCategoryAPI(cachedData)
+      // eslint-disable-next-line
+      const response = await this.addCategoryAPI(data)
       if (response === true) {
         this.createToast(
           'Category added successfully',
@@ -582,19 +585,6 @@ export default {
       }
       this.isAbleToPushButton = true
       this.closeModal('deleteCategoryModal')
-    },
-    // Used in edit and add category to make the data ready to sent to server otherwise it will give error. DTO can be used instead
-    cleanCategorySelections(data) {
-      let cachedData = JSON.parse(JSON.stringify(data))
-      let parentCategoryListUUIDS = cachedData.parentList.map(
-        (parentcategory) => {
-          return parentcategory.uuid
-        },
-      )
-      cachedData.parentList = JSON.parse(
-        JSON.stringify(parentCategoryListUUIDS),
-      )
-      return cachedData
     },
     async getCategories(pageOptions) {
       this.categoryTable.loading = true

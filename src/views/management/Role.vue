@@ -29,7 +29,7 @@
                   color="primary"
                   class="float-end"
                   shape="rounded-pill"
-                  @click="openedModals.addRoleModal = true"
+                  @click="showModal('addRoleModal')"
                   >Ekle
                 </CButton>
               </CCol>
@@ -61,7 +61,7 @@
                         content: 'Düzenle',
                         placement: 'top',
                       }"
-                      @click="setSelectedRole('updateRoleModal', item)"
+                      @click="showModal('updateRoleModal', item)"
                     >
                       <CIcon icon="cil-pencil" />
                     </CButton>
@@ -75,7 +75,7 @@
                         placement: 'top',
                       }"
                       @click="
-                        setSelectedRole('deleteRoleModal', item),
+                        showModal('deleteRoleModal', item),
                           (openedModals.deleteRoleModal = true)
                       "
                     >
@@ -90,11 +90,7 @@
                         content: 'Kullanıcılar',
                         placement: 'top',
                       }"
-                      @click="
-                        () => {
-                          openedModals.showUserModal = true
-                        }
-                      "
+                      @click="showModal('showUserModal')"
                     >
                       <CIcon icon="cil-user" />
                     </CButton>
@@ -107,11 +103,7 @@
                         content: 'Kullanıcı Ekle',
                         placement: 'top',
                       }"
-                      @click="
-                        () => {
-                          openedModals.addUserModal = true
-                        }
-                      "
+                      @click="showModal('addUserModal')"
                     >
                       <CIcon icon="cil-user-plus" />
                     </CButton>
@@ -139,7 +131,7 @@
           class="row g-3"
           @submit.prevent="
             isAbleToPushButton
-              ? checkValidation($event, 'addRoleModal', addedItem)
+              ? submitToAPI($event, 'addRoleModal', addedItem)
               : null
           "
           needs-validation
@@ -212,11 +204,13 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            checkValidation(
-              $event,
-              'updateRoleModal',
-              JSON.parse(JSON.stringify(editedItem)),
-            )
+            isAbleToPushButton
+              ? submitToAPI(
+                  $event,
+                  'updateRoleModal',
+                  JSON.parse(JSON.stringify(editedItem)),
+                )
+              : null
           "
           needs-validation
           novalidate
@@ -259,7 +253,7 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation()"
+          @submit.prevent="submitToAPI()"
           needs-validation
           novalidate
         >
@@ -477,7 +471,7 @@ export default {
       addRoleAPI: 'role/addRole',
       updateRoleAPI: 'role/updateRole',
     }),
-    checkValidation(event, modalname, data) {
+    submitToAPI(event, modalname, data) {
       // Response
       this.isAbleToPushButton = false
       this.validationChecked = true
@@ -591,8 +585,8 @@ export default {
         this.isAbleToPushButton = true
       }
     },
-    setSelectedRole(modalname, data) {
-      this.selectedRole = data
+    showModal(modalname, data) {
+      this.selectedRole = data ? JSON.parse(JSON.stringify(data)) : {}
       switch (modalname) {
         case 'updateRoleModal':
           {

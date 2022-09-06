@@ -41,11 +41,14 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
+    // eslint-disable-next-line
+    async getCategory(state, uuid) {},
     async addCategory(state, categoryData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
         var data = JSON.stringify(categoryData)
+        console.log(data)
         var config = {
           method: 'post',
           url: 'category/',

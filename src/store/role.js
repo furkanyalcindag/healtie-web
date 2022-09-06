@@ -104,8 +104,8 @@ export default {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
         var data = JSON.stringify({
-          language: 'TR',
-          name: 'AAAAAAAAAAAAAAA',
+          language: roleData.language,
+          name: roleData.name,
         })
 
         var config = {
@@ -117,13 +117,16 @@ export default {
           data: data,
         }
 
-        axios(config)
+        const response = axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data))
+            return true
           })
           .catch(function (error) {
             console.log(error)
+            return false
           })
+        return response
       } else {
         // ROLE CHECK IS NEEDED HERE
         router.push({ name: 'Login Admin' })

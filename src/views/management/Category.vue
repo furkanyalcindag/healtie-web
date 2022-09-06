@@ -508,7 +508,7 @@ export default {
             {
               // Restore added item on clicking "No/Deny"
               this.addedItem = {
-                data: new createCategoryDTO(null, null, []),
+                data: new createCategoryDTO(null, 'TR', []),
               }
             }
             break
@@ -543,12 +543,12 @@ export default {
       const response = await this.updateCategoryAPI(newCategoryData)
       if (response === true) {
         this.createToast(
-          'Role updated successfully',
+          'Category updated successfully',
           'success',
           true,
           'text-white align-items-center',
         )
-        this.getRoles(this.roleTable.serverOptions)
+        this.getCategories(this.categoryTable.serverOptions)
         this.isAbleToPushButton = true
         this.openedModals.updateCategoryModal = false
       } else {

@@ -103,10 +103,15 @@ export default {
     async updateCategory(state, newCategoryData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        console.log(newCategoryData)
         newCategoryData.parentList = !newCategoryData.parentList
           ? []
           : newCategoryData.parentList
+        newCategoryData.parentList = newCategoryData.parentList.map(
+          (category) => {
+            return category.uuid
+          },
+        )
+        console.log(newCategoryData)
         var axios = require('axios')
         var data = JSON.stringify({
           language: newCategoryData.language,

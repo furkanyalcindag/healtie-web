@@ -51,7 +51,7 @@ export default {
         console.log(data)
         var config = {
           method: 'post',
-          url: 'category/',
+          url: 'category/user-api',
           headers: {
             'Content-Type': 'application/json',
           },

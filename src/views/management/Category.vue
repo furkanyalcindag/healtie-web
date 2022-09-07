@@ -266,7 +266,7 @@
                 <em>{{ search }}</em
                 >.
               </template>
-              <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              <em v-else style="opacity: 0.5">Bir daha dene.</em>
             </template>
             <template #search="{ attributes, events }">
               <input
@@ -406,6 +406,7 @@ export default {
           }
           break
       }
+      this.isAbleToPushButton = true
     },
     // This two For to filter the selection list by search value
     async get_Filtered_Parent_List_Options_Data(searched) {

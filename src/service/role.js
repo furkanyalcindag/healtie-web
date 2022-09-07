@@ -15,11 +15,12 @@ export default {
           filters: [],
           pageNumber: page.page - 1,
           pageSize: page.rowsPerPage,
+          language: page.language,
         })
 
         var config = {
           method: 'post',
-          url: 'get-all-by-filter',
+          url: 'user-api/role/get-all-by-filter',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -47,7 +48,7 @@ export default {
 
         var config = {
           method: 'delete',
-          url: uuid,
+          url: 'user-api/role/' + uuid,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -76,7 +77,7 @@ export default {
 
         var config = {
           method: 'post',
-          // url: 'https://healtie.herokuapp.com/',
+          url: 'user-api/role/',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -110,7 +111,7 @@ export default {
 
         var config = {
           method: 'put',
-          url: roleData.uuid,
+          url: 'user-api/role/' + roleData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },

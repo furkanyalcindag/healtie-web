@@ -1,19 +1,6 @@
+/* eslint-disable */
 <template>
   <div>
-    <CToaster class="position-fixed top-0 start-50 translate-middle-x">
-      <CToast
-        v-for="(toast, index) in toasts"
-        :key="index"
-        :color="toast.color"
-        :autohide="toast.autohide"
-        :class="toast.classes"
-      >
-        <div class="d-flex">
-          <CToastBody>{{ toast.content }}</CToastBody>
-          <CToastClose class="me-2 m-auto" white />
-        </div>
-      </CToast>
-    </CToaster>
     <CRow>
       <CCol class="justify-content-start">
         <CCard>
@@ -28,7 +15,7 @@
                   color="primary"
                   class="float-end"
                   shape="rounded-pill"
-                  @click="openedModals.addRoleModal = true"
+                  @click="showModal('addRoleModal')"
                   >Ekle
                 </CButton>
               </CCol>
@@ -44,9 +31,9 @@
               :headers="headers"
               :items="items"
               :theme-color="themeColor"
+              buttons-pagination
               :loading="roleTable.loading"
               :rows-items="roleTable.rowsItem"
-              buttons-pagination
             >
               <template #item-operations="item">
                 <div>
@@ -60,7 +47,7 @@
                         content: 'Düzenle',
                         placement: 'top',
                       }"
-                      @click="getClickedItemData('updateRoleModal', item)"
+                      @click="showModal('updateRoleModal', item)"
                     >
                       <CIcon icon="cil-pencil" />
                     </CButton>
@@ -73,7 +60,10 @@
                         content: 'Sil',
                         placement: 'top',
                       }"
-                      @click="setSelectedRole(item)"
+                      @click="
+                        showModal('deleteRoleModal', item),
+                          (openedModals.deleteRoleModal = true)
+                      "
                     >
                       <CIcon icon="cil-trash" />
                     </CButton>
@@ -86,11 +76,7 @@
                         content: 'Kullanıcılar',
                         placement: 'top',
                       }"
-                      @click="
-                        () => {
-                          openedModals.showUserModal = true
-                        }
-                      "
+                      @click="showModal('showUserModal')"
                     >
                       <CIcon icon="cil-user" />
                     </CButton>
@@ -103,11 +89,7 @@
                         content: 'Kullanıcı Ekle',
                         placement: 'top',
                       }"
-                      @click="
-                        () => {
-                          openedModals.addUserModal = true
-                        }
-                      "
+                      @click="showModal('addUserModal')"
                     >
                       <CIcon icon="cil-user-plus" />
                     </CButton>
@@ -133,7 +115,11 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation($event, 'addRoleModal', addedItem)"
+          @submit.prevent="
+            isAbleToPushButton
+              ? submitToAPI($event, 'addRoleModal', addedItem)
+              : null
+          "
           needs-validation
           novalidate
           :validated="validationChecked"
@@ -204,11 +190,13 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            checkValidation(
-              $event,
-              'updateRoleModal',
-              JSON.parse(JSON.stringify(editedItem)),
-            )
+            isAbleToPushButton
+              ? submitToAPI(
+                  $event,
+                  'updateRoleModal',
+                  JSON.parse(JSON.stringify(editedItem)),
+                )
+              : null
           "
           needs-validation
           novalidate
@@ -251,7 +239,7 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation()"
+          @submit.prevent="submitToAPI()"
           needs-validation
           novalidate
         >
@@ -390,6 +378,7 @@
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
 import { mapActions } from 'vuex'
+import Toast from '@/models/create_TOAST_dto'
 
 export default {
   name: 'Colors',
@@ -455,11 +444,6 @@ export default {
     }
   },
   created() {
-    // GET ITEMS
-    // SET EDITED ITEMS
-    let cachedItemData = JSON.parse(JSON.stringify(this.items))
-    this.editedItem = cachedItemData
-
     this.getRoles(this.roleTable.serverOptions)
   },
   watch: {
@@ -474,7 +458,7 @@ export default {
       addRoleAPI: 'role/addRole',
       updateRoleAPI: 'role/updateRole',
     }),
-    checkValidation(event, modalname, data) {
+    submitToAPI(event, modalname, data) {
       // Response
       this.isAbleToPushButton = false
       this.validationChecked = true
@@ -499,6 +483,18 @@ export default {
       }
       this.isAbleToPushButton = true
     },
+    showModal(modalname, data) {
+      this.selectedRole = data ? JSON.parse(JSON.stringify(data)) : {}
+      switch (modalname) {
+        case 'updateRoleModal':
+          {
+            let cachedItemData = JSON.parse(JSON.stringify(data))
+            this.editedItem = cachedItemData
+          }
+          break
+      }
+      this.openedModals[modalname] = true
+    },
     closeModal(modalname, resetData) {
       this.openedModals[modalname] = false
       this.validationChecked = false
@@ -518,15 +514,57 @@ export default {
         }
       }
     },
-    getClickedItemData(modalname, data) {
-      switch (modalname) {
-        case 'updateRoleModal':
-          {
-            let cachedItemData = JSON.parse(JSON.stringify(data))
-            this.editedItem = cachedItemData
-            this.openedModals[modalname] = true
-          }
-          break
+    async getRoles(pageOptions) {
+      this.roleTable.loading = true
+      const response = await this.getAllRoles(pageOptions)
+      this.items = response.data
+      this.roleTable.serverItemsLength = response.totalElements
+      this.roleTable.loading = false
+    },
+    async addRole(data) {
+      this.isAbleToPushButton = false
+      const response = await this.addRoleAPI(data)
+      if (response === true) {
+        this.closeModal('addRoleModal', true)
+        this.getRoles(this.roleTable.serverOptions)
+        new Toast(
+          'New role ' + data.name + ' added successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+      }
+      this.isAbleToPushButton = true
+    },
+    async updateRole(newroleData) {
+      this.isAbleToPushButton = false
+      const response = await this.updateRoleAPI(newroleData)
+      if (response === true) {
+        new Toast(
+          'Role updated successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+        this.getRoles(this.roleTable.serverOptions)
+        this.isAbleToPushButton = true
+        this.closeModal('updateRoleModal')
+        this.editedItem = {}
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
       }
     },
     async deleteRole(uuid) {
@@ -536,7 +574,7 @@ export default {
         this.isAbleToPushButton = true
         this.selectedRole = {}
       } else {
-        this.createToast(
+        new Toast(
           'Something went wrong',
           'danger',
           true,
@@ -544,75 +582,7 @@ export default {
         )
         this.isAbleToPushButton = true
       }
-    },
-    async addRole(data) {
-      this.isAbleToPushButton = false
-      const response = await this.addRoleAPI(data)
-      if (response === true) {
-        this.openedModals.addRoleModal = false
-        this.getRoles(this.roleTable.serverOptions)
-        this.addedItem = { name: null }
-        this.isAbleToPushButton = true
-        this.createToast(
-          'New role ' + data.name + ' added successfully',
-          'success',
-          true,
-          'text-white align-items-center',
-        )
-      } else {
-        this.createToast(
-          'Something went wrong',
-          'danger',
-          true,
-          'text-white align-items-center',
-        )
-        this.isAbleToPushButton = true
-      }
-    },
-    async getRoles(pageOptions) {
-      this.roleTable.loading = true
-      const response = await this.getAllRoles(pageOptions)
-      this.items = response.data
-      this.roleTable.serverItemsLength = response.totalElements
-      this.roleTable.loading = false
-    },
-    // eslint-disable-next-line
-    async updateRole(newroleData) {
-      this.isAbleToPushButton = false
-      const response = await this.updateRoleAPI(newroleData)
-      if (response === true) {
-        this.createToast(
-          'Role updated successfully',
-          'success',
-          true,
-          'text-white align-items-center',
-        )
-        this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
-        this.openedModals.updateRoleModal = false
-        this.editedItem = {}
-      } else {
-        this.createToast(
-          'Something went wrong',
-          'danger',
-          true,
-          'text-white align-items-center',
-        )
-        this.isAbleToPushButton = true
-      }
-    },
-    setSelectedRole(data) {
-      this.openedModals.deleteRoleModal = true
-      this.selectedRole = data
-    },
-    createToast(content, color, isautoHided, classes, delay) {
-      this.toasts.push({
-        content: content,
-        color: color,
-        autohide: isautoHided,
-        classes: classes,
-        delay: delay,
-      })
+      this.closeModal('deleteRoleModal')
     },
   },
 }

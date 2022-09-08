@@ -75,7 +75,7 @@
                 :options="categoryList.options"
                 label="name"
                 multiple
-                :reduce="(option) => option.uuid"
+                :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
                 @search="
                   (search) => get_Filtered_Category_List_Options_Data(search)
                 "
@@ -222,21 +222,26 @@ export default {
       if (searched) {
         let filterBy = [
           {
-            key: 'title',
+            key: 'name',
             operation: ':',
-            type: 'title',
+            type: 'name',
             value: searched,
           },
         ]
-        const response = await this.getAllCategories(
-          this.categoryList.parentListSearcherDefaultServerOptions,
-          filterBy,
-        )
+        let searchedFor = {
+          pageOptions:
+            this.categoryList.parentListSearcherDefaultServerOptions,
+          filter: filterBy,
+        }
+        const response = await this.getAllCategories(searchedFor)
         this.categoryList.options = reduceDataHeaviless(response.data)
       } else {
-        const response = await this.getAllCategories(
-          this.categoryList.parentListSearcherDefaultServerOptions,
-        )
+        let searchedFor = {
+          pageOptions:
+            this.categoryList.parentListSearcherDefaultServerOptions,
+          filter: null,
+        }
+        const response = await this.getAllCategories(searchedFor)
         this.categoryList.options = reduceDataHeaviless(response.data)
       }
       this.categoryList.loading = false
@@ -248,7 +253,7 @@ export default {
       }
     },
     checkDescriptionLength(newvalue) {
-      if (newvalue && newvalue.length > 10) {
+      if (newvalue && newvalue.length > 100) {
         this.addedItem.isDescriptionEnoughToSend = true
         if (this.validationChecked) {
           this.$refs['article-description'].$el.setAttribute(
@@ -294,6 +299,7 @@ export default {
       this.isAbleToPushButton = true
     },
     async addArticle(data) {
+      data.categoryList = await takeCategoryListUUIDS(data.categoryList)
       const response = await this.addArticleAPI(data)
       if (response === true) {
         ;(this.addedItem.data = new createArticleDTO(
@@ -329,6 +335,11 @@ export default {
         )
       }
       this.isAbleToPushButton = true
+      function takeCategoryListUUIDS() {
+        return data.categoryList.map((category) => {
+          return category.uuid
+        })
+      }
     },
     closeModal(index) {
       this.openedModals[index] = false

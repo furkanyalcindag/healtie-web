@@ -6,16 +6,19 @@ export default {
   state: {},
   mutations: {},
   actions: {
-    async getCategories(state, page, filter) {
+    async getCategories(state, pageAndSearchValue) {
       // CHECK IF USER LOGGED IN ALREADY
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        let filterBy = filter ? filter : []
+        let filterBy = pageAndSearchValue.filter
+          ? pageAndSearchValue.filter
+          : []
+
         var data = JSON.stringify({
           filters: filterBy,
-          pageNumber: page.page - 1,
-          pageSize: page.rowsPerPage,
+          pageNumber: pageAndSearchValue.pageOptions.page - 1,
+          pageSize: pageAndSearchValue.pageOptions.rowsPerPage,
         })
 
         var config = {
@@ -105,11 +108,6 @@ export default {
         newCategoryData.parentList = !newCategoryData.parentList
           ? []
           : newCategoryData.parentList
-        newCategoryData.parentList = newCategoryData.parentList.map(
-          (category) => {
-            return category.uuid
-          },
-        )
         var axios = require('axios')
         var data = JSON.stringify({
           language: newCategoryData.language,
@@ -119,7 +117,7 @@ export default {
 
         var config = {
           method: 'put',
-          url: 'category/' + newCategoryData.uuid,
+          url: 'category/user-api/' + newCategoryData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },

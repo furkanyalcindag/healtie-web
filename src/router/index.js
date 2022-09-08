@@ -274,12 +274,12 @@ const routes = [
           {
             path: '/admin/doctor/list',
             name: 'AdminDoctorList',
-            component: () => import('@/views/admin/listDoctor.vue'),
+            component: () => import('@/views/admin/ListDoctor.vue'),
           },
           {
             path: '/admin/article/list',
             name: 'AdminArticleList',
-            component: () => import('@/views/admin/listDoctor.vue'),
+            component: () => import('@/views/admin/ListArticle.vue'),
           },
           {
             path: '/admin/login-admin',

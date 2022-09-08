@@ -253,7 +253,7 @@ export default {
       }
     },
     checkDescriptionLength(newvalue) {
-      if (newvalue && newvalue.length > 100) {
+      if (newvalue && newvalue.length > 20) {
         this.addedItem.isDescriptionEnoughToSend = true
         if (this.validationChecked) {
           this.$refs['article-description'].$el.setAttribute(
@@ -300,6 +300,7 @@ export default {
     },
     async addArticle(data) {
       data.categoryList = await takeCategoryListUUIDS(data.categoryList)
+      console.log(data)
       const response = await this.addArticleAPI(data)
       if (response === true) {
         ;(this.addedItem.data = new createArticleDTO(

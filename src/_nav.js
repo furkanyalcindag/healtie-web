@@ -40,6 +40,11 @@ export default [
         name: 'AdminDoctorList',
         to: '/admin/doctor/list',
       },
+      {
+        component: 'CNavItem',
+        name: 'AdminArticleList',
+        to: '/admin/article/list',
+      },
     ],
   },
   {

@@ -465,7 +465,6 @@ export default {
     },
     async showModal(modalname, data) {
       this.selectedCategory = data ? JSON.parse(JSON.stringify(data)) : {}
-      console.log(data)
       switch (modalname) {
         case 'addCategoryModal':
           {

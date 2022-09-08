@@ -214,6 +214,7 @@ export default {
   methods: {
     ...mapActions({
       getAllCategories: 'category/getCategories',
+      addArticleAPI: 'article/addArticle',
     }),
     // This one for to filter the selection list by search value
     async get_Filtered_Category_List_Options_Data(searched) {
@@ -247,7 +248,7 @@ export default {
       }
     },
     checkDescriptionLength(newvalue) {
-      if (newvalue && newvalue.length > 100) {
+      if (newvalue && newvalue.length > 10) {
         this.addedItem.isDescriptionEnoughToSend = true
         if (this.validationChecked) {
           this.$refs['article-description'].$el.setAttribute(
@@ -271,7 +272,7 @@ export default {
       this.validationChecked = true
       this.checkDescriptionLength(this.addedItem.data.description)
       const form = event.currentTarget
-      if (this.addedItem.isDescriptionEnoughToSend === false){
+      if (this.addedItem.isDescriptionEnoughToSend === false) {
         event.preventDefault()
         event.stopPropagation()
         this.isAbleToPushButton = true
@@ -286,10 +287,46 @@ export default {
       switch (actionname) {
         case 'addArticle':
           {
-            console.log(data)
-            // this.addCategory(JSON.parse(JSON.stringify(data)))
+            this.addArticle(JSON.parse(JSON.stringify(data)))
           }
           break
+      }
+      this.isAbleToPushButton = true
+    },
+    async addArticle(data) {
+      const response = await this.addArticleAPI(data)
+      if (response === true) {
+        ;(this.addedItem.data = new createArticleDTO(
+          '',
+          'TR',
+          '',
+          new Date()
+            .toLocaleDateString('tr-TR', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            })
+            .replaceAll('.', '-')
+            .split('-')
+            .reverse()
+            .join('-'),
+          [],
+          [],
+        )),
+          new Toast(
+            'Category added successfully',
+            'success',
+            true,
+            'text-white align-items-center',
+          )
+          this.validationChecked = false
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
       }
       this.isAbleToPushButton = true
     },

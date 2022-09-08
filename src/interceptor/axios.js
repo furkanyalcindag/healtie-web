@@ -11,7 +11,7 @@ axios.interceptors.request.use(
     //console.log('Adding token to header', request)
     const isLoggedIn = store.getters['auth/checkIfLoggedIn']
     if (isLoggedIn) {
-      request.headers.Authorization = 'Bearer' + localStorage.getItem('token')
+      request.headers.Authorization = 'Bearer ' + localStorage.getItem('token')
     } else {
       router.push({ name: 'Login Admin' })
     }

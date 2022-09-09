@@ -1,6 +1,5 @@
 import router from '@/router'
 import store from '@/store/'
-
 export default {
   namespaced: true,
   state: {},
@@ -17,7 +16,6 @@ export default {
           pageSize: page.rowsPerPage,
           language: page.language,
         })
-
         var config = {
           method: 'post',
           url: 'user-api/role/get-all-by-filter',
@@ -26,7 +24,6 @@ export default {
           },
           data: data,
         }
-
         const response = await axios(config)
           .then(function (response) {
             return response.data
@@ -45,7 +42,6 @@ export default {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-
         var config = {
           method: 'delete',
           url: 'user-api/role/' + uuid,
@@ -53,7 +49,6 @@ export default {
             'Content-Type': 'application/json',
           },
         }
-
         const response = await axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data))
@@ -74,7 +69,6 @@ export default {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
         var data = JSON.stringify(roleData)
-
         var config = {
           method: 'post',
           url: 'user-api/role/',
@@ -83,7 +77,6 @@ export default {
           },
           data: data,
         }
-
         const response = await axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data.name))
@@ -108,7 +101,6 @@ export default {
           language: roleData.language,
           name: roleData.name,
         })
-
         var config = {
           method: 'put',
           url: 'user-api/role/' + roleData.uuid,
@@ -117,7 +109,6 @@ export default {
           },
           data: data,
         }
-
         const response = axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data))

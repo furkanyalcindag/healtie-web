@@ -3,7 +3,10 @@ import auth from '@/service/auth'
 import role from '@/service/role'
 import category from '@/service/category'
 import language from '@/service/language'
+
 import article from '@/service/article'
+import user from '@/service/user'
+
 
 export default createStore({
   state: {
@@ -42,5 +45,7 @@ export default createStore({
     category,
     language,
     article,
+    user,
+
   },
 })

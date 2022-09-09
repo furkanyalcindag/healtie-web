@@ -76,7 +76,7 @@
                         content: 'Kullanıcılar',
                         placement: 'top',
                       }"
-                      @click="showModal('showUserModal')"
+                      @click="showModal('showUserModal', item)"
                     >
                       <CIcon icon="cil-user" />
                     </CButton>
@@ -89,7 +89,7 @@
                         content: 'Kullanıcı Ekle',
                         placement: 'top',
                       }"
-                      @click="showModal('addUserModal')"
+                      @click="showModal('addUserModal', item)"
                     >
                       <CIcon icon="cil-user-plus" />
                     </CButton>
@@ -230,7 +230,6 @@
       size="lg"
       :visible="openedModals.addUserModal"
       @close="closeModal('addUserModal')"
-      :no-close-on-backdrop="true"
       backdrop="static"
     >
       <CModalHeader>
@@ -239,15 +238,30 @@
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="submitToAPI()"
+          @submit.prevent="
+            isAbleToPushButton
+              ? submitToAPI($event, 'addUserModal', addedItem)
+              : null
+          "
           needs-validation
           novalidate
+          :validated="validationChecked"
         >
+          <CCol md="6">
+            <CFormLabel for="add-user-userName">Kullanıcı İsmi</CFormLabel>
+            <CFormInput
+              id="add-user-userName"
+              required
+              v-model="addedItem.userName"
+              feedbackInvalid="Lütfen bir kullanıcı ismi giriniz"
+            />
+          </CCol>
           <CCol md="6">
             <CFormLabel for="add-user-firstName">İsim</CFormLabel>
             <CFormInput
               id="add-user-firstname"
               required
+              v-model="addedItem.firstName"
               feedbackInvalid="Lütfen bir isim giriniz"
             />
           </CCol>
@@ -256,6 +270,7 @@
             <CFormInput
               id="add-user-lastName"
               required
+              v-model="addedItem.lastName"
               feedbackInvalid="Lütfen bir soyisim giriniz"
             />
           </CCol>
@@ -264,15 +279,8 @@
             <CFormInput
               id="add-user-email"
               required
+              v-model="addedItem.email"
               feedbackInvalid="Lütfen bir Email adresi giriniz"
-            />
-          </CCol>
-          <CCol md="6">
-            <CFormLabel for="add-user-role">Rol</CFormLabel>
-            <CFormInput
-              id="add-user-role"
-              required
-              feedbackInvalid="Lütfen bir rol adı giriniz"
             />
           </CCol>
           <CCol md="6">
@@ -280,15 +288,45 @@
             <CFormInput
               id="add-user-password"
               required
+              v-model="addedItem.password"
               feedbackInvalid="Lütfen bir şifre giriniz"
             />
           </CCol>
+          <CCol md="6">
+            <CFormLabel for="add-user-ageRangeEnum">Yaş Aralığı</CFormLabel>
+            <CFormSelect
+              id="add-user-age"
+              required
+              v-model="addedItem.ageRangeEnum"
+              feedbackInvalid="Lütfen yaş aralığı seçiniz"
+            >
+              <option selected="" disabled="" value="">Seçiniz...</option>
+              <option value="_UNSPECIFIED">Belirtmek İstemiyorum</option>
+            </CFormSelect>
+          </CCol>
+
+          <CCol md="6">
+            <CFormLabel for="add-user-genderEnum">Cinsiyet</CFormLabel>
+            <CFormSelect
+              id="add-user-genderEnum"
+              required
+              v-model="addedItem.genderEnum"
+              feedbackInvalid="Lütfen Cinsiyet seçiniz"
+            >
+              <option selected="" disabled="" value="">Seçiniz...</option>
+              <option value="FEMALE">Kadın</option>
+            </CFormSelect>
+          </CCol>
 
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal('addUserModal')"
+            <CButton color="secondary" @click="closeModal('addUserModal', true)"
               >İptal</CButton
             >
-            <CButton color="success" type="submit">Kaydet</CButton>
+            <CButton
+              color="success"
+              :type="isAbleToPushButton ? 'submit' : null"
+              >Kaydet</CButton
+            >
           </CModalFooter>
         </CForm>
       </CModalBody>
@@ -309,13 +347,16 @@
             class="m-4"
             show-index
             v-model:itemsSelected="itemsSelected"
+            v-model:server-options="userTable.serverOptions"
+            :server-items-length="userTable.serverItemsLength"
             :headers="headers2"
-            :items="items2"
+            :items="items"
             :theme-color="themeColor"
             buttons-pagination
-            :rows-per-page="rowsPerPage"
+            :loading="userTable.loading"
+            :rows-items="userTable.rowsItem"
           >
-            <template #item-operations>
+            <template #item-operations="item">
               <div>
                 <CButtonGroup role="group" size="sm">
                   <CButton
@@ -327,11 +368,7 @@
                       content: 'Sil',
                       placement: 'top',
                     }"
-                    @click="
-                      () => {
-                        openedModals.deleteUserModal = true
-                      }
-                    "
+                    @click="showModal('deleteUserModal', item)"
                   >
                     <CIcon icon="cil-trash" />
                   </CButton>
@@ -365,10 +402,16 @@
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton color="secondary" @click="closeModal('deleteUserModal')"
+          <CButton
+            color="secondary"
+            @click="closeModal('deleteUserModal', true)"
             >İptal</CButton
           >
-          <CButton color="danger" type="submit">SİL</CButton>
+          <CButton
+            color="danger"
+            @click="isAbleToPushButton ? deleteUser(selectedUser.uuid) : null"
+            >SİL</CButton
+          >
         </CModalFooter>
       </CModalBody>
     </CModal>
@@ -406,18 +449,7 @@ export default {
         { text: 'Email', value: 'email', sortable: true },
         { text: 'İşlemler', value: 'operations' },
       ],
-      items2: [
-        {
-          firstName: 'ALi',
-          lastName: 'Akkuş',
-          email: 'ali@gmail.com',
-        },
-        {
-          firstName: 'ALi',
-          lastName: 'Akkuş',
-          email: 'ali@gmail.com',
-        },
-      ],
+      items2: [],
 
       themeColor: '#321fdb',
       itemsSelected: [],
@@ -440,8 +472,19 @@ export default {
         rowsItem: [10, 20, 50],
         loading: true,
       },
+      userTable: {
+        serverItemsLength: 0,
+        serverOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        rowsItem: [10, 20, 50],
+        loading: true,
+      },
       isAbleToPushButton: true,
       toasts: [],
+      selectedUser: {},
+      selectedRole: {},
     }
   },
   created() {
@@ -451,6 +494,9 @@ export default {
     'roleTable.serverOptions'(newvalue) {
       this.getRoles(newvalue)
     },
+    'userTable.serverOptions'(newvalue) {
+      this.getUser(newvalue)
+    },
   },
   methods: {
     ...mapActions({
@@ -458,6 +504,9 @@ export default {
       deleteRoleAPI: 'role/deleteRole',
       addRoleAPI: 'role/addRole',
       updateRoleAPI: 'role/updateRole',
+      addUserAPI: 'user/addUserByRole',
+      showUserByAPI: 'user/getUserByRole',
+      deleteUserAPI: 'user/deleteUser',
     }),
     submitToAPI(event, modalname, data) {
       // Response
@@ -481,6 +530,11 @@ export default {
             this.updateRole(data)
           }
           break
+        case 'addUserModal':
+          {
+            this.addUser(data)
+          }
+          break
       }
       this.isAbleToPushButton = true
     },
@@ -493,6 +547,20 @@ export default {
             this.editedItem = cachedItemData
           }
           break
+        case 'addUserModal':
+          {
+            let cachedItemData = JSON.parse(JSON.stringify(data))
+            this.addedItem = cachedItemData
+          }
+          break
+        case 'showUserModal':
+          {
+            this.getUser(this.userTable.serverOptions, data)
+          }
+          break
+        case 'deleteUserModal': {
+          this.selectedUser = data
+        }
       }
       this.openedModals[modalname] = true
     },
@@ -507,9 +575,23 @@ export default {
               this.addedItem = cachedAddedItemData
             }
             break
-          case 'deleteRoleModal':
+          case 'addUserModal':
             {
-              this.selectedRole = {}
+              let cachedAddedItemData = {
+                username: null,
+                firstName: null,
+                lastName: null,
+                email: null,
+                password: null,
+                ageRangeEnum: null,
+                genderEnum: null,
+              }
+              this.addedItem = cachedAddedItemData
+            }
+            break
+          case 'deleteUserModal':
+            {
+              this.selectedUser = {}
             }
             break
         }
@@ -521,6 +603,14 @@ export default {
       this.items = response.data
       this.roleTable.serverItemsLength = response.totalElements
       this.roleTable.loading = false
+    },
+    async getUser(pageOptions, data) {
+      this.userTable.loading = true
+      let pageAndData = { pageOptions: pageOptions, roleData: data }
+      const response = await this.showUserByAPI(pageAndData)
+      this.items = response.data
+      this.userTable.serverItemsLength = response.totalElements
+      this.userTable.loading = false
     },
     async addRole(data) {
       this.isAbleToPushButton = false
@@ -584,6 +674,57 @@ export default {
         this.isAbleToPushButton = true
       }
       this.closeModal('deleteRoleModal')
+    },
+    async addUser(data) {
+      this.isAbleToPushButton = false
+      const response = await this.addUserAPI(data)
+      if (response === true) {
+        this.closeModal('addUserModal', true)
+
+        this.getUser(this.userTable.serverOptions)
+        new Toast(
+          'New role ' + data.name + ' added successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+      }
+      this.isAbleToPushButton = true
+    },
+    async deleteUser(uuid) {
+      this.isAbleToPushButton = false
+      console.log(uuid)
+      const response = await this.deleteUserAPI(uuid)
+      if (response === true) {
+        this.isAbleToPushButton = true
+        this.selectedUser = {}
+        new Toast('Silindi', 'success', true, 'text-white align-items-center')
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+      this.closeModal('deleteUserModal')
+    },
+    createToast(content, color, isautoHided, classes, delay) {
+      this.toasts.push({
+        content: content,
+        color: color,
+        autohide: isautoHided,
+        classes: classes,
+        delay: delay,
+      })
     },
   },
 }

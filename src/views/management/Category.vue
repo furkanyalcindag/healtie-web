@@ -107,14 +107,16 @@
           <CFormLabel for="add-category-parent-category"
             >Üst kategorileri</CFormLabel
           >
+          {{ addedItem.data.parentList }}
           <v-select
             id="add-category-parent-category"
             v-model="addedItem.data.parentList"
             :options="parentCategoryList.options"
             label="name"
             multiple
-            :reduce="(option) => option.uuid"
+            :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
             @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
+            :closeOnSelect="true"
             :loading="parentCategoryList.loading"
           >
             <template v-slot:no-options="{ search, searching }">
@@ -228,15 +230,17 @@
             />
           </CCol>
           <!-- For category parent list multiple selection -->
-          <CFormLabel for="add-category-parent-category"
+          <CFormLabel for="edit-category-parent-category"
             >Üst kategorileri</CFormLabel
           >
+          {{ editedItem.data.parentList }}
           <v-select
-            id="add-category-parent-category"
+            id="edit-category-parent-category"
             v-model="editedItem.data.parentList"
             :options="parentCategoryList.options"
             label="name"
             multiple
+            :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
             @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
             :loading="parentCategoryList.loading"
           >
@@ -266,7 +270,7 @@
                 <em>{{ search }}</em
                 >.
               </template>
-              <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              <em v-else style="opacity: 0.5">Bir daha dene.</em>
             </template>
             <template #search="{ attributes, events }">
               <input
@@ -406,28 +410,35 @@ export default {
           }
           break
       }
+      this.isAbleToPushButton = true
     },
     // This two For to filter the selection list by search value
     async get_Filtered_Parent_List_Options_Data(searched) {
       this.parentCategoryList.loading = true
+      // Filtered version(if) and unfiltered version(else)
       if (searched) {
         let filterBy = [
           {
-            key: 'title',
+            key: 'name',
             operation: ':',
-            type: 'title',
+            type: 'name',
             value: searched,
           },
         ]
-        const response = await this.getAllCategories(
-          this.parentCategoryList.parentListSearcherDefaultServerOptions,
-          filterBy,
-        )
+        let searchedFor = {
+          pageOptions:
+            this.parentCategoryList.parentListSearcherDefaultServerOptions,
+          filter: filterBy,
+        }
+        const response = await this.getAllCategories(searchedFor)
         this.parentCategoryList.options = reduceDataHeaviless(response.data)
       } else {
-        const response = await this.getAllCategories(
-          this.parentCategoryList.parentListSearcherDefaultServerOptions,
-        )
+        let searchedFor = {
+          pageOptions:
+            this.parentCategoryList.parentListSearcherDefaultServerOptions,
+          filter: null,
+        }
+        const response = await this.getAllCategories(searchedFor)
         this.parentCategoryList.options = reduceDataHeaviless(response.data)
       }
       this.parentCategoryList.loading = false
@@ -464,7 +475,6 @@ export default {
     },
     async showModal(modalname, data) {
       this.selectedCategory = data ? JSON.parse(JSON.stringify(data)) : {}
-      console.log(data)
       switch (modalname) {
         case 'addCategoryModal':
           {
@@ -479,6 +489,12 @@ export default {
         case 'updateCategoryModal':
           {
             this.editedItem.data = JSON.parse(JSON.stringify(data))
+            // Filter parentlist by uuid and name only.
+            this.editedItem.data.parentList =
+              this.editedItem.data.parentList.map((option) => ({
+                uuid: option.uuid,
+                name: option.name,
+              }))
             this.parentCategoryList.loading = true
             this.languageList.loading = true
             this.get_Filtered_Parent_List_Options_Data()
@@ -508,12 +524,17 @@ export default {
     },
     async getCategories(pageOptions) {
       this.categoryTable.loading = true
-      const response = await this.getAllCategories(pageOptions)
+      const response = await this.getAllCategories({
+        pageOptions: pageOptions,
+        filter: null,
+      })
       this.items = response.data
       this.categoryTable.serverItemsLength = response.totalElements
       this.categoryTable.loading = false
     },
     async addCategory(data) {
+      this.isAbleToPushButton = false
+      data.parentList = await takeParentListUUIDS()
       const response = await this.addCategoryAPI(data)
       if (response === true) {
         new Toast(
@@ -533,9 +554,15 @@ export default {
         )
       }
       this.isAbleToPushButton = true
+      function takeParentListUUIDS() {
+        return data.parentList.map((parentCategory) => {
+          return parentCategory.uuid
+        })
+      }
     },
     async updateCategory(newCategoryData) {
       this.isAbleToPushButton = false
+      newCategoryData.parentList = await takeParentListUUIDS()
       const response = await this.updateCategoryAPI(newCategoryData)
       if (response === true) {
         new Toast(
@@ -555,6 +582,11 @@ export default {
           'text-white align-items-center',
         )
         this.isAbleToPushButton = true
+      }
+      function takeParentListUUIDS() {
+        return newCategoryData.parentList.map((parentCategory) => {
+          return parentCategory.uuid
+        })
       }
     },
     async deleteCategory(uuid) {

@@ -1,3 +1,4 @@
+/* eslint-disable */
 <template>
   <CRow>
     <CCol class="justify-content-start">
@@ -6,14 +7,14 @@
           <!-- <CIcon icon="cil-user" /> -->
           <CRow>
             <CCol lg="3" class="text-left mt-3">
-              <h2>Kategori Listesi</h2>
+              <h2>Makale Listesi</h2>
             </CCol>
             <CCol lg="9" class="text-right mt-3">
               <CButton
                 color="primary"
                 class="float-end"
                 shape="rounded-pill"
-                @click="showModal('addArticleModal')"
+                @click="doAction('goSpecifiedPage', 'Article Doctor')"
                 >Ekle</CButton
               >
             </CCol>
@@ -33,6 +34,62 @@
             :loading="articleTable.loading"
             :rows-items="articleTable.rowsItem"
           >
+            <template #item-title="{ title }">
+              <div class="position-relative d-inline-block">
+                <CTooltip :content="title" placement="top">
+                  <template #toggler="{ on }">
+                    <div
+                      v-on="on"
+                      style="max-width: 200px"
+                      class="d-inline-block text-truncate"
+                    >
+                      {{ title }}
+                    </div>
+                  </template>
+                </CTooltip>
+              </div>
+            </template>
+            <template #item-statictics="{ likeCount, saveCount, commentCount }">
+              <div class="position-relative d-inline-block">
+                <CTooltip :content="String(likeCount)" placement="top">
+                  <template #toggler="{ on }">
+                    <CIcon
+                      icon="cil-heart"
+                      size="xxl"
+                      class="text-danger"
+                      v-on="on"
+                      style="cursor: pointer"
+                    />
+                  </template>
+                </CTooltip>
+              </div>
+              <div class="position-relative d-inline-block">
+                <CTooltip :content="String(saveCount)" placement="top">
+                  <template #toggler="{ on }">
+                    <CIcon
+                      icon="cil-bookmark"
+                      size="xxl"
+                      class="text-info"
+                      v-on="on"
+                      style="cursor: pointer"
+                    />
+                  </template>
+                </CTooltip>
+              </div>
+              <div class="position-relative d-inline-block">
+                <CTooltip :content="String(commentCount)" placement="top">
+                  <template #toggler="{ on }">
+                    <CIcon
+                      icon="cil-speech"
+                      size="xxl"
+                      class="text-dark"
+                      v-on="on"
+                      style="cursor: pointer"
+                    />
+                  </template>
+                </CTooltip>
+              </div>
+            </template>
             <template #item-operations="item">
               <div>
                 <CButtonGroup role="group" size="sm">
@@ -69,110 +126,6 @@
         </CCardBody>
       </CCard>
     </CCol>
-    <!-- Add category -->
-    <CModal
-      backdrop="static"
-      size="lg"
-      :visible="openedModals.addArticleModal"
-      @close="closeModal('addArticleModal')"
-    >
-      <CModalHeader>
-        <CModalTitle>Kategori Ekle</CModalTitle>
-      </CModalHeader>
-      <CModalBody>
-        <CForm
-          class="row g-3"
-          @submit.prevent="
-            isAbleToPushButton
-              ? submitToAPI($event, 'addArticleModal', addedItem.data)
-              : null
-          "
-          needs-validation
-          novalidate
-          :validated="validationChecked"
-        >
-          <CCol md="6">
-            <CFormLabel for="add-category-name"
-              >Kategori Adı<span class="text-danger">*</span></CFormLabel
-            >
-            <CFormInput
-              id="add-category-name"
-              required
-              feedbackInvalid="Lütfen bir kategori adı giriniz"
-              v-model="addedItem.data.name"
-              autocomplete="off"
-            />
-          </CCol>
-          <!-- For category parent list multiple selection -->
-          <CFormLabel for="add-category-parent-category"
-            >Üst kategorileri</CFormLabel
-          >
-          {{ addedItem.data.parentList }}
-          <v-select
-            id="add-category-parent-category"
-            v-model="addedItem.data.parentList"
-            :options="parentCategoryList.options"
-            label="name"
-            multiple
-            :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
-            @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
-            :closeOnSelect="true"
-            :loading="parentCategoryList.loading"
-          >
-            <template v-slot:no-options="{ search, searching }">
-              <template v-if="searching">
-                Sonuç bulunamadı:
-                <em>{{ search }}</em
-                >.
-              </template>
-              <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
-            </template>
-          </v-select>
-          <!-- For language selection -->
-          <CFormLabel for="add-language-to-category"
-            >Kategori Dili<span class="text-danger">*</span></CFormLabel
-          >
-          <v-select
-            id="add-language-to-category"
-            v-model="addedItem.data.language"
-            :options="languageList.options"
-            label="name"
-          >
-            <template v-slot:no-options="{ search, searching }">
-              <template v-if="searching">
-                Sonuç bulunamadı:
-                <em>{{ search }}</em
-                >.
-              </template>
-              <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
-            </template>
-            <template #search="{ attributes, events }">
-              <input
-                class="form-control vs__search"
-                feedbackInvalid="Lütfen bir kategori adı giriniz"
-                :required="!addedItem.data.language"
-                v-bind="attributes"
-                v-on="events"
-              />
-            </template>
-          </v-select>
-
-          <CModalFooter class="pe-0">
-            <CButton
-              color="secondary"
-              @click="closeModal('addArticleModal', true)"
-              >İptal</CButton
-            >
-            <CButton
-              color="success"
-              :type="isAbleToPushButton ? 'submit' : null"
-            >
-              Ekle</CButton
-            >
-          </CModalFooter>
-        </CForm>
-      </CModalBody>
-    </CModal>
     <!-- Delete category -->
     <CModal
       size="lg"
@@ -194,7 +147,7 @@
           <CButton
             color="danger"
             @click="
-              isAbleToPushButton ? deleteCategory(selectedCategory.uuid) : null
+              isAbleToPushButton ? deleteArticle(selectedArticle.uuid) : null
             "
             >SİL</CButton
           >
@@ -220,29 +173,62 @@
           novalidate
           :validated="validationChecked"
         >
-          <CCol md="6">
-            <CFormLabel for="update-category-name">Kategori Adı</CFormLabel>
+          <CCol md="12">
+            <CFormLabel for="update-article-title">Makale Başlığı</CFormLabel>
             <CFormInput
-              id="update-category-name"
+              id="update-article-title"
               required
-              feedbackInvalid="Lütfen bir kategori adı giriniz"
-              v-model="editedItem.data.name"
+              feedbackInvalid="Lütfen bir makale adı giriniz"
+              v-model="editedItem.data.title"
+            />
+          </CCol>
+          <!-- Article tags -->
+          <CCol md="6">
+            <CFormLabel for="add-article-tags">Etiketler</CFormLabel>
+            <v-select
+              id="add-article-tags"
+              v-model="editedItem.data.tags"
+              :options="tagList.options"
+              multiple
+              label="name"
+              :loading="tagList.loading"
+            >
+              <template v-slot:no-options="{ search, searching }">
+                <template v-if="searching">
+                  Sonuç bulunamadı:
+                  <em>{{ search }}</em
+                  >.
+                </template>
+                <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              </template>
+            </v-select>
+          </CCol>
+          <!-- Article published Date -->
+          <CCol md="6">
+            <CFormLabel for="edit-article-publishedDate"
+              >Yayımlanma Tarihi</CFormLabel
+            >
+            <CFormInput
+              id="edit-article-publishedDate"
+              required
+              type="date"
+              feedbackInvalid="Lütfen bir tarih giriniz"
+              v-model="editedItem.data.publishedDate"
             />
           </CCol>
           <!-- For category parent list multiple selection -->
           <CFormLabel for="edit-category-parent-category"
-            >Üst kategorileri</CFormLabel
+            >Makale Kategorisi</CFormLabel
           >
-          {{ editedItem.data.parentList }}
           <v-select
             id="edit-category-parent-category"
-            v-model="editedItem.data.parentList"
-            :options="parentCategoryList.options"
+            v-model="editedItem.data.categoryListForArticle"
+            :options="categoryList.options"
             label="name"
             multiple
             :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
             @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
-            :loading="parentCategoryList.loading"
+            :loading="categoryList.loading"
           >
             <template v-slot:no-options="{ search, searching }">
               <template v-if="searching">
@@ -250,13 +236,20 @@
                 <em>{{ search }}</em
                 >.
               </template>
-              <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              <em v-else style="opacity: 0.5">Bir daha dene.</em>
+            </template>
+            <template #search="{ attributes, events }">
+              <input
+                class="form-control vs__search"
+                feedbackInvalid="Lütfen bir kategori adı giriniz"
+                :required="!(editedItem.data.categoryListForArticle.length > 0)"
+                v-bind="attributes"
+                v-on="events"
+              />
             </template>
           </v-select>
           <!-- For language selection -->
-          <CFormLabel for="add-language-to-category"
-            >Üst kategorileri</CFormLabel
-          >
+          <CFormLabel for="add-language-to-category">Dil seçimi</CFormLabel>
           <v-select
             id="add-language-to-category"
             v-model="editedItem.data.language"
@@ -282,6 +275,21 @@
               />
             </template>
           </v-select>
+          <!-- Article Description -->
+          <CCol md="12">
+            <CFormLabel for="add-article-content" class="m-2"
+              >Makale İçeriği</CFormLabel
+            >
+            <light-editor
+              v-model="editedItem.data.description"
+              ref="article-description"
+            />
+            <div
+              class="prose lg:prose-xl"
+              v-html="editedItem.data.description"
+              required
+            ></div>
+          </CCol>
           <CModalFooter class="pe-0">
             <CButton color="secondary" @click="closeModal('updateArticleModal')"
               >Kapat</CButton
@@ -301,8 +309,9 @@
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
 import { mapActions } from 'vuex'
-import createCategoryDTO from '@/models/create_CATEGORY_dto'
+import createArticleDTO from '@/models/create_ARTICLE_dto'
 import Toast from '@/models/create_TOAST_dto'
+import router from '@/router'
 export default {
   name: 'Colors',
   components: {
@@ -312,21 +321,82 @@ export default {
     return {
       avatar: avatar,
       headers: [
-        { text: 'Kategori Adı', value: 'name', sortable: true },
-        { text: 'Toplam Makale Sayısı', value: 'articleCount' },
+        { text: 'Başlık', value: 'title', sortable: true },
+        { text: 'Yazar', value: 'author', sortable: true },
+        { text: 'Yayınlanma Tarihi', value: 'publishedDate', sortable: true },
+        { text: 'İstatistikler', value: 'statictics', sortable: true },
         { text: 'İşlemler', value: 'operations' },
       ],
-      items: [],
+      items: [
+        {
+          title: 'BAŞLIK',
+          author: 'YAZAR',
+          publishedDate: '2022-09-12',
+          likeCount: 100,
+          saveCount: 50,
+          commentCount: 32,
+        },
+        {
+          title:
+            'UZUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUN BAŞLIK2',
+          author: 'YAZAR2',
+          publishedDate: '2022-10-01',
+          likeCount: 2,
+          saveCount: 0,
+          commentCount: 0,
+        },
+        {
+          title: 'BAŞLIK3',
+          author: 'YAZAR',
+          publishedDate: '2022-09-12',
+          likeCount: 100,
+          saveCount: 50,
+          commentCount: 32,
+        },
+      ],
       addedItem: {
         // Real data
-        data: new createCategoryDTO(null, 'TR', []),
+        data: new createArticleDTO(
+          null,
+          'TR',
+          null,
+          new Date()
+            .toLocaleDateString('tr-TR', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            })
+            .replaceAll('.', '-')
+            .split('-')
+            .reverse()
+            .join('-'),
+          null,
+          [],
+        ),
       },
       editedItem: {
         // Real data
-        data: new createCategoryDTO(null, null, []),
+        data: new createArticleDTO(
+          null,
+          'TR',
+          null,
+          new Date()
+            .toLocaleDateString('tr-TR', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            })
+            .replaceAll('.', '-')
+            .split('-')
+            .reverse()
+            .join('-'),
+          null,
+          [],
+        ),
+        isDescriptionEnoughToSend: false,
       },
       // Category Selection
-      parentCategoryList: {
+      categoryList: {
         // The parent category list inside selection in addCategory
         options: [],
         // Parent category Selection server options for getting options in selection in addArticleModal
@@ -347,6 +417,16 @@ export default {
         },
         loading: true,
       },
+      // Tag selection
+      tagList: {
+        options: [
+          { name: 'Depresyon', language: 'TR' },
+          { name: 'Hayvan', language: 'TR' },
+          { name: 'Çocuk', language: 'TR' },
+          { name: 'Tatlılar', language: 'TR' },
+          { name: 'Obezler', language: 'TR' },
+        ],
+      },
       themeColor: '#321fdb',
       itemsSelected: [],
       openedModals: {
@@ -361,36 +441,46 @@ export default {
           rowsPerPage: 10,
         },
         rowsItem: [10, 20, 50],
-        loading: true,
+        loading: false,
       },
       validationChecked: false,
       isAbleToPushButton: true,
       toasts: [],
-      selectedCategory: {},
+      selectedArticle: {},
     }
   },
   watch: {
     'articleTable.serverOptions'(newvalue) {
-      this.getCategories(newvalue)
+      this.getArticles(newvalue)
+    },
+    'editedItem.data.description'(newvalue) {
+      this.checkDescriptionLength(newvalue)
     },
   },
   created() {
-    this.getCategories(this.articleTable.serverOptions)
+    this.getArticles(this.articleTable.serverOptions)
   },
   methods: {
     ...mapActions({
       getAllCategories: 'category/getCategories',
+      getAllArticles: 'article/getArticles',
       getAllLanguages: 'language/getLanguages',
       addCategoryAPI: 'category/addCategory',
-      deleteCategoryAPI: 'category/deleteCategory',
-      updateCategoryAPI: 'category/updateCategory',
-      getAllArticles: 'article/getArticles',
+      deleteArticleAPI: 'article/deleteArticle',
+      updateArticleAPI: 'article/updateArticle',
     }),
     submitToAPI(event, modalname, data) {
       // Response
       this.isAbleToPushButton = false
       this.validationChecked = true
+      this.checkDescriptionLength(this.editedItem.data.description)
       const form = event.currentTarget
+      if (this.editedItem.isDescriptionEnoughToSend === false) {
+        event.preventDefault()
+        event.stopPropagation()
+        this.isAbleToPushButton = true
+        return
+      }
       if (form.checkValidity() === false) {
         event.preventDefault()
         event.stopPropagation()
@@ -405,7 +495,7 @@ export default {
           break
         case 'updateArticleModal':
           {
-            this.updateCategory(JSON.parse(JSON.stringify(data)))
+            this.updateArticle(JSON.parse(JSON.stringify(data)))
           }
           break
       }
@@ -413,7 +503,7 @@ export default {
     },
     // This two For to filter the selection list by search value
     async get_Filtered_Parent_List_Options_Data(searched) {
-      this.parentCategoryList.loading = true
+      this.categoryList.loading = true
       // Filtered version(if) and unfiltered version(else)
       if (searched) {
         let filterBy = [
@@ -425,22 +515,20 @@ export default {
           },
         ]
         let searchedFor = {
-          pageOptions:
-            this.parentCategoryList.parentListSearcherDefaultServerOptions,
+          pageOptions: this.categoryList.parentListSearcherDefaultServerOptions,
           filter: filterBy,
         }
         const response = await this.getAllCategories(searchedFor)
-        this.parentCategoryList.options = reduceDataHeaviless(response.data)
+        this.categoryList.options = reduceDataHeaviless(response.data)
       } else {
         let searchedFor = {
-          pageOptions:
-            this.parentCategoryList.parentListSearcherDefaultServerOptions,
+          pageOptions: this.categoryList.parentListSearcherDefaultServerOptions,
           filter: null,
         }
         const response = await this.getAllCategories(searchedFor)
-        this.parentCategoryList.options = reduceDataHeaviless(response.data)
+        this.categoryList.options = reduceDataHeaviless(response.data)
       }
-      this.parentCategoryList.loading = false
+      this.categoryList.loading = false
       function reduceDataHeaviless(data) {
         // Reducing if the data is too heavy to handle
         return data.map((category) => {
@@ -472,33 +560,26 @@ export default {
       }
       this.languageList.loading = false
     },
-    async showModal(modalname, data) {
-      this.selectedCategory = data ? JSON.parse(JSON.stringify(data)) : {}
-      switch (modalname) {
-        case 'addArticleModal':
+    async doAction(actionName, data) {
+      switch (actionName) {
+        case 'goSpecifiedPage':
           {
-            this.parentCategoryList.loading = true
-            this.languageList.loading = true
-            this.get_Filtered_Parent_List_Options_Data()
-            //this.get_Filtered_Language_Options_Data()
-            this.parentCategoryList.loading = false
-            this.languageList.loading = false
+            router.push({ name: data })
           }
           break
+      }
+    },
+    async showModal(modalname, data) {
+      this.selectedArticle = data ? JSON.parse(JSON.stringify(data)) : {}
+      switch (modalname) {
         case 'updateArticleModal':
           {
             this.editedItem.data = JSON.parse(JSON.stringify(data))
-            // Filter parentlist by uuid and name only.
-            this.editedItem.data.parentList =
-              this.editedItem.data.parentList.map((option) => ({
-                uuid: option.uuid,
-                name: option.name,
-              }))
-            this.parentCategoryList.loading = true
+            this.categoryList.loading = true
             this.languageList.loading = true
             this.get_Filtered_Parent_List_Options_Data()
             //this.get_Filtered_Language_Options_Data()
-            this.parentCategoryList.loading = false
+            this.categoryList.loading = false
             this.languageList.loading = false
           }
           break
@@ -514,16 +595,52 @@ export default {
             {
               // Restore added item on clicking "No/Deny"
               this.addedItem = {
-                data: new createCategoryDTO(null, 'TR', []),
+                data: new createArticleDTO(
+                  null,
+                  'TR',
+                  null,
+                  new Date()
+                    .toLocaleDateString('tr-TR', {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                    })
+                    .replaceAll('.', '-')
+                    .split('-')
+                    .reverse()
+                    .join('-'),
+                  null,
+                  [],
+                ),
               }
             }
             break
         }
       }
     },
-    async getCategories(pageOptions) {
+    checkDescriptionLength(newvalue) {
+      if (newvalue && newvalue.length > 20) {
+        this.editedItem.isDescriptionEnoughToSend = true
+        if (this.validationChecked) {
+          this.$refs['article-description'].$el.setAttribute(
+            'style',
+            'border-color: green;',
+          )
+        }
+      } else {
+        this.editedItem.isDescriptionEnoughToSend = false
+        if (this.validationChecked) {
+          this.$refs['article-description'].$el.setAttribute(
+            'style',
+            'border-color: red;',
+          )
+        }
+      }
+    },
+    // eslint-disable-next-line
+    async getArticles(pageOptions) {
       this.articleTable.loading = true
-      const response = await this.getAllCategories({
+      const response = await this.getAllArticles({
         pageOptions: pageOptions,
         filter: null,
       })
@@ -531,38 +648,10 @@ export default {
       this.articleTable.serverItemsLength = response.totalElements
       this.articleTable.loading = false
     },
-    async addCategory(data) {
+    async updateArticle(newCategoryData) {
       this.isAbleToPushButton = false
-      data.parentList = await takeParentListUUIDS()
-      const response = await this.addCategoryAPI(data)
-      if (response === true) {
-        new Toast(
-          'Category added successfully',
-          'success',
-          true,
-          'text-white align-items-center',
-        )
-        this.getCategories(this.articleTable.serverOptions)
-        this.closeModal('addArticleModal', true)
-      } else {
-        new Toast(
-          'Something went wrong',
-          'danger',
-          true,
-          'text-white align-items-center',
-        )
-      }
-      this.isAbleToPushButton = true
-      function takeParentListUUIDS() {
-        return data.parentList.map((parentCategory) => {
-          return parentCategory.uuid
-        })
-      }
-    },
-    async updateCategory(newCategoryData) {
-      this.isAbleToPushButton = false
-      newCategoryData.parentList = await takeParentListUUIDS()
-      const response = await this.updateCategoryAPI(newCategoryData)
+      newCategoryData.categoryListForArticle = await takeParentListUUIDS()
+      const response = await this.updateArticleAPI(newCategoryData)
       if (response === true) {
         new Toast(
           'Category updated successfully',
@@ -570,7 +659,7 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.getCategories(this.articleTable.serverOptions)
+        this.getArticles(this.articleTable.serverOptions)
         this.isAbleToPushButton = true
         this.closeModal('updateArticleModal')
       } else {
@@ -583,18 +672,18 @@ export default {
         this.isAbleToPushButton = true
       }
       function takeParentListUUIDS() {
-        return newCategoryData.parentList.map((parentCategory) => {
-          return parentCategory.uuid
+        return newCategoryData.categoryListForArticle.map((category) => {
+          return category.uuid
         })
       }
     },
-    async deleteCategory(uuid) {
+    async deleteArticle(uuid) {
       this.isAbleToPushButton = false
-      const response = await this.deleteCategoryAPI(uuid)
+      const response = await this.deleteArticleAPI(uuid)
       if (response === true) {
-        this.selectedCategory = {}
+        this.selectedArticle = {}
         new Toast(
-          'Category deleted successfully',
+          'Article deleted successfully',
           'success',
           true,
           'text-white align-items-center',

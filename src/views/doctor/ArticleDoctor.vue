@@ -8,7 +8,7 @@
             <CCol lg="3" class="text-left mt-3">
               <h2>Makale Ekle</h2>
             </CCol>
-            <CCol lg="9" class="text-right mt-3">{{ addedItem }}</CCol>
+            <CCol lg="9" class="text-right mt-3"> </CCol>
           </CRow>
         </CCardHeader>
         <CCardBody class="p-2">

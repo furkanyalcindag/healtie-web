@@ -356,7 +356,7 @@
             :loading="userTable.loading"
             :rows-items="userTable.rowsItem"
           >
-            <template #item-operations>
+            <template #item-operations="item">
               <div>
                 <CButtonGroup role="group" size="sm">
                   <CButton
@@ -368,11 +368,7 @@
                       content: 'Sil',
                       placement: 'top',
                     }"
-                    @click="
-                      () => {
-                        openedModals.deleteUserModal = true
-                      }
-                    "
+                    @click="showModal('deleteUserModal', item)"
                   >
                     <CIcon icon="cil-trash" />
                   </CButton>
@@ -413,7 +409,7 @@
           >
           <CButton
             color="danger"
-            @click="isAbleToPushButton ? deleteUser(selectedRole.uuid) : null"
+            @click="isAbleToPushButton ? deleteUser(selectedUser.uuid) : null"
             >SİL</CButton
           >
         </CModalFooter>
@@ -486,6 +482,8 @@ export default {
       },
       isAbleToPushButton: true,
       toasts: [],
+      selectedUser: {},
+      selectedRole: {},
     }
   },
   created() {
@@ -557,9 +555,11 @@ export default {
         case 'showUserModal':
           {
             this.getUser(this.userTable.serverOptions, data)
-            console.log(data)
           }
           break
+        case 'deleteUserModal': {
+          this.selectedUser = data
+        }
       }
       this.openedModals[modalname] = true
     },
@@ -572,11 +572,6 @@ export default {
             {
               let cachedAddedItemData = { name: null }
               this.addedItem = cachedAddedItemData
-            }
-            break
-          case 'deleteRoleModal':
-            {
-              this.selectedRole = {}
             }
             break
           case 'addUserModal':
@@ -595,7 +590,7 @@ export default {
             break
           case 'deleteUserModal':
             {
-              this.selectedRole = {}
+              this.selectedUser = {}
             }
             break
         }
@@ -684,23 +679,8 @@ export default {
       const response = await this.addUserAPI(data)
       if (response === true) {
         this.closeModal('addUserModal', true)
-        //    this.openedModals.addUserModal = false
+
         this.getUser(this.userTable.serverOptions)
-        /*   this.addedItem = {
-          uuid: null,
-          username: null,
-          firstName: null,
-          lastName: null,
-          email: null,
-          password: null,
-        }*/
-        //  this.isAbleToPushButton = true
-        /*        this.createToast(
-          'New user' + data.username + ' added successfully',
-          'success',
-          true,
-          'text-white align-items-center',
-        )*/
         new Toast(
           'New role ' + data.name + ' added successfully',
           'success',
@@ -719,10 +699,12 @@ export default {
     },
     async deleteUser(uuid) {
       this.isAbleToPushButton = false
+      console.log(uuid)
       const response = await this.deleteUserAPI(uuid)
       if (response === true) {
         this.isAbleToPushButton = true
-        this.selectedRole = {}
+        this.selectedUser = {}
+        new Toast('Silindi', 'success', true, 'text-white align-items-center')
       } else {
         new Toast(
           'Something went wrong',
@@ -733,10 +715,6 @@ export default {
         this.isAbleToPushButton = true
       }
       this.closeModal('deleteUserModal')
-    },
-    setSelectedRole(data) {
-      this.openedModals.deleteRoleModal = true
-      this.selectedRole = data
     },
     createToast(content, color, isautoHided, classes, delay) {
       this.toasts.push({

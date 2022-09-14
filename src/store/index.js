@@ -7,7 +7,6 @@ import language from '@/service/language'
 import article from '@/service/article'
 import user from '@/service/user'
 
-
 export default createStore({
   state: {
     sidebarVisible: '',
@@ -46,6 +45,5 @@ export default createStore({
     language,
     article,
     user,
-
   },
 })

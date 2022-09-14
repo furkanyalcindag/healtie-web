@@ -986,9 +986,11 @@
         </CModalFooter>
       </CModalBody>
     </CModal>
+    <!-- Show comment -->
     <CModal
       backdrop="static"
-      size="lg"
+      size="xl"
+      style="width: 100% !important"
       :visible="openedModals.showComment"
       @close="closeModal('showComment')"
     >
@@ -1004,7 +1006,8 @@
           novalidate
           :validated="validationChecked"
         >
-          <div class="p-4 md:w-2/3 lg:w-[55%] xl:1/3 mx-auto">
+          <TreeView> </TreeView>
+          <!-- <div class="p-4 md:w-2/3 lg:w-[55%] xl:1/3 mx-auto">
             <div class="container bootstrap snippets bootdey">
               <div class="row">
                 <div class="col-md-12">
@@ -1149,7 +1152,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
         </CForm>
         <div class="d-grid gap-2 col-6 mx-auto">
           <CButton color="light">Daha Fazla</CButton>
@@ -1162,6 +1165,7 @@
         >
       </CModalFooter>
     </CModal>
+    <!-- Add comment -->
     <CModal
       size="lg"
       :visible="openedModals.addComment"
@@ -1814,14 +1818,21 @@
 
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
+import TreeView from '@/components/TreeViewCustom.vue'
 export default {
   name: 'Colors',
   components: {
     EasyDataTable: window['vue3-easy-data-table'],
+    TreeView,
   },
   data() {
     return {
       avatar: avatar,
+      items: [
+        {
+          name: 'AAAAAAAAA',
+        },
+      ],
       profileData: {
         uuid: null,
         firstName: 'AHMET',
@@ -2325,7 +2336,6 @@ export default {
         { text: 'İstatistikler', value: 'statictics', sortable: true },
         { text: 'İşlemler', value: 'operations' },
       ],
-      items: [],
       // experience+articles normal data/ edited data / added data eklenecek
       openedModals: {
         updateDoctorProfile: false,

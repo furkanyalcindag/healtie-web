@@ -7,6 +7,10 @@ import language from '@/service/language'
 import article from '@/service/article'
 import user from '@/service/user'
 
+import doctor from '@/service/Doctor'
+import academicInfo from '@/service/AcademicInfo'
+import certificate from '@/service/Certificate'
+import experience from '@/service/Experience'
 
 export default createStore({
   state: {
@@ -46,6 +50,10 @@ export default createStore({
     language,
     article,
     user,
+    doctor,
+    academicInfo,
+    certificate,
+    experience,
 
   },
 })

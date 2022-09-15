@@ -4,7 +4,10 @@ import role from '@/service/role'
 import category from '@/service/category'
 import language from '@/service/language'
 import user from '@/service/user'
-
+import doctor from '@/service/Doctor'
+import academicInfo from '@/service/AcademicInfo'
+import certificate from '@/service/Certificate'
+import experience from '@/service/Experience'
 export default createStore({
   state: {
     sidebarVisible: '',
@@ -42,5 +45,9 @@ export default createStore({
     category,
     language,
     user,
+    doctor,
+    academicInfo,
+    certificate,
+    experience,
   },
 })

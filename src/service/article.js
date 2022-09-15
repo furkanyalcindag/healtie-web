@@ -1,12 +1,47 @@
+/* eslint-disable */
 import router from '@/router'
 import store from '@/store/'
-
+import createArticleDTO from '@/models/create_ARTICLE_dto'
 export default {
   namespaced: true,
   state: {},
   mutations: {},
   actions: {
-    async getCategories(state, pageAndSearchValue) {
+    async addArticle(state, articleData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        articleData.description = articleData.description.substring(
+          3,
+          articleData.description.length - 4,
+        )
+        var axios = require('axios')
+        var data = JSON.parse(JSON.stringify(articleData))
+        //debugger
+        var config = {
+          method: 'post',
+          url: 'article/user-api',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+
+        const response = await axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data.title))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async getArticles(state, pageAndSearchValue) {
       // CHECK IF USER LOGGED IN ALREADY
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
@@ -23,7 +58,7 @@ export default {
 
         var config = {
           method: 'post',
-          url: 'category/get-all-by-filter',
+          url: 'article/get-all-by-filter',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -44,46 +79,17 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    // eslint-disable-next-line
-    async addCategory(state, categoryData) {
-      if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        var axios = require('axios')
-        var data = JSON.stringify(categoryData)
-        console.log(data)
-        var config = {
-          method: 'post',
-          url: 'category/user-api',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        }
-
-        const response = await axios(config)
-          .then(function (response) {
-            console.log(JSON.stringify(response.data.name))
-            return true
-          })
-          .catch(function (error) {
-            console.log(error)
-            return false
-          })
-        return response
-      } else {
-        // ROLE CHECK IS NEEDED HERE
-        router.push({ name: 'Login Admin' })
-      }
-    },
-    async deleteCategory(state, uuid) {
+    async deleteArticle(state, uuid) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
 
         var config = {
           method: 'delete',
-          url: 'category/' + uuid,
-          headers: {},
+          url: 'article/' + uuid,
+          headers: {
+            'Content-Type': 'application/json',
+          },
         }
 
         const response = await axios(config)
@@ -101,22 +107,41 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async updateCategory(state, newCategoryData) {
+    async updateArticle(state, articleData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        newCategoryData.parentList = !newCategoryData.parentList
-          ? []
-          : newCategoryData.parentList
-        var axios = require('axios')
-        var data = JSON.stringify({
-          language: newCategoryData.language,
-          name: newCategoryData.name,
-          parentList: newCategoryData.parentList,
+        articleData.tags =
+          articleData.tags && articleData.tags.length > 0
+            ? articleData.tags
+            : []
+        // filter the tags DTO CAN BE USED INSTEAD
+        articleData.tags = articleData.tags.map((tag) => {
+          return { name: tag.name, language: tag.language }
         })
+
+        articleData.categoryList =
+          articleData.categoryListForArticle &&
+          articleData.categoryListForArticle.length > 0
+            ? articleData.categoryListForArticle
+            : []
+        
+        delete articleData.categoryListForArticle
+
+        let updatedArticle = new createArticleDTO(
+          articleData.title,
+          articleData.language,
+          articleData.description,
+          articleData.publishedDate,
+          articleData.tags,
+          articleData.categoryList,
+        )
+
+        var axios = require('axios')
+        var data = JSON.stringify(updatedArticle)
 
         var config = {
           method: 'put',
-          url: 'category/user-api/' + newCategoryData.uuid,
+          url: 'article/' + articleData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },

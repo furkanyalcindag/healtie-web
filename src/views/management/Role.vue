@@ -467,6 +467,7 @@ export default {
         serverOptions: {
           page: 1,
           rowsPerPage: 10,
+          language: 'TR',
         },
         rowsItem: [10, 20, 50],
         loading: true,

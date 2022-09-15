@@ -999,15 +999,14 @@
       </CModalHeader>
 
       <CModalBody>
-        <CForm
-          class="row g-3"
-          @submit.prevent="checkValidation()"
-          needs-validation
-          novalidate
-          :validated="validationChecked"
+        <Comments
+          :comments="commentData.comments"
+          :parentCommentsPageOptions="commentData.pageOptions"
+          :isLoading="commentData.isLoading"
+          @load-more-comments-on-parent="loadChildComments"
         >
-          <TreeView> </TreeView>
-          <!-- <div class="p-4 md:w-2/3 lg:w-[55%] xl:1/3 mx-auto">
+        </Comments>
+        <!-- <div class="p-4 md:w-2/3 lg:w-[55%] xl:1/3 mx-auto">
             <div class="container bootstrap snippets bootdey">
               <div class="row">
                 <div class="col-md-12">
@@ -1153,10 +1152,6 @@
               </div>
             </div>
           </div> -->
-        </CForm>
-        <div class="d-grid gap-2 col-6 mx-auto">
-          <CButton color="light">Daha Fazla</CButton>
-        </div>
       </CModalBody>
 
       <CModalFooter class="pe-0">
@@ -1798,7 +1793,7 @@
                               content: 'Yorumlar',
                               placement: 'top',
                             }"
-                            @click="showCommentData(data)"
+                            @click="showModal('showComment', data)"
                           >
                             <CIcon icon="cil-comment-bubble" />
                           </CButton>
@@ -1818,12 +1813,14 @@
 
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
-import TreeView from '@/components/TreeViewCustom.vue'
+import Comments from '@/components/Comment.vue'
+import articleCommentDTO from '@/models/articleCommentDTO'
+import { mapActions } from 'vuex'
 export default {
   name: 'Colors',
   components: {
     EasyDataTable: window['vue3-easy-data-table'],
-    TreeView,
+    Comments,
   },
   data() {
     return {
@@ -1934,6 +1931,7 @@ export default {
         {
           totalPage: 0,
           data: {
+            uuid: '534dd3f0-5db8-4892-b42a-0e7f341f6dc5',
             title: 'ABCdiler neden yumak şeyleri sever?',
             author: 'Hasan bey',
             publishedDate: 'M.Ö 124',
@@ -2352,9 +2350,28 @@ export default {
         addComment: false,
       },
       validationChecked: false,
+
+      commentData: {
+        data: articleCommentDTO.createEmpty(),
+        comments: [],
+        pageOptions: {
+          number: 0,
+          size: 10,
+          totalElements: 10,
+        },
+        isLoading: true,
+      },
     }
   },
+  watch: {
+    'commentData.pageOptions.size'() {
+      console.log('CHANGED')
+    },
+  },
   methods: {
+    ...mapActions({
+      getParentCommentsFromArticleAPI: 'comment/getParentCommentsFromArticle',
+    }),
     scrollToSpecifiedElement(name) {
       var elmntToView = document.getElementById(name)
       elmntToView.scrollIntoView()
@@ -2362,6 +2379,38 @@ export default {
     checkValidation() {
       // Response
       this.validationChecked = true
+    },
+    showModal(modalname, data) {
+      switch (modalname) {
+        case 'showComment':
+          {
+            this.getParentCommentsFromArticle(data)
+          }
+          break
+      }
+      this.openedModals[modalname] = true
+    },
+    async getParentCommentsFromArticle(data) {
+      this.commentData.isLoading = true
+      const response = await this.getParentCommentsFromArticleAPI({
+        articleUUID: data.uuid,
+        pageOptions: JSON.parse(JSON.stringify(this.commentData.pageOptions)),
+      })
+      this.commentData.pageOptions.totalElements = response
+        ? response.totalElements
+        : 0
+      this.commentData.comments = response ? response.data : []
+      this.commentData.isLoading = false
+      console.log(this.commentData.comments)
+    },
+    async loadChildComments(data) {
+      console.log(data)
+      if (data) {
+        // data.data.forEach(function (parentComment) {
+        //   if (parentComment.replyCount > 0) {
+        //   }
+        // })
+      }
     },
     closeModal(index, resetData) {
       this.openedModals[index] = false

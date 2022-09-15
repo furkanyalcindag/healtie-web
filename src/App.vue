@@ -20,3 +20,13 @@
 // Import Main styles for this application
 @import 'styles/style';
 </style>
+<style>
+.not-animated,
+.form-control {
+  transition: none !important;
+}
+.not-animated:focus,
+.form-control:focus {
+  box-shadow: none;
+}
+</style>

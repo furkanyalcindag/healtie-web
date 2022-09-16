@@ -48,11 +48,11 @@ export default {
           method: 'get',
           url:
             'comment/comment/' +
-            commentUUIDandPageOptions.commentUUID +
+            commentUUIDandPageOptions.commentData.uuid +
             '?pageNumber=' +
-            commentUUIDandPageOptions.pageOptions.number +
+            commentUUIDandPageOptions.pageNumber +
             '&pageSize=' +
-            commentUUIDandPageOptions.pageOptions.size,
+            commentUUIDandPageOptions.pageSize,
           headers: {},
         }
         const response = await axios(config)

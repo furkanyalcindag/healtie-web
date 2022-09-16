@@ -999,6 +999,7 @@
       </CModalHeader>
 
       <CModalBody>
+        {{ commentData.comments[3] }}
         <Comments
           :comments="commentData.comments"
           :parentCommentsPageOptions="commentData.pageOptions"
@@ -2355,7 +2356,7 @@ export default {
         data: articleCommentDTO.createEmpty(),
         comments: [],
         pageOptions: {
-          number: 0,
+          number: 1,
           size: 10,
           totalElements: 10,
         },
@@ -2371,6 +2372,7 @@ export default {
   methods: {
     ...mapActions({
       getParentCommentsFromArticleAPI: 'comment/getParentCommentsFromArticle',
+      getRepliesFromCommentAPI: 'comment/getRepliesFromComment',
     }),
     scrollToSpecifiedElement(name) {
       var elmntToView = document.getElementById(name)
@@ -2396,20 +2398,78 @@ export default {
         articleUUID: data.uuid,
         pageOptions: JSON.parse(JSON.stringify(this.commentData.pageOptions)),
       })
+      let notReplacedComment = {}
       this.commentData.pageOptions.totalElements = response
         ? response.totalElements
         : 0
-      this.commentData.comments = response ? response.data : []
+      this.commentData.comments = await (response.data
+        ? response.data.map((loopingComment) => {
+            if (
+              this.commentData.comments.find((loopingComment2) => {
+                if (loopingComment.uuid == loopingComment2.uuid) {
+                  return true
+                }
+              })
+            ) {
+              this.commentData.comments.some((loopingComment3) => {
+                if (loopingComment.uuid == loopingComment3.uuid) {
+                  notReplacedComment = loopingComment3
+                  return true
+                }
+              })
+              return notReplacedComment
+            } else {
+              return loopingComment
+            }
+          })
+        : [])
+      // this.commentData.comments = response ? response.data : []
       this.commentData.isLoading = false
       console.log(this.commentData.comments)
     },
-    async loadChildComments(data) {
-      console.log(data)
-      if (data) {
-        // data.data.forEach(function (parentComment) {
-        //   if (parentComment.replyCount > 0) {
-        //   }
-        // })
+    async getChildCommentsFromParentComment(commentUUIDandPageOptions) {
+      return await this.getRepliesFromCommentAPI(commentUUIDandPageOptions)
+    },
+    async loadChildComments(commentUUIDandPageOptions) {
+      /* eslint-disable */
+      const replies = await this.getChildCommentsFromParentComment(
+        commentUUIDandPageOptions,
+      )
+      console.log(commentUUIDandPageOptions)
+      if (replies) {
+        // update comment replies
+        replies.data = replies.data.map((reply) => {
+          reply.replyCount = 1
+          return reply
+        })
+        // to load replies for child comments and send it to parent comment (.replies)
+        if (commentUUIDandPageOptions.commentData.mainParent) {
+          let mainParentIndex = commentUUIDandPageOptions.commentData.mainParent
+          let currentCommentIndex =
+            commentUUIDandPageOptions.commentData.repliedParentIndex
+            // DONT USE INDEX, FIND INDEX IN OBJECT. DO NOT USE LIKE arr[index] FOR JSONS USE OBJECT.entries or object.keys or object.values
+            // how to set values in specified index at object
+          this.commentData.comments[mainParentIndex][currentCommentIndex] = commentUUIDandPageOptions.commentData
+          let currentAddingCommentIndex = currentCommentIndex
+          await replies.data.forEach((comment) => {
+            currentAddingCommentIndex++
+            this.commentData.comments[mainParentIndex].replies.splice(currentCommentIndex, 0, comment)
+          })
+        }
+        // to load replies for parent comment
+        else {
+          this.commentData.comments = await this.commentData.comments.map(
+            (comment) => {
+              if (comment.uuid == commentUUIDandPageOptions.commentData.uuid) {
+                comment = commentUUIDandPageOptions.commentData
+                comment.replies = replies.data
+                return comment
+              }
+              return comment
+            },
+          )
+        }
+        //console.log(replies)
       }
     },
     closeModal(index, resetData) {

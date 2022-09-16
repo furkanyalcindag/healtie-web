@@ -120,7 +120,7 @@
                         <ul class="comments">
                           <li class="clearfix">
                             <img
-                              :src="childComment.profilePicture"
+                              src="https://bootdey.com/img/Content/user_1.jpg"
                               class="avatar"
                               alt=""
                             />
@@ -166,6 +166,109 @@
                             :id="'child-comment-' + childCommentIndex"
                             class="clearfix"
                           ></li>
+                          <!-- Show comment/Loading button -->
+                          {{
+                            childComment.loadedCommentCount
+                          }}
+                          <!-- {{
+                            childCommentIndex
+                          }} -->
+                          <div
+                            v-if="
+                              (childComment.replyCount > 0 &&
+                                !childComment.isReplyCountExceeded) ||
+                              childComment.isStopHidingLoadedComments
+                            "
+                            class="comment-show-reply"
+                            @click="
+                              async function attemptToLoadChildComments() {
+                                childComment.loadingReplies = true
+                                // if its not created yet
+                                if (!childComment.loadedCommentCount) {
+                                  childComment.loadedCommentCount = 5
+                                  childComment.loadingReplies = false
+                                  // Check the reply count again to hide the button suddenly after the reply count exceeds
+                                  if (
+                                    childComment.loadedCommentCount >=
+                                    childComment.replyCount
+                                  ) {
+                                    childComment.isReplyCountExceeded = true
+                                  }
+                                  childComment.mainParent = parentCommentIndex
+                                  childComment.repliedParentIndex =
+                                    childCommentIndex
+
+                                  await emitLoadCurrentCommentData({
+                                    pageNumber: 0,
+                                    pageSize: childComment.loadedCommentCount,
+                                    commentData: JSON.parse(
+                                      JSON.stringify(childComment),
+                                    ),
+                                  })
+                                }
+                                // if its smaller than reply count then +5 page size
+                                else if (
+                                  childComment.loadedCommentCount <
+                                  childComment.replyCount
+                                ) {
+                                  childComment.loadedCommentCount += 5
+                                  childComment.loadingReplies = false
+                                  // Check the reply count again to hide the button suddenly after the reply count exceeds
+                                  if (
+                                    childComment.loadedCommentCount >=
+                                    childComment.replyCount
+                                  ) {
+                                    childComment.isReplyCountExceeded = true
+                                  }
+                                  childComment.mainParent = parentCommentIndex
+                                  childComment.repliedParentIndex =
+                                    childCommentIndex
+
+                                  await emitLoadCurrentCommentData({
+                                    pageNumber: 0,
+                                    pageSize: childComment.loadedCommentCount,
+                                    commentData: JSON.parse(
+                                      JSON.stringify(childComment),
+                                    ),
+                                  })
+                                } else if (
+                                  childComment.isStopHidingLoadedComments
+                                ) {
+                                  childComment.isStopHidingLoadedComments = false
+                                } else {
+                                  childComment.isReplyCountExceeded = true
+                                }
+                                // Check the reply count again to hide the button suddenly after the reply count exceeds
+                                // IDK IF ITS NEEDED! IMPORTANT NOTE
+                                if (
+                                  childComment.loadedCommentCount >=
+                                  childComment.replyCount
+                                ) {
+                                  childComment.isReplyCountExceeded = true
+                                }
+                                childComment.loadingReplies = false
+                              }
+                            "
+                          >
+                            <span v-if="childComment.loadingReplies">
+                              <span
+                                class="spinner-grow spinner-grow-sm"
+                                role="status"
+                                aria-hidden="true"
+                              ></span>
+                              Yükleniyor...
+                            </span>
+                            <span v-else>
+                              Show more({{
+                                childComment.isReplyCountExceeded
+                                  ? childComment.replyCount
+                                  : childComment.replyCount -
+                                    (childComment.loadedCommentCount
+                                      ? childComment.loadedCommentCount
+                                      : 0)
+                              }})
+                            </span>
+                          </div>
                         </ul>
                       </li>
                     </ul>
@@ -179,11 +282,27 @@
                     "
                     class="comment-show-reply"
                     @click="
-                      async function attemptLoadComments() {
+                      async function attemptToLoadChildComments() {
                         parentComment.loadingReplies = true
                         // if its not created yet
                         if (!parentComment.loadedCommentCount) {
                           parentComment.loadedCommentCount = 5
+                          parentComment.loadingReplies = false
+                          // Check the reply count again to hide the button suddenly after the reply count exceeds
+                          if (
+                            parentComment.loadedCommentCount >=
+                            parentComment.replyCount
+                          ) {
+                            parentComment.isReplyCountExceeded = true
+                          }
+
+                          await emitLoadCurrentCommentData({
+                            pageNumber: 0,
+                            pageSize: parentComment.loadedCommentCount,
+                            commentData: JSON.parse(
+                              JSON.stringify(parentComment),
+                            ),
+                          })
                         }
                         // if its smaller than reply count then +5 page size
                         else if (
@@ -191,10 +310,21 @@
                           parentComment.replyCount
                         ) {
                           parentComment.loadedCommentCount += 5
-                          await this.emitLoadCurrentCommentData({
+                          parentComment.loadingReplies = false
+                          // Check the reply count again to hide the button suddenly after the reply count exceeds
+                          if (
+                            parentComment.loadedCommentCount >=
+                            parentComment.replyCount
+                          ) {
+                            parentComment.isReplyCountExceeded = true
+                          }
+
+                          await emitLoadCurrentCommentData({
                             pageNumber: 0,
                             pageSize: parentComment.loadedCommentCount,
-                            commentData: parentComment,
+                            commentData: JSON.parse(
+                              JSON.stringify(parentComment),
+                            ),
                           })
                         } else if (parentComment.isStopHidingLoadedComments) {
                           parentComment.isStopHidingLoadedComments = false
@@ -202,6 +332,7 @@
                           parentComment.isReplyCountExceeded = true
                         }
                         // Check the reply count again to hide the button suddenly after the reply count exceeds
+                        // IDK IF ITS NEEDED! IMPORTANT NOTE
                         if (
                           parentComment.loadedCommentCount >=
                           parentComment.replyCount
@@ -232,7 +363,7 @@
                     </span>
                   </div>
                   <!-- Hide comment button -->
-                  <div
+                  <!-- <div
                     class="comment-show-reply"
                     v-if="
                       parentComment.loadedCommentCount != 0 &&
@@ -247,7 +378,7 @@
                     "
                   >
                     Hide({{ parentComment.replyCount }})
-                  </div>
+                  </div> -->
                 </div>
               </div>
             </CCol>
@@ -400,6 +531,11 @@ export default {
     isLoading: {
       default: true,
     },
+    defaultProfilePicture: {
+      default: {
+        avatar,
+      },
+    },
   },
   watch: {
     comments() {
@@ -428,7 +564,7 @@ export default {
     this.commentsDataCopy = cachedCommentsData
     this.parentCommentsPageOptionsCopy = this.parentCommentsPageOptions
   },
-  emits: ['loadMoreCommentsOnParent', 'loadMoreComments', 'sendReplyData'],
+  emits: ['load-more-comments-on-parent', 'loadMoreComments', 'sendReplyData'],
   methods: {
     // eslint-disable-next-line
     async submitToAPI(event, modalname, data) {
@@ -452,7 +588,7 @@ export default {
     },
 
     async emitLoadCurrentCommentData(data) {
-      console.log('emitted')
+      console.log('Loading Child Comments...')
       this.$emit('load-more-comments-on-parent', data)
     },
     async emitLoadMoreComments() {

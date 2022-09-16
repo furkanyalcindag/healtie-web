@@ -424,13 +424,10 @@
           class="row g-3"
           @submit.prevent="
             isAbleToPushButton
-              ? submitToAPI(
-                  $event,
-                  'updateUserName',
-
-                  editedItemForProfileData.firstName,
-                  editedItemForProfileData.lastName,
-                )
+              ? submitToAPI($event, 'updateUserName', {
+                  firstName: editedItemForProfileData.firstName,
+                  lastName: editedItemForProfileData.lastName,
+                })
               : null
           "
           needs-validation
@@ -1098,205 +1095,12 @@
       </CModalBody>
     </CModal>
 
-    <!-- Article info -->
+    <!-- Article-->
+    <!-- Delete article -->
     <CModal
-      backdrop="static"
       size="lg"
-      :visible="openedModals.updateArticleInfo"
-      @close="closeModal('updateArticleInfo')"
-    >
-      <CModalHeader>
-        <CModalTitle>Makale Bilgilerimi Düzenle</CModalTitle>
-      </CModalHeader>
-      <CModalBody>
-        <CForm
-          class="row g-3"
-          @submit.prevent="checkValidation()"
-          needs-validation
-          novalidate
-          :validated="validationChecked"
-        >
-          <CTable
-            responsive
-            hover
-            class="bg-white mb-0"
-            style="border-color: #321fdb"
-          >
-            <CTableHead>
-              <CTableRow>
-                <CTableHeaderCell scope="col">#</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Ünvan</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Çalıştığı yer</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Açıklama</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Başladığı tarih</CTableHeaderCell>
-                <CTableHeaderCell scope="col">Bitiş tarihi</CTableHeaderCell>
-                <CTableHeaderCell scope="col">İşlemler</CTableHeaderCell>
-              </CTableRow>
-            </CTableHead>
-            <CTableBody>
-              <CTableRow>
-                <CTableHeaderCell scope="row">+</CTableHeaderCell>
-                <CTableDataCell>
-                  <CFormInput
-                    id="update-doctor-firstname"
-                    required
-                    feedbackInvalid="Lütfen bir ünvan giriniz(Ex. Programmer)"
-                    v-model="addedExperienceData.title"
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CFormInput
-                    id="update-doctor-firstname"
-                    required
-                    feedbackInvalid="Lütfen bir yer giriniz(Ex. Comitfy)"
-                    v-model="addedExperienceData.workedPlace"
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div>
-                    <div class="d-inline-block text-truncate">
-                      <CTooltip
-                        :content="addedExperienceData.description"
-                        placement="top"
-                      >
-                        <template #toggler="{ on }">
-                          <CFormInput
-                            id="update-doctor-firstname"
-                            required
-                            v-on="on"
-                            feedbackInvalid="Lütfen bir açıklama giriniz"
-                            v-model="addedExperienceData.description"
-                          />
-                        </template>
-                      </CTooltip>
-                    </div>
-                  </div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CFormInput
-                    id="update-doctor-firstname"
-                    required
-                    feedbackInvalid="Lütfen başlangıç tarihini giriniz"
-                    v-model="addedExperienceData.startDate"
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CFormInput
-                    id="update-doctor-firstname"
-                    required
-                    feedbackInvalid="Lütfen bir tarih giriniz"
-                    v-model="addedExperienceData.endDate"
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CButton
-                    color="success"
-                    class="ms-2 text-white align-items-center"
-                    shape="rounded-pill"
-                    size="sm"
-                    v-c-tooltip="{
-                      content: 'Ekle',
-                      placement: 'top',
-                    }"
-                    @click="addCertificateData(certificate)"
-                  >
-                    <CIcon icon="cil-plus" />
-                  </CButton>
-                </CTableDataCell>
-              </CTableRow>
-              <CTableRow
-                v-for="(experience, index) in editedExperienceData"
-                :key="index"
-              >
-                <CTableHeaderCell scope="row">{{ index + 1 }}</CTableHeaderCell>
-                <CTableDataCell>
-                  <CFormInput
-                    id="update-doctor-firstname"
-                    required
-                    feedbackInvalid="Lütfen bir ünvan giriniz(Ex. Programmer)"
-                    v-model="experience.title"
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CFormInput
-                    id="update-doctor-firstname"
-                    required
-                    feedbackInvalid="Lütfen bir yer giriniz(Ex. Comitfy)"
-                    v-model="experience.workedPlace"
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <div>
-                    <div class="d-inline-block text-truncate">
-                      <CTooltip
-                        :content="experience.description"
-                        placement="top"
-                      >
-                        <template #toggler="{ on }">
-                          <CFormInput
-                            id="update-doctor-firstname"
-                            required
-                            v-on="on"
-                            feedbackInvalid="Lütfen bir açıklama giriniz"
-                            v-model="experience.description"
-                          />
-                        </template>
-                      </CTooltip>
-                    </div>
-                  </div>
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CFormInput
-                    id="update-doctor-firstname"
-                    required
-                    feedbackInvalid="Lütfen başlangıç tarihini giriniz"
-                    v-model="experience.startDate"
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CFormInput
-                    id="update-doctor-firstname"
-                    required
-                    feedbackInvalid="Lütfen bir tarih giriniz"
-                    v-model="experience.endDate"
-                  />
-                </CTableDataCell>
-                <CTableDataCell>
-                  <CButton
-                    color="danger"
-                    class="ms-2 text-white align-items-center"
-                    shape="rounded-pill"
-                    size="sm"
-                    v-c-tooltip="{
-                      content: 'Sil',
-                      placement: 'top',
-                    }"
-                    @click="addArticleData(togo)"
-                  >
-                    <CIcon icon="cil-trash" />
-                  </CButton>
-                </CTableDataCell>
-              </CTableRow>
-            </CTableBody>
-          </CTable>
-          <CModalFooter class="pe-0">
-            <CButton
-              color="secondary"
-              @click="closeModal('updateArticleInfo', true)"
-              >İptal</CButton
-            >
-            <CButton color="success" type="submit"
-              >Değişiklikleri Kaydet</CButton
-            >
-          </CModalFooter>
-        </CForm>
-      </CModalBody>
-    </CModal>
-    <CModal
-      backdrop="static"
-      size="lg"
-      :visible="openedModals.deleteArticle"
-      @close="closeModal('deleteArticle')"
+      :visible="openedModals.deleteArticleModal"
+      @close="closeModal('deleteArticleModal')"
     >
       <CModalHeader>
         <CModalTitle>Makale <span class="text-danger">Sil</span></CModalTitle>
@@ -1307,219 +1111,166 @@
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton color="secondary" @click="closeModal('deleteArticle')"
+          <CButton color="secondary" @click="closeModal('deleteArticleModal')"
             >Kapat</CButton
           >
-          <CButton color="danger" type="submit">SİL</CButton>
+          <CButton
+            color="danger"
+            @click="
+              isAbleToPushButton ? deleteArticle(selectedArticle.uuid) : null
+            "
+            >SİL</CButton
+          >
         </CModalFooter>
       </CModalBody>
     </CModal>
-    <CModal
-      backdrop="static"
-      size="lg"
-      :visible="openedModals.showComment"
-      @close="closeModal('showComment')"
-    >
-      <CModalHeader>
-        <CModalTitle>Makalenin Yorumları</CModalTitle>
-      </CModalHeader>
-
-      <CModalBody>
-        <CForm
-          class="row g-3"
-          @submit.prevent="checkValidation()"
-          needs-validation
-          novalidate
-          :validated="validationChecked"
-        >
-          <div class="p-4 md:w-2/3 lg:w-[55%] xl:1/3 mx-auto">
-            <div class="container bootstrap snippets bootdey">
-              <div class="row">
-                <div class="col-md-12">
-                  <div class="blog-comment">
-                    <hr />
-                    <ul class="comments">
-                      <li class="clearfix">
-                        <img
-                          src="https://bootdey.com/img/Content/user_1.jpg"
-                          class="avatar"
-                          alt=""
-                        />
-                        <div class="post-comments">
-                          <p class="meta">
-                            Dec 18, 2014 <a href="#">JohnDoe</a> says :
-                            <i class="pull-right"
-                              ><a><small>Cevapla</small></a></i
-                            >
-                            <CButton
-                              color="info"
-                              class="ms-2 text-white align-items-center"
-                              shape="rounded-pill"
-                              size="sm"
-                              v-c-tooltip="{
-                                content: 'Cevapla',
-                                placement: 'top',
-                              }"
-                              @click="() => (openedModals.addComment = true)"
-                            >
-                              <CIcon icon="cil-comment-bubble" />
-                            </CButton>
-                          </p>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Etiam a sapien odio, sit amet
-                          </p>
-                        </div>
-                      </li>
-                      <li class="clearfix">
-                        <img
-                          src="https://bootdey.com/img/Content/user_2.jpg"
-                          class="avatar"
-                          alt=""
-                        />
-                        <div class="post-comments">
-                          <p class="meta">
-                            Dec 19, 2014 <a href="#">JohnDoe</a> says :
-                            <i class="pull-right"
-                              ><a><small>Cevapla</small></a></i
-                            >
-                            <CButton
-                              color="info"
-                              class="ms-2 text-white align-items-center"
-                              shape="rounded-pill"
-                              size="sm"
-                              v-c-tooltip="{
-                                content: 'Cevapla',
-                                placement: 'top',
-                              }"
-                              @click="() => (openedModals.addComment = true)"
-                            >
-                              <CIcon icon="cil-comment-bubble" />
-                            </CButton>
-                          </p>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Etiam a sapien odio, sit amet
-                          </p>
-                        </div>
-
-                        <ul class="comments">
-                          <li class="clearfix">
-                            <img
-                              src="https://bootdey.com/img/Content/user_3.jpg"
-                              class="avatar"
-                              alt=""
-                            />
-                            <div class="post-comments">
-                              <p class="meta">
-                                Dec 20, 2014 <a href="#">JohnDoe</a> says :
-                                <i class="pull-right"
-                                  ><a><small>Cevapla</small></a></i
-                                >
-                                <CButton
-                                  color="info"
-                                  class="ms-2 text-white align-items-center"
-                                  shape="rounded-pill"
-                                  size="sm"
-                                  v-c-tooltip="{
-                                    content: 'Cevapla',
-                                    placement: 'top',
-                                  }"
-                                  @click="
-                                    () => (openedModals.addComment = true)
-                                  "
-                                >
-                                  <CIcon icon="cil-comment-bubble" />
-                                </CButton>
-                              </p>
-                              <p>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit. Etiam a sapien odio, sit amet
-                              </p>
-                            </div>
-                          </li>
-                        </ul>
-                      </li>
-                      <li class="clearfix">
-                        <img
-                          src="https://bootdey.com/img/Content/user_1.jpg"
-                          class="avatar"
-                          alt=""
-                        />
-                        <div class="post-comments">
-                          <p class="meta">
-                            Dec 18, 2014 <a href="#">JohnDoe</a> says :
-                            <i class="pull-right"
-                              ><a><small>Cevapla</small></a></i
-                            >
-                            <CButton
-                              color="info"
-                              class="ms-2 text-white align-items-center"
-                              shape="rounded-pill"
-                              size="sm"
-                              v-c-tooltip="{
-                                content: 'Cevapla',
-                                placement: 'top',
-                              }"
-                              @click="() => (openedModals.addComment = true)"
-                            >
-                              <CIcon icon="cil-comment-bubble" />
-                            </CButton>
-                          </p>
-                          <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit. Etiam a sapien odio, sit amet
-                          </p>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </CForm>
-        <div class="d-grid gap-2 col-6 mx-auto">
-          <CButton color="light">Daha Fazla</CButton>
-        </div>
-      </CModalBody>
-
-      <CModalFooter class="pe-0">
-        <CButton color="secondary" @click="closeModal('showComment', true)"
-          >Kapat</CButton
-        >
-      </CModalFooter>
-    </CModal>
+    <!-- Update article -->
     <CModal
       size="lg"
-      :visible="openedModals.addComment"
-      @close="closeModal('addComment')"
+      :visible="openedModals.updateArticleModal"
+      @close="closeModal('updateArticleModal')"
     >
       <CModalHeader>
-        <CModalTitle>Yorum Yap</CModalTitle>
+        <CModalTitle>Makale Düzenle</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <CForm
           class="row g-3"
-          @submit.prevent="checkValidation()"
+          @submit.prevent="
+            submitToAPI($event, 'updateArticleModal', editedItemForArticle.data)
+          "
           needs-validation
           novalidate
           :validated="validationChecked"
         >
-          <CCol xs="12">
-            <CFormLabel for="add-comment">Yorum İçeriği</CFormLabel>
-            <CFormTextarea
-              id="add-comment"
-              rows="3"
+          <CCol md="12">
+            <CFormLabel for="update-article-title">Makale Başlığı</CFormLabel>
+            <CFormInput
+              id="update-article-title"
               required
-              feedbackInvalid="Lütfen bir yorum giriniz"
-            ></CFormTextarea>
+              feedbackInvalid="Lütfen bir makale adı giriniz"
+              v-model="editedItemForArticle.data.title"
+            />
+          </CCol>
+          <!-- Article tags -->
+          <CCol md="6">
+            <CFormLabel for="add-article-tags">Etiketler</CFormLabel>
+            <v-select
+              id="add-article-tags"
+              v-model="editedItemForArticle.data.tags"
+              :options="tagList.options"
+              multiple
+              label="name"
+              :loading="tagList.loading"
+            >
+              <template v-slot:no-options="{ search, searching }">
+                <template v-if="searching">
+                  Sonuç bulunamadı:
+                  <em>{{ search }}</em
+                  >.
+                </template>
+                <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              </template>
+            </v-select>
+          </CCol>
+          <!-- Article published Date -->
+          <CCol md="6">
+            <CFormLabel for="edit-article-publishedDate"
+              >Yayımlanma Tarihi</CFormLabel
+            >
+            <CFormInput
+              id="edit-article-publishedDate"
+              required
+              type="date"
+              feedbackInvalid="Lütfen bir tarih giriniz"
+              v-model="editedItemForArticle.data.publishedDate"
+            />
+          </CCol>
+          <!-- For category parent list multiple selection -->
+          <CFormLabel for="edit-category-parent-category"
+            >Makale Kategorisi</CFormLabel
+          >
+          <v-select
+            id="edit-category-parent-category"
+            v-model="editedItemForArticle.data.categoryListForArticle"
+            :options="categoryList.options"
+            label="name"
+            multiple
+            :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
+            @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
+            :loading="categoryList.loading"
+          >
+            <template v-slot:no-options="{ search, searching }">
+              <template v-if="searching">
+                Sonuç bulunamadı:
+                <em>{{ search }}</em
+                >.
+              </template>
+              <em v-else style="opacity: 0.5">Bir daha dene.</em>
+            </template>
+            <template #search="{ attributes, events }">
+              <input
+                class="form-control vs__search"
+                feedbackInvalid="Lütfen bir kategori adı giriniz"
+                :required="
+                  !(editedItemForArticle.data.categoryListForArticle.length > 0)
+                "
+                v-bind="attributes"
+                v-on="events"
+              />
+            </template>
+          </v-select>
+          <!-- For language selection -->
+          <CFormLabel for="add-language-to-category">Dil seçimi</CFormLabel>
+          <v-select
+            id="add-language-to-category"
+            v-model="editedItemForArticle.data.language"
+            :options="languageList.options"
+            label="name"
+            :loading="languageList.loading"
+          >
+            <template v-slot:no-options="{ search, searching }">
+              <template v-if="searching">
+                Sonuç bulunamadı:
+                <em>{{ search }}</em
+                >.
+              </template>
+              <em v-else style="opacity: 0.5">Bir daha dene.</em>
+            </template>
+            <template #search="{ attributes, events }">
+              <input
+                class="form-control vs__search"
+                feedbackInvalid="Lütfen bir kategori adı giriniz"
+                :required="!editedItemForArticle.data.language"
+                v-bind="attributes"
+                v-on="events"
+              />
+            </template>
+          </v-select>
+          <!-- Article Description -->
+          <CCol md="12">
+            <CFormLabel for="add-article-content" class="m-2"
+              >Makale İçeriği</CFormLabel
+            >
+            <light-editor
+              v-model="editedItemForArticle.data.description"
+              ref="article-description"
+            />
+            <div
+              class="prose lg:prose-xl"
+              v-html="editedItemForArticle.data.description"
+              required
+            ></div>
           </CCol>
           <CModalFooter class="pe-0">
-            <CButton color="secondary" @click="closeModal('addComment')"
+            <CButton color="secondary" @click="closeModal('updateArticleModal')"
               >Kapat</CButton
             >
-            <CButton color="success" type="submit">Kaydet</CButton>
+            <CButton
+              color="success"
+              :type="isAbleToPushButton ? 'submit' : null"
+              >Değişiklikleri Kaydet</CButton
+            >
           </CModalFooter>
         </CForm>
       </CModalBody>
@@ -1548,7 +1299,7 @@
                 <CNavLink
                   class="text-secondary"
                   role="button"
-                  @click="scrollToSpecifiedElement('doctor-academic')"
+                  @click="scrollToSpecifiedElement('doctor-academic-info')"
                   >Akademik</CNavLink
                 >
               </CNavItem>
@@ -2116,58 +1867,67 @@
                     class="mt-0 me-0 ms-0 mb-3"
                   >
                     <CCardHeader>
-                      <CCol lg="3" class="text-left mt-3 text-white">
-                        <CButton
-                          color="success"
-                          class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
-                          shape="rounded-pill"
-                          size="sm"
-                          v-c-tooltip="{
-                            content: 'Ekle',
-                            placement: 'top',
-                          }"
-                          @click="() => {}"
-                        >
-                          <CIcon icon="cil-plus" />
-                        </CButton>
-                        <h5>Makaleleri</h5>
-                      </CCol>
+                      <!-- <CIcon icon="cil-user" /> -->
+                      <CRow>
+                        <CCol lg="3" class="text-left mt-3 text-white">
+                          <h5>Makale Listesi</h5>
+                        </CCol>
+                        <CCol lg="9" class="text-right mt-3">
+                          <CButton
+                            color="success"
+                            class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-2"
+                            shape="rounded-pill"
+                            @click="
+                              doAction('goSpecifiedPage', 'Article Doctor')
+                            "
+                          >
+                            <CIcon icon="cil-plus" />
+                          </CButton>
+                        </CCol>
+                      </CRow>
                     </CCardHeader>
-
-                    <CCardBody class="bg-white p-0">
+                    <CCardBody class="p-0">
                       <easy-data-table
-                        v-if="items != null"
                         show-index
                         style="
                           --easy-table-body-row-font-size: 16px;
                           --easy-table-header-font-size: 16px;
                         "
-                        :headers="headers"
-                        v-model:items="items"
+                        v-model:itemsSelected="itemsSelected"
+                        v-model:server-options="articleTable.serverOptions"
+                        :server-items-length="articleTable.serverItemsLength"
+                        :headers="headersForArticle"
+                        :items="itemsForArticle"
                         :theme-color="themeColor"
                         buttons-pagination
-                        :rows-per-page="rowsPerPage"
+                        :loading="articleTable.loading"
+                        :rows-items="articleTable.rowsItem"
                       >
-                        <template #item-title="{ data }">
-                          <CTooltip :content="data.title" placement="top">
-                            <template #toggler="{ on }">
-                              <div
-                                v-on="on"
-                                style="max-width: 200px"
-                                class="d-inline-block text-truncate"
-                              >
-                                {{ data.title }}
-                              </div>
-                            </template>
-                          </CTooltip>
+                        <template #item-title="{ title }">
+                          <div class="position-relative d-inline-block">
+                            <CTooltip :content="title" placement="top">
+                              <template #toggler="{ on }">
+                                <div
+                                  v-on="on"
+                                  style="max-width: 200px"
+                                  class="d-inline-block text-truncate"
+                                >
+                                  {{ title }}
+                                </div>
+                              </template>
+                            </CTooltip>
+                          </div>
                         </template>
-                        <template #item-publishedDate="{ data }">
-                          {{ data.publishedDate }}
-                        </template>
-                        <template #item-statictics="{ data }">
+                        <template
+                          #item-statictics="{
+                            likeCount,
+                            saveCount,
+                            commentCount,
+                          }"
+                        >
                           <div class="position-relative d-inline-block">
                             <CTooltip
-                              :content="String(data.likeCount)"
+                              :content="String(likeCount)"
                               placement="top"
                             >
                               <template #toggler="{ on }">
@@ -2183,7 +1943,7 @@
                           </div>
                           <div class="position-relative d-inline-block">
                             <CTooltip
-                              :content="String(data.saveCount)"
+                              :content="String(saveCount)"
                               placement="top"
                             >
                               <template #toggler="{ on }">
@@ -2199,7 +1959,7 @@
                           </div>
                           <div class="position-relative d-inline-block">
                             <CTooltip
-                              :content="String(data.commentCount)"
+                              :content="String(commentCount)"
                               placement="top"
                             >
                               <template #toggler="{ on }">
@@ -2214,46 +1974,37 @@
                             </CTooltip>
                           </div>
                         </template>
-                        <template #item-operations="{ data }">
-                          <CButton
-                            color="warning"
-                            class="ms-2 text-white align-items-center"
-                            shape="rounded-pill"
-                            size="sm"
-                            v-c-tooltip="{
-                              content: 'Düzenle',
-                              placement: 'top',
-                            }"
-                            @click="() => {}"
-                          >
-                            <CIcon icon="cil-pencil" />
-                          </CButton>
-                          <CButton
-                            color="danger"
-                            class="ms-2 text-white align-items-center"
-                            shape="rounded-pill"
-                            size="sm"
-                            v-c-tooltip="{
-                              content: 'Sil',
-                              placement: 'top',
-                            }"
-                            @click="deleteArticleData(data)"
-                          >
-                            <CIcon icon="cil-trash" />
-                          </CButton>
-                          <CButton
-                            color="info"
-                            class="ms-2 text-white align-items-center"
-                            shape="rounded-pill"
-                            size="sm"
-                            v-c-tooltip="{
-                              content: 'Yorumlar',
-                              placement: 'top',
-                            }"
-                            @click="showCommentData(data)"
-                          >
-                            <CIcon icon="cil-comment-bubble" />
-                          </CButton>
+                        <template #item-operations="item">
+                          <div>
+                            <CButtonGroup role="group" size="sm">
+                              <CButton
+                                color="warning"
+                                class="ms-2 text-white align-items-center"
+                                shape="rounded-pill"
+                                size="sm"
+                                v-c-tooltip="{
+                                  content: 'Düzenle',
+                                  placement: 'top',
+                                }"
+                                @click="showModal('updateArticleModal', item)"
+                              >
+                                <CIcon icon="cil-pencil" />
+                              </CButton>
+                              <CButton
+                                color="danger"
+                                class="ms-2 text-white align-items-center"
+                                shape="rounded-pill"
+                                size="sm"
+                                v-c-tooltip="{
+                                  content: 'Sil',
+                                  placement: 'top',
+                                }"
+                                @click="showModal('deleteArticleModal', item)"
+                              >
+                                <CIcon icon="cil-trash" />
+                              </CButton>
+                            </CButtonGroup>
+                          </div>
                         </template>
                       </easy-data-table>
                     </CCardBody>
@@ -2276,9 +2027,10 @@ import DoctorAcademicInfoDTO from '@/models/doctorAcademicInfoDTO'
 import DoctorCertificateDTO from '@/models/doctorCertificateDTO'
 import DoctorExperienceDTO from '@/models/doctorExperienceDTO'
 import createDoctorProfileDTO from '@/models/doctorProfileDTO'
-import createDoctorInfoDTO from '@/models/doctorInfoDTO'
 import { mapActions } from 'vuex'
 import Toast from '@/models/create_TOAST_dto'
+import router from '@/router'
+import createArticleDTO from '@/models/create_ARTICLE_dto'
 export default {
   name: 'Colors',
   components: {
@@ -2309,6 +2061,26 @@ export default {
       addedExperienceItem: {
         // Real data
         data: DoctorExperienceDTO.createEmpty(),
+      },
+      addedItemForArticle: {
+        // Real data
+        data: new createArticleDTO(
+          null,
+          'TR',
+          null,
+          new Date()
+            .toLocaleDateString('tr-TR', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            })
+            .replaceAll('.', '-')
+            .split('-')
+            .reverse()
+            .join('-'),
+          null,
+          [],
+        ),
       },
 
       articleData: [
@@ -2712,17 +2484,13 @@ export default {
       rowsPerPage: 10,
       themeColor: '#321fdb',
       itemsSelected: [],
-      headers: [
-        { text: 'Başlık', value: 'title', sortable: true },
-        { text: 'Yayınlanma Tarihi', value: 'publishedDate', sortable: true },
-        { text: 'İstatistikler', value: 'statictics', sortable: true },
-        { text: 'İşlemler', value: 'operations' },
-      ],
+
       //Items
       itemsForDoctorProfile: [],
       itemsForAcademicInfo: [],
       itemsForCertificate: [],
       itemsForExperience: [],
+      itemsForArticle: [],
       //Headers
       headersForDoctorProfile: [
         { text: 'İsim', value: 'firstName', sortable: true },
@@ -2753,6 +2521,45 @@ export default {
         { text: 'Açıklama', value: 'description' },
         { text: 'İşlemler', value: 'operations' },
       ],
+      headersForArticle: [
+        { text: 'Başlık', value: 'title', sortable: true },
+        { text: 'Yazar', value: 'author', sortable: true },
+        { text: 'Yayınlanma Tarihi', value: 'publishedDate', sortable: true },
+        { text: 'İstatistikler', value: 'statictics', sortable: true },
+        { text: 'İşlemler', value: 'operations' },
+      ],
+      // Category Selection
+      categoryList: {
+        // The parent category list inside selection in addCategory
+        options: [],
+        // Parent category Selection server options for getting options in selection in addArticleModal
+        parentListSearcherDefaultServerOptions: {
+          page: 1,
+          rowsPerPage: 50,
+        },
+        loading: true,
+      },
+      // Language Selection
+      languageList: {
+        // The language list inside selection in addCategory
+        options: ['TR', 'EN'],
+        // Language Selection server options for getting options in selection in addCategory
+        languageSearcherDefaultServerOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        loading: true,
+      },
+      // Tag selection QQ
+      tagList: {
+        options: [
+          { name: 'Depresyon', language: 'TR' },
+          { name: 'Hayvan', language: 'TR' },
+          { name: 'Çocuk', language: 'TR' },
+          { name: 'Tatlılar', language: 'TR' },
+          { name: 'Obezler', language: 'TR' },
+        ],
+      },
 
       openedModals: {
         getDoctorProfile: false,
@@ -2779,10 +2586,9 @@ export default {
         updateExperience: false,
         deleteExperience: false,
 
-        updateArticleInfo: false,
-        deleteArticle: false,
-        showComment: false,
-        addComment: false,
+        addArticleModal: false,
+        deleteArticleModal: false,
+        updateArticleModal: false,
       },
       //TABLES
       academicInfoTable: {
@@ -2812,24 +2618,50 @@ export default {
         rowsItem: [10, 20, 50],
         loading: true,
       },
+      articleTable: {
+        serverItemsLength: 0,
+        serverOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        rowsItem: [10, 20, 50],
+        loading: false,
+      },
 
       selectedAcademicInfo: {},
       selectedCertificate: {},
       selectedExperience: {},
       selectedDoctor: {},
+      selectedArticle: {},
 
       validationChecked: false,
       toasts: [],
       isAbleToPushButton: true,
 
-      addedItem: {
-        data: new createDoctorInfoDTO(null, null, null, null),
-      },
-
       editedItem: {
         data: new createDoctorProfileDTO(null, null, null, null, null, null),
       },
-
+      editedItemForArticle: {
+        // Real data
+        data: new createArticleDTO(
+          null,
+          'TR',
+          null,
+          new Date()
+            .toLocaleDateString('tr-TR', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            })
+            .replaceAll('.', '-')
+            .split('-')
+            .reverse()
+            .join('-'),
+          null,
+          [],
+        ),
+        isDescriptionEnoughToSend: false,
+      },
       editedItemForProfileData: {
         data: DoctorProfileDTO.createEmpty(),
       },
@@ -2860,12 +2692,21 @@ export default {
     'experienceTable.serverOptions'(newvalue) {
       this.getExperienceByDoctor(newvalue)
     },
+    'articleTable.serverOptions'(newvalue) {
+      //QQ
+      this.getArticles(newvalue)
+    },
+    'editedItemForArticle.data.description'(newvalue) {
+      //QQ
+      this.checkDescriptionLength(newvalue)
+    },
   },
   async created() {
     await this.getDoctor()
     await this.getAcademicInfoByDoctor(this.academicInfoTable.serverOptions)
     await this.getCertificateByDoctor(this.certificateTable.serverOptions)
     await this.getExperienceByDoctor(this.experienceTable.serverOptions)
+    this.getArticles(this.articleTable.serverOptions) //QQ
   },
   methods: {
     ...mapActions({
@@ -2895,11 +2736,29 @@ export default {
       addExperienceAPI: 'experience/addExperience',
       updateExperienceAPI: 'experience/updateExperience',
       deleteExperienceAPI: 'experience/deleteExperience',
+      //ARTICLE
+      getAllCategories: 'category/getCategories',
+      getAllArticles: 'article/getArticles',
+      getAllLanguages: 'language/getLanguages',
+      addCategoryAPI: 'category/addCategory',
+      deleteArticleAPI: 'article/deleteArticle',
+      updateArticleAPI: 'article/updateArticle',
     }),
     submitToAPI(event, modalName, data) {
       this.isAbleToPushButton = false
       this.validationChecked = true
+      this.checkDescriptionLength(this.editedItemForArticle.data.description) //QQ
       const form = event.currentTarget
+      if (
+        this.editedItemForArticle.isDescriptionEnoughToSend === false &&
+        this.$refs['article-description']
+      ) {
+        //QQ
+        event.preventDefault()
+        event.stopPropagation()
+        this.isAbleToPushButton = true
+        return
+      }
       if (form.checkValidity() === false) {
         event.preventDefault()
         event.stopPropagation()
@@ -2996,6 +2855,17 @@ export default {
             this.addExperience(JSON.parse(JSON.stringify(data)))
           }
           break
+
+        case 'addArticleModal':
+          {
+            this.addCategory(JSON.parse(JSON.stringify(data)))
+          }
+          break
+        case 'updateArticleModal':
+          {
+            this.updateArticle(JSON.parse(JSON.stringify(data)))
+          }
+          break
       }
       this.isAbleToPushButton = true
     },
@@ -3004,6 +2874,7 @@ export default {
       this.selectedAcademicInfo = data ? JSON.parse(JSON.stringify(data)) : {}
       this.selectedCertificate = data ? JSON.parse(JSON.stringify(data)) : {}
       this.selectedExperience = data ? JSON.parse(JSON.stringify(data)) : {}
+      this.selectedArticle = data ? JSON.parse(JSON.stringify(data)) : {}
       switch (modalname) {
         case 'getDoctorInfo':
           {
@@ -3103,6 +2974,17 @@ export default {
             this.editedItemForExperience = cachedItemData
           }
           break
+        case 'updateArticleModal': //QQ
+          {
+            this.editedItemForArticle.data = JSON.parse(JSON.stringify(data))
+            this.categoryList.loading = true
+            this.languageList.loading = true
+            this.get_Filtered_Parent_List_Options_Data()
+            //this.get_Filtered_Language_Options_Data()
+            this.categoryList.loading = false
+            this.languageList.loading = false
+          }
+          break
       }
 
       this.openedModals[modalname] = true
@@ -3118,7 +3000,6 @@ export default {
     closeModal(index, resetData) {
       this.openedModals[index] = false
       this.validationChecked = false
-      // true - false if he wants to reset data of current modal
       if (resetData) {
         switch (index) {
           case 'updateUserName':
@@ -3241,21 +3122,57 @@ export default {
               this.editedItemForExperience = cachedProfileData
             }
             break
+          case 'addArticleModal': //QQ
+            {
+              // Restore added item on clicking "No/Deny"
+              this.addedItemForArticle = {
+                data: new createArticleDTO(
+                  null,
+                  'TR',
+                  null,
+                  new Date()
+                    .toLocaleDateString('tr-TR', {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                    })
+                    .replaceAll('.', '-')
+                    .split('-')
+                    .reverse()
+                    .join('-'),
+                  null,
+                  [],
+                ),
+              }
+            }
+            break
         }
       }
     },
-    addArticleData(togo) {
-      console.log(togo)
-      // link togo article ekleme sayfasına dönüş yapılacak
-    },
-    deleteArticleData(data) {
-      console.log(data)
-      this.openedModals.deleteArticle = true
-    },
-    showCommentData(data) {
-      console.log(data)
-      this.openedModals.showComment = true
-    },
+    checkDescriptionLength(newvalue) {
+      if (newvalue && newvalue.length > 20) {
+        this.editedItemForArticle.isDescriptionEnoughToSend = true
+        if (this.validationChecked) {
+          if (this.$refs['article-description']) {
+            this.$refs['article-description'].$el.setAttribute(
+              'style',
+              'border-color: green;',
+            )
+          }
+        }
+      } else {
+        this.editedItemForArticle.isDescriptionEnoughToSend = false
+        if (this.validationChecked) {
+          if (this.$refs['article-description']) {
+            this.$refs['article-description'].$el.setAttribute(
+              'style',
+              'border-color: red;',
+            )
+          }
+        }
+      }
+    }, //QQ
+
     async getDoctor() {
       const response = await this.getDoctorAPI()
       console.log(response)
@@ -3302,6 +3219,7 @@ export default {
     },
     async updateUserName(newroleData) {
       this.isAbleToPushButton = false
+      console.log(newroleData)
       const response = await this.updateUserNameAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -3542,8 +3460,6 @@ export default {
         this.getAcademicInfoByDoctor(this.academicInfoTable.serverOptions)
         this.isAbleToPushButton = true
         this.closeModal('updateAcademicInfo', true)
-
-        this.editedItem = {}
       } else {
         new Toast(
           'Something went wrong',
@@ -3618,8 +3534,6 @@ export default {
         this.getCertificateByDoctor(this.certificateTable.serverOptions)
         this.isAbleToPushButton = true
         this.closeModal('updateCertificate', true)
-
-        this.editedItem = {}
       } else {
         new Toast(
           'Something went wrong',
@@ -3695,8 +3609,6 @@ export default {
         this.getExperienceByDoctor(this.experienceTable.serverOptions)
         this.isAbleToPushButton = true
         this.closeModal('updateExperience', true)
-
-        this.editedItem = {}
       } else {
         new Toast(
           'Something went wrong',
@@ -3728,6 +3640,137 @@ export default {
       }
       this.isAbleToPushButton = true
       this.closeModal('deleteExperience')
+    },
+
+    async getArticles(pageOptions) {
+      this.articleTable.loading = true
+      const response = await this.getAllArticles({
+        pageOptions: pageOptions,
+        filter: null,
+      })
+      this.itemsForArticle = response.data
+      this.articleTable.serverItemsLength = response.totalElements
+      this.articleTable.loading = false
+    },
+    async updateArticle(newCategoryData) {
+      this.isAbleToPushButton = false
+      newCategoryData.categoryListForArticle = await takeParentListUUIDS()
+      const response = await this.updateArticleAPI(newCategoryData)
+      if (response === true) {
+        new Toast(
+          'Category updated successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+        this.getArticles(this.articleTable.serverOptions)
+        this.isAbleToPushButton = true
+        this.closeModal('updateArticleModal')
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+      function takeParentListUUIDS() {
+        return newCategoryData.categoryListForArticle.map((category) => {
+          return category.uuid
+        })
+      }
+    },
+    async deleteArticle(uuid) {
+      this.isAbleToPushButton = false
+      const response = await this.deleteArticleAPI(uuid)
+      if (response === true) {
+        this.selectedArticle = {}
+        new Toast(
+          'Article deleted successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white -align-items-center',
+        )
+      }
+      this.isAbleToPushButton = true
+      this.closeModal('deleteArticleModal')
+    },
+
+    // This two For to filter the selection list by search value //QQ
+    async get_Filtered_Parent_List_Options_Data(searched) {
+      this.categoryList.loading = true
+      // Filtered version(if) and unfiltered version(else)
+      if (searched) {
+        let filterBy = [
+          {
+            key: 'name',
+            operation: ':',
+            type: 'name',
+            value: searched,
+          },
+        ]
+        let searchedFor = {
+          pageOptions: this.categoryList.parentListSearcherDefaultServerOptions,
+          filter: filterBy,
+        }
+        const response = await this.getAllCategories(searchedFor)
+        this.categoryList.options = reduceDataHeaviless(response.data)
+      } else {
+        let searchedFor = {
+          pageOptions: this.categoryList.parentListSearcherDefaultServerOptions,
+          filter: null,
+        }
+        const response = await this.getAllCategories(searchedFor)
+        this.categoryList.options = reduceDataHeaviless(response.data)
+      }
+      this.categoryList.loading = false
+      function reduceDataHeaviless(data) {
+        // Reducing if the data is too heavy to handle
+        return data.map((category) => {
+          return { uuid: category.uuid, name: category.name }
+        })
+      } //QQ
+    },
+    async get_Filtered_Language_Options_Data(searched) {
+      this.languageList.loading = true
+      if (searched) {
+        let filterBy = [
+          {
+            key: 'title',
+            operation: ':',
+            type: 'title',
+            value: searched,
+          },
+        ]
+        const response = await this.getAllLanguages(
+          this.languageList.languageSearcherDefaultServerOptions,
+          filterBy,
+        )
+        this.languageList.options = response.data
+      } else {
+        const response = await this.getAllLanguages(
+          this.languageList.languageSearcherDefaultServerOptions,
+        )
+        this.languageList.options = response.data
+      }
+      this.languageList.loading = false
+    },
+    async doAction(actionName, data) {
+      switch (actionName) {
+        case 'goSpecifiedPage':
+          {
+            router.push({ name: data })
+          }
+          break
+      }
     },
   },
 }

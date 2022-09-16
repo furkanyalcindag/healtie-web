@@ -54,6 +54,5 @@ export default createStore({
     academicInfo,
     certificate,
     experience,
-
   },
 })

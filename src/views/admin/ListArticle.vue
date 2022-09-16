@@ -327,33 +327,7 @@ export default {
         { text: 'İstatistikler', value: 'statictics', sortable: true },
         { text: 'İşlemler', value: 'operations' },
       ],
-      items: [
-        {
-          title: 'BAŞLIK',
-          author: 'YAZAR',
-          publishedDate: '2022-09-12',
-          likeCount: 100,
-          saveCount: 50,
-          commentCount: 32,
-        },
-        {
-          title:
-            'UZUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUN BAŞLIK2',
-          author: 'YAZAR2',
-          publishedDate: '2022-10-01',
-          likeCount: 2,
-          saveCount: 0,
-          commentCount: 0,
-        },
-        {
-          title: 'BAŞLIK3',
-          author: 'YAZAR',
-          publishedDate: '2022-09-12',
-          likeCount: 100,
-          saveCount: 50,
-          commentCount: 32,
-        },
-      ],
+      items: [],
       addedItem: {
         // Real data
         data: new createArticleDTO(

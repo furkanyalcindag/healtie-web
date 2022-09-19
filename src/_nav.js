@@ -31,6 +31,77 @@ export default [
   },
   {
     component: 'CNavGroup',
+    name: 'Admin',
+    to: '/admin',
+    icon: 'cil-puzzle',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'AdminDoctorList',
+        to: '/admin/doctor/list',
+      },
+      {
+        component: 'CNavItem',
+        name: 'AdminArticleList',
+        to: '/admin/article/list',
+      },
+    ],
+  },
+  {
+    component: 'CNavGroup',
+
+    name: 'Management',
+    to: '/management',
+    icon: 'cil-puzzle',
+    items: [
+      {
+        component: 'CNavItem',
+
+        name: 'Category',
+        to: '/management/category',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Role',
+        to: '/management/role',
+      },
+      {
+        component: 'CNavItem',
+        name: 'User',
+        to: '/management/user',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Settings',
+        to: '/management/settings',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Notification',
+        to: '/management/notification',
+      },
+    ],
+  },
+  {
+    component: 'CNavGroup',
+    name: 'Doctor',
+    to: '/doctor',
+    icon: 'cil-puzzle',
+    items: [
+      {
+        component: 'CNavItem',
+        name: 'Doctor Profile',
+        to: '/doctor/profile',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Doctor Article',
+        to: '/doctor/article',
+      },
+    ],
+  },
+  {
+    component: 'CNavGroup',
     name: 'Base',
     to: '/base',
     icon: 'cil-puzzle',

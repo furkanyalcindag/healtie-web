@@ -34,6 +34,7 @@ const routes = [
         name: 'Typography',
         component: () => import('@/views/theme/Typography.vue'),
       },
+
       {
         path: '/base',
         name: 'Base',
@@ -258,6 +259,108 @@ const routes = [
         path: '/widgets',
         name: 'Widgets',
         component: () => import('@/views/widgets/Widgets.vue'),
+      },
+
+      {
+        path: '/admin',
+        name: 'Admin',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        redirect: '/admin/doctor/list',
+        children: [
+          {
+            path: '/admin/doctor/list',
+            name: 'AdminDoctorList',
+            component: () => import('@/views/admin/ListDoctor.vue'),
+          },
+          {
+            path: '/admin/article/list',
+            name: 'AdminArticleList',
+            component: () => import('@/views/admin/ListArticle.vue'),
+          },
+          {
+            path: '/admin/login-admin',
+            name: 'Login Admin',
+            component: () => import('@/views/admin/LoginAdmin.vue'),
+          },
+          {
+            path: '/admin/register-admin',
+            name: 'Register Admin',
+            component: () => import('@/views/admin/RegisterAdmin.vue'),
+          },
+        ],
+      },
+      {
+        path: '/management',
+        name: 'Management',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        children: [
+          {
+            path: 'category',
+            name: 'Category',
+            component: () => import('@/views/management/Category.vue'),
+          },
+          {
+            path: 'user',
+            name: 'User',
+            component: () => import('@/views/management/User.vue'),
+          },
+          {
+            path: 'role',
+            name: 'Role',
+            component: () => import('@/views/management/Role.vue'),
+          },
+          {
+            path: 'settings',
+            name: 'Settings',
+            component: () => import('@/views/management/Settings.vue'),
+          },
+          {
+            path: 'notification',
+            name: 'Notification',
+            component: () => import('@/views/management/Notification.vue'),
+          },
+        ],
+      },
+      {
+        path: '/doctor',
+        redirect: '/doctor/register-doctor',
+        name: 'Doctor',
+        component: {
+          render() {
+            return h(resolveComponent('router-view'))
+          },
+        },
+        children: [
+          {
+            path: '/doctor/profile',
+            name: 'Profile Doctor',
+            component: () => import('@/views/doctor/ProfileDoctor.vue'),
+          },
+
+          {
+            path: 'login-doctor',
+            name: 'Login Doctor',
+            component: () => import('@/views/doctor/LoginDoctor.vue'),
+          },
+          {
+            path: 'register-doctor',
+            name: 'Register Doctor',
+            component: () => import('@/views/doctor/RegisterDoctor.vue'),
+          },
+          {
+            path: '/doctor/article',
+            name: 'Article Doctor',
+            component: () => import('@/views/doctor/ArticleDoctor.vue'),
+          },
+        ],
       },
     ],
   },

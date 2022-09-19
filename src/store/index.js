@@ -11,6 +11,8 @@ import doctor from '@/service/Doctor'
 import academicInfo from '@/service/AcademicInfo'
 import certificate from '@/service/Certificate'
 import experience from '@/service/Experience'
+import settings from '@/service/Settings'
+import notification from '@/service/Notification'
 
 export default createStore({
   state: {
@@ -54,5 +56,7 @@ export default createStore({
     academicInfo,
     certificate,
     experience,
+    settings,
+    notification,
   },
 })

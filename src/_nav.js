@@ -80,6 +80,11 @@ export default [
         name: 'Notification',
         to: '/management/notification',
       },
+      {
+        component: 'CNavItem',
+        name: 'Tag',
+        to: '/management/tag',
+      },
     ],
   },
   {

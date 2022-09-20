@@ -386,14 +386,6 @@ export default {
         )
         this.getSettings(this.settingsTable.serverOptions)
         this.closeModal('addSettingsModal', true)
-        debugger
-        if (data.current === true) {
-          // console.log(data)
-
-          this.addedItem.data.current = 'T'
-        } else {
-          return null
-        }
       } else {
         new Toast(
           'Something went wrong',
@@ -408,7 +400,6 @@ export default {
       newSettingsData.language = 'TR'
       this.isAbleToPushButton = false
       const response = await this.updateSettingsAPI(newSettingsData)
-      console.log(newSettingsData)
       if (response === true) {
         new Toast(
           'Settings updated successfully',

@@ -2409,6 +2409,7 @@ export default {
       this.commentData.pageOptions.totalElements = response
         ? response.totalElements
         : 0
+      // Find the comments that already in comment data
       this.commentData.comments = await (response.data
         ? response.data.map((loopingComment) => {
             let isCommentAlreadyFoundInComments =
@@ -2503,7 +2504,7 @@ export default {
     },
     async sendComment(parentCommentAndReplyContent) {
       parentCommentAndReplyContent.articleUUID = this.selectedArticle.uuid
-      const response = this.addReplyAPI(parentCommentAndReplyContent)
+      const response = await this.addReplyAPI(parentCommentAndReplyContent)
       if (response == true) {
         new Toast(
           'Comment added',
@@ -2511,6 +2512,47 @@ export default {
           true,
           'text-white align-items-center',
         )
+        let mainParentUUID = parentCommentAndReplyContent.selectedComment.uuid
+        let repliedCommentUUID =
+          parentCommentAndReplyContent.selectedChildComment
+            ? parentCommentAndReplyContent.selectedChildComment.uuid
+            : null
+        // Get comments if its already in comment data. If not then add new one
+        // if replied in a child comment
+        if (repliedCommentUUID) {
+          this.commentData.comments = await this.commentData.comments.map(
+            (comment) => {
+              if (comment.uuid == mainParentUUID) {
+                let currentAddingCommentCount = -1
+                if (comment.replies) {
+                  comment.replies = comment.replies.map(
+                    (repliedComment, replyCommentIndex) => {
+                      if (repliedComment.uuid == repliedCommentUUID) {
+                        currentAddingCommentCount = replyCommentIndex
+                        repliedComment.replyCount++
+                        return repliedComment
+                      }
+                      return repliedComment
+                    },
+                  )
+                }
+              }
+              return comment
+            },
+          )
+        }
+        // if replied in a parent comment
+        else if (mainParentUUID) {
+          this.commentData.comments = await this.commentData.comments.map(
+            (comment, parentCommentIndex) => {
+              if (comment.uuid == mainParentUUID) {
+                comment.replyCount++
+                return comment
+              }
+              return comment
+            },
+          )
+        }
         this.validationChecked = false
       } else {
         new Toast('Error', 'danger', true, 'text-white align-items-center')

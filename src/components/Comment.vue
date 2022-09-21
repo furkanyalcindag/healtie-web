@@ -153,6 +153,8 @@
                                       @click="
                                         showReplyEditor(
                                           '#child-comment-' + childCommentIndex,
+                                          parentComment,
+                                          childComment,
                                         )
                                       "
                                     >
@@ -416,6 +418,7 @@
                   ? submitToAPI($event, null, {
                       replyContent: addedReply,
                       selectedComment: selectedComment,
+                      selectedChildComment: selectedChildComment,
                     })
                   : null
               "
@@ -558,6 +561,7 @@ export default {
       },
       isAbleToPushButton: true,
       selectedComment: null,
+      selectedChildComment: null,
     }
   },
   async created() {
@@ -598,21 +602,22 @@ export default {
       console.log('Loading Child Comments...')
       this.$emit('load-more-comments-on-parent', data)
     },
-    async emitSendReplyData(commentData) {
+    async emitSendReplyData(commentData, childCommentData) {
       console.log('Sending comment data to page...')
-      this.$emit('send-reply-data', commentData)
+      this.$emit('send-reply-data', commentData, childCommentData)
     },
     async emitLoadMoreComments() {
       this.parentCommentsPageOptionsCopy.size += 5
       // this.$emit('loadMoreComments', this.parentCommentsPageOptionsCopy)
     },
-    async showReplyEditor(commentID, commentData) {
+    async showReplyEditor(commentID, parentCommentData, childCommentData) {
       if (commentID == this.teleportReplyEditorTo) {
         this.teleportReplyEditorTo = ''
         return
       }
       this.teleportReplyEditorTo = commentID
-      this.selectedComment = commentData
+      this.selectedComment = parentCommentData
+      this.selectedChildComment = childCommentData
     },
     async resetComponent() {
       this.parentCommentsPageOptionsCopy = {

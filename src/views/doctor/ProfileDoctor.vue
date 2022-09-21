@@ -999,12 +999,12 @@
       </CModalHeader>
 
       <CModalBody>
-        {{ commentData.comments[3] }}
         <Comments
           :comments="commentData.comments"
           :parentCommentsPageOptions="commentData.pageOptions"
           :isLoading="commentData.isLoading"
           @load-more-comments-on-parent="loadChildComments"
+          @send-reply-data="sendComment"
         >
         </Comments>
         <!-- <div class="p-4 md:w-2/3 lg:w-[55%] xl:1/3 mx-auto">
@@ -1816,6 +1816,7 @@
 import avatar from '@/assets/images/avatars/8.jpg'
 import Comments from '@/components/Comment.vue'
 import articleCommentDTO from '@/models/articleCommentDTO'
+import Toast from '@/models/create_TOAST_dto'
 import { mapActions } from 'vuex'
 export default {
   name: 'Colors',
@@ -2356,23 +2357,28 @@ export default {
         data: articleCommentDTO.createEmpty(),
         comments: [],
         pageOptions: {
-          number: 1,
+          number: 0,
           size: 10,
           totalElements: 10,
         },
         isLoading: true,
       },
+      selectedComment: null,
+      selectedArticle: null,
     }
   },
   watch: {
-    'commentData.pageOptions.size'() {
-      console.log('CHANGED')
+    'commentData.pageOptions.size'(newval) {
+      console.log('Page size changed. Loading more...')
+      console.log(newval)
+      this.getParentCommentsFromArticle(this.selectedArticle)
     },
   },
   methods: {
     ...mapActions({
       getParentCommentsFromArticleAPI: 'comment/getParentCommentsFromArticle',
       getRepliesFromCommentAPI: 'comment/getRepliesFromComment',
+      addReplyAPI: 'comment/addReply',
     }),
     scrollToSpecifiedElement(name) {
       var elmntToView = document.getElementById(name)
@@ -2387,6 +2393,7 @@ export default {
         case 'showComment':
           {
             this.getParentCommentsFromArticle(data)
+            this.selectedArticle = data
           }
           break
       }
@@ -2398,26 +2405,27 @@ export default {
         articleUUID: data.uuid,
         pageOptions: JSON.parse(JSON.stringify(this.commentData.pageOptions)),
       })
-      let notReplacedComment = {}
+      // let notReplacedComment = {}
       this.commentData.pageOptions.totalElements = response
         ? response.totalElements
         : 0
       this.commentData.comments = await (response.data
         ? response.data.map((loopingComment) => {
-            if (
-              this.commentData.comments.find((loopingComment2) => {
-                if (loopingComment.uuid == loopingComment2.uuid) {
-                  return true
-                }
-              })
-            ) {
-              this.commentData.comments.some((loopingComment3) => {
-                if (loopingComment.uuid == loopingComment3.uuid) {
-                  notReplacedComment = loopingComment3
-                  return true
-                }
-              })
-              return notReplacedComment
+            let isCommentAlreadyFoundInComments =
+              this.commentData.comments.find(
+                (loopingComment2) =>
+                  loopingComment.uuid == loopingComment2.uuid,
+              )
+            if (isCommentAlreadyFoundInComments) {
+              // this.commentData.comments.some((loopingComment3) => {
+              //   if (loopingComment.uuid == loopingComment3.uuid) {
+              //     notReplacedComment = loopingComment3
+              //     return true
+              //   }
+              // })
+              // console.log(notReplacedComment)
+              // return notReplacedComment
+              return isCommentAlreadyFoundInComments
             } else {
               return loopingComment
             }
@@ -2435,7 +2443,6 @@ export default {
       const replies = await this.getChildCommentsFromParentComment(
         commentUUIDandPageOptions,
       )
-      console.log(commentUUIDandPageOptions)
       if (replies) {
         // update comment replies
         replies.data = replies.data.map((reply) => {
@@ -2444,17 +2451,40 @@ export default {
         })
         // to load replies for child comments and send it to parent comment (.replies)
         if (commentUUIDandPageOptions.commentData.mainParent) {
-          let mainParentIndex = commentUUIDandPageOptions.commentData.mainParent
-          let currentCommentIndex =
-            commentUUIDandPageOptions.commentData.repliedParentIndex
-            // DONT USE INDEX, FIND INDEX IN OBJECT. DO NOT USE LIKE arr[index] FOR JSONS USE OBJECT.entries or object.keys or object.values
-            // how to set values in specified index at object
-          this.commentData.comments[mainParentIndex][currentCommentIndex] = commentUUIDandPageOptions.commentData
-          let currentAddingCommentIndex = currentCommentIndex
-          await replies.data.forEach((comment) => {
-            currentAddingCommentIndex++
-            this.commentData.comments[mainParentIndex].replies.splice(currentCommentIndex, 0, comment)
-          })
+          let mainParentUUID = commentUUIDandPageOptions.commentData.mainParent
+          let repliedCommentUUID =
+            commentUUIDandPageOptions.commentData.repliedParent
+          this.commentData.comments = await this.commentData.comments.map(
+            (comment) => {
+              if (comment.uuid == mainParentUUID) {
+                let currentAddingCommentCount = -1
+                if (comment.replies) {
+                  comment.replies = comment.replies.map(
+                    (repliedComment, replyCommentIndex) => {
+                      if (repliedComment.uuid == repliedCommentUUID) {
+                        currentAddingCommentCount = replyCommentIndex
+                        repliedComment = commentUUIDandPageOptions.commentData
+                        return repliedComment
+                      }
+                      return repliedComment
+                    },
+                  )
+                  // add the comments bottom of the replied comment
+                  if (currentAddingCommentCount >= 0) {
+                    replies.data.forEach((replyComment) => {
+                      currentAddingCommentCount++
+                      comment.replies.splice(
+                        currentAddingCommentCount,
+                        0,
+                        replyComment,
+                      )
+                    })
+                  }
+                }
+              }
+              return comment
+            },
+          )
         }
         // to load replies for parent comment
         else {
@@ -2469,8 +2499,23 @@ export default {
             },
           )
         }
-        //console.log(replies)
       }
+    },
+    async sendComment(parentCommentAndReplyContent) {
+      parentCommentAndReplyContent.articleUUID = this.selectedArticle.uuid
+      const response = this.addReplyAPI(parentCommentAndReplyContent)
+      if (response == true) {
+        new Toast(
+          'Comment added',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+        this.validationChecked = false
+      } else {
+        new Toast('Error', 'danger', true, 'text-white align-items-center')
+      }
+      this.isAbleToPushButton = true
     },
     closeModal(index, resetData) {
       this.openedModals[index] = false

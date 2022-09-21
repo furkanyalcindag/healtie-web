@@ -89,6 +89,7 @@
                             @click="
                               showReplyEditor(
                                 '#parent-comment-' + parentCommentIndex,
+                                parentComment,
                               )
                             "
                           >
@@ -109,13 +110,17 @@
                       !parentComment.isStopHidingLoadedComments
                     "
                   >
-                    <ul class="comment-reply-container">
+                    <TransitionGroup
+                      name="reply"
+                      tag="ul"
+                      class="comment-reply-container"
+                    >
                       <li
                         class="comment-reply"
                         v-for="(
                           childComment, childCommentIndex
                         ) in parentComment.replies"
-                        :key="childCommentIndex"
+                        :key="childComment.uuid"
                       >
                         <ul class="comments">
                           <li class="clearfix">
@@ -167,12 +172,6 @@
                             class="clearfix"
                           ></li>
                           <!-- Show comment/Loading button -->
-                          {{
-                            childComment.loadedCommentCount
-                          }}
-                          <!-- {{
-                            childCommentIndex
-                          }} -->
                           <div
                             v-if="
                               (childComment.replyCount > 0 &&
@@ -194,9 +193,8 @@
                                   ) {
                                     childComment.isReplyCountExceeded = true
                                   }
-                                  childComment.mainParent = parentCommentIndex
-                                  childComment.repliedParentIndex =
-                                    childCommentIndex
+                                  childComment.mainParent = parentComment.uuid
+                                  childComment.repliedParent = childComment.uuid
 
                                   await emitLoadCurrentCommentData({
                                     pageNumber: 0,
@@ -220,9 +218,8 @@
                                   ) {
                                     childComment.isReplyCountExceeded = true
                                   }
-                                  childComment.mainParent = parentCommentIndex
-                                  childComment.repliedParentIndex =
-                                    childCommentIndex
+                                  childComment.mainParent = parentComment.uuid
+                                  childComment.repliedParent = childComment.uuid
 
                                   await emitLoadCurrentCommentData({
                                     pageNumber: 0,
@@ -271,7 +268,7 @@
                           </div>
                         </ul>
                       </li>
-                    </ul>
+                    </TransitionGroup>
                   </div>
                   <!-- Show comment/Loading button -->
                   <div
@@ -416,7 +413,10 @@
               class="row g-3"
               @submit.prevent="
                 isAbleToPushButton
-                  ? submitToAPI($event, null, addedReply)
+                  ? submitToAPI($event, null, {
+                      replyContent: addedReply,
+                      selectedComment: selectedComment,
+                    })
                   : null
               "
               needs-validation
@@ -557,6 +557,7 @@ export default {
         text: '',
       },
       isAbleToPushButton: true,
+      selectedComment: null,
     }
   },
   async created() {
@@ -564,7 +565,11 @@ export default {
     this.commentsDataCopy = cachedCommentsData
     this.parentCommentsPageOptionsCopy = this.parentCommentsPageOptions
   },
-  emits: ['load-more-comments-on-parent', 'loadMoreComments', 'sendReplyData'],
+  emits: [
+    'load-more-comments-on-parent',
+    'loadMoreComments',
+    'send-reply-data',
+  ],
   methods: {
     // eslint-disable-next-line
     async submitToAPI(event, modalname, data) {
@@ -578,7 +583,9 @@ export default {
         this.isAbleToPushButton = true
         return
       }
-      this.$emit('sendReplyData', data)
+      if (data.selectedComment) {
+        this.emitSendReplyData(data)
+      }
       this.teleportReplyEditorTo = ''
       this.addedReply = {
         text: '',
@@ -591,16 +598,21 @@ export default {
       console.log('Loading Child Comments...')
       this.$emit('load-more-comments-on-parent', data)
     },
+    async emitSendReplyData(commentData) {
+      console.log('Sending comment data to page...')
+      this.$emit('send-reply-data', commentData)
+    },
     async emitLoadMoreComments() {
       this.parentCommentsPageOptionsCopy.size += 5
       // this.$emit('loadMoreComments', this.parentCommentsPageOptionsCopy)
     },
-    async showReplyEditor(commentID) {
+    async showReplyEditor(commentID, commentData) {
       if (commentID == this.teleportReplyEditorTo) {
         this.teleportReplyEditorTo = ''
         return
       }
       this.teleportReplyEditorTo = commentID
+      this.selectedComment = commentData
     },
     async resetComponent() {
       this.parentCommentsPageOptionsCopy = {
@@ -761,5 +773,16 @@ ul,
   font-size: 26px;
   line-height: 30px;
   font-weight: 800;
+}
+
+/* Reply comment animations */
+.reply-enter-active,
+.reply-leave-active {
+  transition: all 0.5s ease;
+}
+.reply-enter-from,
+.reply-leave-to {
+  opacity: 0;
+  background-color: yellow;
 }
 </style>

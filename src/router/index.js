@@ -327,6 +327,11 @@ const routes = [
             name: 'Notification',
             component: () => import('@/views/management/Notification.vue'),
           },
+          {
+            path: 'tag',
+            name: 'Tag',
+            component: () => import('@/views/management/Tag.vue'),
+          },
         ],
       },
       {

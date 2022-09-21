@@ -3,6 +3,7 @@
     <CCol class="justify-content-start">
       <CCard>
         <CCardHeader>
+          <!-- <CIcon icon="cil-user" /> -->
           <CRow>
             <CCol lg="3" class="text-left mt-3">
               <h2>Bildirimler</h2>
@@ -12,237 +13,9 @@
                 color="primary"
                 class="float-end"
                 shape="rounded-pill"
-                @click="
-                  () => {
-                    openedModals[0] = true
-                  }
-                "
+                @click="showModal('addNotificationModal')"
                 >Ekle</CButton
               >
-              <CModal
-                size="lg"
-                :visible="openedModals[0]"
-                @close="closeModal(0)"
-              >
-                <CModalHeader>
-                  <CModalTitle>Bildirim Ekle</CModalTitle>
-                </CModalHeader>
-                <CModalBody>
-                  <CForm
-                    class="row g-3"
-                    @submit.prevent="checkValidation()"
-                    needs-validation
-                    novalidate
-                    :validated="validationChecked"
-                  >
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-title"
-                        >Başlık</CFormLabel
-                      >
-                      <CFormInput
-                        id="add-notification-title"
-                        required
-                        feedbackInvalid="Lütfen bir başlık giriniz"
-                      />
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-message"
-                        >Mesaj</CFormLabel
-                      >
-                      <CFormInput
-                        id="add-notification-message"
-                        required
-                        feedbackInvalid="Lütfen bir mesaj giriniz"
-                      />
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-link">Link</CFormLabel>
-                      <CFormInput
-                        id="add-notification-link"
-                        required
-                        feedbackInvalid="Lütfen bir link giriniz"
-                      />
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-image"
-                        >Resim Yükle</CFormLabel
-                      >
-                      <CInputGroup class="mb-3">
-                        <CFormInput type="file" id="inputGroupFile02" />
-                        <CInputGroupText
-                          component="label"
-                          required
-                          for="inputGroupFile02"
-                          >Yükle</CInputGroupText
-                        >
-                      </CInputGroup>
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-toWho"
-                        >Kime?</CFormLabel
-                      >
-                      <CFormInput
-                        id="add-notification-toWho"
-                        required
-                        feedbackInvalid="Lütfen bir değer giriniz"
-                      />
-                    </CCol>
-                    <CCol md="12">
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          role="switch"
-                          id="flexSwitchCheckDefault"
-                        />
-                        <label
-                          class="form-check-label"
-                          for="flexSwitchCheckDefault"
-                          >Gönderildi mi?</label
-                        >
-                      </div>
-                    </CCol>
-                    <CModalFooter class="pe-0">
-                      <CButton color="secondary" @click="closeModal(0)"
-                        >Kapat</CButton
-                      >
-                      <CButton color="success" type="submit">Kaydet</CButton>
-                    </CModalFooter>
-                  </CForm>
-                </CModalBody>
-              </CModal>
-              <CModal
-                size="lg"
-                :visible="openedModals[2]"
-                @close="closeModal(2)"
-              >
-                <CModalHeader>
-                  <CModalTitle> Düzenle</CModalTitle>
-                </CModalHeader>
-                <CModalBody>
-                  <CForm
-                    class="row g-3"
-                    @submit.prevent="checkValidation()"
-                    needs-validation
-                    novalidate
-                    :validated="validationChecked"
-                  >
-                    <CCol md="6">
-                      <div
-                        class="rounder d-flex justify-content-center align-items-center"
-                        style="height: 9rem"
-                      >
-                        <CAvatar
-                          :src="avatar"
-                          status="success"
-                          style="transform: scale(4)"
-                        >
-                        </CAvatar>
-                      </div>
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-image"
-                        >Resim Yükle</CFormLabel
-                      >
-                      <CInputGroup class="mb-3">
-                        <CFormInput type="file" id="inputGroupFile02" />
-                        <CInputGroupText
-                          component="label"
-                          required
-                          for="inputGroupFile02"
-                          >Yükle</CInputGroupText
-                        >
-                      </CInputGroup>
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-title"
-                        >Başlık</CFormLabel
-                      >
-                      <CFormInput
-                        id="add-notification-title"
-                        required
-                        feedbackInvalid="Lütfen bir başlık giriniz"
-                      />
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-message"
-                        >Mesaj</CFormLabel
-                      >
-                      <CFormInput
-                        id="add-notification-message"
-                        required
-                        feedbackInvalid="Lütfen bir mesaj giriniz"
-                      />
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-link">Link</CFormLabel>
-                      <CFormInput
-                        id="add-notification-link"
-                        required
-                        feedbackInvalid="Lütfen bir link giriniz"
-                      />
-                    </CCol>
-                    <CCol md="6">
-                      <CFormLabel for="add-notification-toWho"
-                        >Kime?</CFormLabel
-                      >
-                      <CFormInput
-                        id="add-notification-toWho"
-                        required
-                        feedbackInvalid="Lütfen bir değer giriniz"
-                      />
-                    </CCol>
-                    <CCol md="12">
-                      <div class="form-check form-switch">
-                        <input
-                          class="form-check-input"
-                          type="checkbox"
-                          role="switch"
-                          id="flexSwitchCheckDefault"
-                        />
-                        <label
-                          class="form-check-label"
-                          for="flexSwitchCheckDefault"
-                          >Gönderildi mi?</label
-                        >
-                      </div>
-                    </CCol>
-                    <CModalFooter class="pe-0">
-                      <CButton color="secondary" @click="closeModal(2)"
-                        >Kapat</CButton
-                      >
-                      <CButton color="success" type="submit">
-                        Düzenlemeyi Kaydet</CButton
-                      >
-                    </CModalFooter>
-                  </CForm>
-                </CModalBody>
-              </CModal>
-              <CModal
-                size="lg"
-                :visible="openedModals[1]"
-                @close="closeModal(1)"
-              >
-                <CModalHeader>
-                  <CModalTitle
-                    >Bildirimi <span class="text-danger">Sil</span></CModalTitle
-                  >
-                </CModalHeader>
-                <CModalBody>
-                  <h5>
-                    Bu işlemi geri alamazsınız. Bildirim bilgilerini
-                    <span class="text-danger fw-bolder">
-                      silmek istiyor musunuz?
-                    </span>
-                  </h5>
-                  <CModalFooter class="pe-0">
-                    <CButton color="secondary" @click="closeModal(1)"
-                      >Kapat</CButton
-                    >
-                    <CButton color="danger" type="submit">SİL</CButton>
-                  </CModalFooter>
-                </CModalBody>
-              </CModal>
             </CCol>
           </CRow>
         </CCardHeader>
@@ -251,66 +24,28 @@
             class="m-4"
             show-index
             v-model:itemsSelected="itemsSelected"
+            v-model:server-options="notificationTable.serverOptions"
+            :server-items-length="notificationTable.serverItemsLength"
             :headers="headers"
             :items="items"
             :theme-color="themeColor"
             buttons-pagination
-            :rows-per-page="rowsPerPage"
+            :loading="notificationTable.loading"
           >
-            <template #item-image="{ image }">
+            <template #item-send="item">
+              <CIcon v-if="item.send" icon="cil-check-alt" />
+              <CIcon v-else icon="cil-x" />
+            </template>
+
+            <template #item-base64="{ base64 }">
               <CAvatar
                 class="image-rounder"
                 shape="rounded"
-                :src="image"
+                :src="base64"
                 style="margin: 12px"
               />
             </template>
-
-            <template #item-message="{ message }">
-              <CTooltip :content="message" placement="top">
-                <template #toggler="{ on }">
-                  <div
-                    v-on="on"
-                    style="max-width: 150px"
-                    class="d-inline-block text-truncate"
-                  >
-                    {{ message }}
-                  </div>
-                </template>
-              </CTooltip>
-            </template>
-            <template #item-link="{ link }">
-              <CTooltip :content="link" placement="top">
-                <template #toggler="{ on }">
-                  <div
-                    v-on="on"
-                    style="max-width: 150px"
-                    class="d-inline-block text-truncate"
-                  >
-                    {{ link }}
-                  </div>
-                </template>
-              </CTooltip>
-            </template>
-            <template #item-send="{ send }">
-              <CTooltip :content="send" placement="top">
-                <template #toggler="{ send }">
-                  <div class="form-check form-switch form-check-reverse">
-                    <input
-                      class="form-check-input"
-                      type="checkbox"
-                      id="flexSwitchCheckReverse"
-                    />
-                    <label
-                      class="form-check-label"
-                      for="flexSwitchCheckReverse"
-                    ></label>
-                  </div>
-                  {{ send }}
-                </template>
-              </CTooltip>
-            </template>
-            <template #item-operations>
+            <template #item-operations="item">
               <div>
                 <CButtonGroup role="group" size="sm">
                   <CButton
@@ -322,11 +57,7 @@
                       content: 'Düzenle',
                       placement: 'top',
                     }"
-                    @click="
-                      () => {
-                        openedModals[2] = true
-                      }
-                    "
+                    @click="showModal('updateNotificationModal', item)"
                   >
                     <CIcon icon="cil-pencil" />
                   </CButton>
@@ -339,11 +70,7 @@
                       content: 'Sil',
                       placement: 'top',
                     }"
-                    @click="
-                      () => {
-                        openedModals[1] = true
-                      }
-                    "
+                    @click="showModal('deleteNotificationModal', item)"
                   >
                     <CIcon icon="cil-trash" />
                   </CButton>
@@ -353,12 +80,268 @@
           </easy-data-table>
         </CCardBody>
       </CCard>
+      <!-- Add Notification -->
+      <CModal
+        backdrop="static"
+        size="lg"
+        :visible="openedModals.addNotificationModal"
+        @close="closeModal('addNotificationModal')"
+      >
+        <CModalHeader>
+          <CModalTitle>Bildirim Ekle</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm
+            class="row g-3"
+            @submit.prevent="
+              isAbleToPushButton
+                ? submitToAPI($event, 'addNotificationModal', addedItem.data)
+                : null
+            "
+            needs-validation
+            novalidate
+            :validated="validationChecked"
+          >
+            <CCol md="6">
+              <CFormLabel for="add-notification-title">Başlık</CFormLabel>
+              <CFormInput
+                id="add-notification-title"
+                required
+                feedbackInvalid="Lütfen bir başlık giriniz"
+                v-model="addedItem.data.title"
+                autocomplete="off"
+              />
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="add-notification-message">Mesaj</CFormLabel>
+              <CFormInput
+                id="add-notification-message"
+                required
+                feedbackInvalid="Lütfen bir mesaj giriniz"
+                v-model="addedItem.data.message"
+                autocomplete="off"
+              />
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="add-notification-link">Link</CFormLabel>
+              <CFormInput
+                id="add-notification-link"
+                required
+                feedbackInvalid="Lütfen bir link giriniz"
+                v-model="addedItem.data.link"
+                autocomplete="off"
+              />
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="add-notification-base64">Base64</CFormLabel>
+              <CFormInput
+                id="add-notification-base64"
+                required
+                feedbackInvalid="Lütfen bir base64 link giriniz"
+                v-model="addedItem.data.base64"
+                autocomplete="off"
+              />
+            </CCol>
+            <CCol md="12">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  v-model="addedItem.data.send"
+                />
+                <label class="form-check-label" for="flexSwitchCheckDefault"
+                  >Güncel mi?</label
+                >
+              </div>
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="add-notification-image">Resim Yükle</CFormLabel>
+              <CInputGroup class="mb-3">
+                <CFormInput type="file" id="inputGroupFile02" />
+                <CInputGroupText
+                  component="label"
+                  required
+                  for="inputGroupFile02"
+                  >Yükle</CInputGroupText
+                >
+              </CInputGroup>
+            </CCol>
+
+            <CModalFooter class="pe-0">
+              <CButton
+                color="secondary"
+                @click="closeModal('addNotificationModal', true)"
+                >Kapat</CButton
+              >
+              <CButton
+                color="success"
+                :type="isAbleToPushButton ? 'submit' : null"
+                >Kaydet</CButton
+              >
+            </CModalFooter>
+          </CForm>
+        </CModalBody>
+      </CModal>
+      <!-- Update Notification -->
+      <CModal
+        size="lg"
+        :visible="openedModals.updateNotificationModal"
+        @close="closeModal('updateNotificationModal')"
+      >
+        <CModalHeader>
+          <CModalTitle> Düzenle</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <CForm
+            class="row g-3"
+            @submit.prevent="
+              submitToAPI($event, 'updateNotificationModal', editedItem)
+            "
+            needs-validation
+            novalidate
+            :validated="validationChecked"
+          >
+            <CCol md="6">
+              <div
+                class="rounder d-flex justify-content-center align-items-center"
+                style="height: 9rem"
+              >
+                <CAvatar
+                  :src="avatar"
+                  status="success"
+                  style="transform: scale(4)"
+                >
+                </CAvatar>
+              </div>
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="add-notification-image">Resim Yükle</CFormLabel>
+              <CInputGroup class="mb-3">
+                <CFormInput type="file" id="inputGroupFile02" />
+                <CInputGroupText
+                  component="label"
+                  required
+                  for="inputGroupFile02"
+                  >Yükle</CInputGroupText
+                >
+              </CInputGroup>
+            </CCol>
+
+            <CCol md="6">
+              <CFormLabel for="update-notification-title">Başlık</CFormLabel>
+              <CFormInput
+                id="update-notification-title"
+                required
+                feedbackInvalid="Lütfen bir başlık giriniz"
+                v-model="editedItem.title"
+                autocomplete="off"
+              />
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="update-notification-message">Mesaj</CFormLabel>
+              <CFormInput
+                id="update-notification-message"
+                required
+                feedbackInvalid="Lütfen bir mesaj giriniz"
+                v-model="editedItem.message"
+                autocomplete="off"
+              />
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="update-notification-link">Link</CFormLabel>
+              <CFormInput
+                id="update-notification-link"
+                required
+                feedbackInvalid="Lütfen bir link giriniz"
+                v-model="editedItem.link"
+                autocomplete="off"
+              />
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="update-notification-base64">Base64</CFormLabel>
+              <CFormInput
+                id="update-notification-base64"
+                required
+                feedbackInvalid="Lütfen bir base64 link giriniz"
+                v-model="editedItem.base64"
+                autocomplete="off"
+              />
+            </CCol>
+            <CCol md="12">
+              <div class="form-check form-switch">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  id="flexSwitchCheckDefault"
+                  v-model="editedItem.send"
+                />
+                <label class="form-check-label" for="flexSwitchCheckDefault"
+                  >Güncel mi?</label
+                >
+              </div>
+            </CCol>
+
+            <CModalFooter class="pe-0">
+              <CButton
+                color="secondary"
+                @click="closeModal('updateNotificationModal')"
+                >Kapat</CButton
+              >
+              <CButton
+                color="success"
+                :type="isAbleToPushButton ? 'submit' : null"
+                >Düzenlemeyi Kaydet</CButton
+              >
+            </CModalFooter>
+          </CForm>
+        </CModalBody>
+      </CModal>
+      <!-- Delete Notification -->
+      <CModal
+        size="lg"
+        :visible="openedModals.deleteNotificationModal"
+        @close="closeModal('deleteNotificationModal')"
+      >
+        <CModalHeader>
+          <CModalTitle
+            >Bildirimi <span class="text-danger">Sil</span></CModalTitle
+          >
+        </CModalHeader>
+        <CModalBody>
+          <h5>
+            Bu işlemi geri alamazsınız. bildirim bilgilerini
+            <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
+          </h5>
+          <CModalFooter class="pe-0">
+            <CButton
+              color="secondary"
+              @click="closeModal('deleteNotificationModal')"
+              >Kapat</CButton
+            >
+            <CButton
+              color="danger"
+              @click="
+                isAbleToPushButton
+                  ? deleteNotification(selectedNotification.uuid)
+                  : null
+              "
+              >SİL</CButton
+            >
+          </CModalFooter>
+        </CModalBody>
+      </CModal>
     </CCol>
   </CRow>
 </template>
 
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
+import notificationDTO from '@/models/NotificationDTO'
+import { mapActions } from 'vuex'
+import Toast from '@/models/create_TOAST_dto'
 export default {
   name: 'Colors',
   components: {
@@ -368,68 +351,189 @@ export default {
     return {
       avatar: avatar,
       headers: [
-        { text: 'Resim', value: 'image' },
         { text: 'Başlık', value: 'title', sortable: true },
-        { text: 'Mesaj', value: 'message', sortable: true },
-        { text: 'Link', value: 'link' },
+        { text: 'Mesaj', value: 'message' },
         { text: 'Gönderildi mi?', value: 'send' },
-
-        { text: 'Kime Gönderildi?', value: 'toWho', sortable: true },
         { text: 'İşlemler', value: 'operations' },
       ],
-      items: [
-        {
-          title: 'ayar',
-          message:
-            'cvbfgddfffffffffffffdfsgfdgfdgfffffffffffffffffffffffffffffffffffffffffffffffg',
-          link: 'ssfddfgfgerg5erg56er5t1egf',
-          send: true,
-          image:
-            'https://ts2.mm.bing.net/th?q=Eba%27ya%20konulacak%20profil%20resmi',
-          toWho: 'lkfdd',
-        },
-        {
-          title: 'ayar',
-          message: 'cvbfgdfg',
-          link: 'asdsad',
-          send: 'True',
-          image:
-            'https://ts2.mm.bing.net/th?q=Eba%27ya%20konulacak%20profil%20resmi',
-          toWho: 'lkfdd',
-        },
-        {
-          title: 'ayar',
-          message: 'cvbfgdfg',
-          link: 'asdsad',
-          send: 'True',
-          image:
-            'https://ts2.mm.bing.net/th?q=Eba%27ya%20konulacak%20profil%20resmi',
-          toWho: 'lkfdd',
-        },
-      ],
+      items: [],
+      addedItem: {
+        // Real data
+        data: new notificationDTO(null, null, null, null, null, null),
+      },
+      editedItem: {
+        // Real data
+        data: new notificationDTO(null, null, null, null, null, null),
+      },
       themeColor: '#321fdb',
       itemsSelected: [],
-      rowsPerPage: 10,
       openedModals: {
-        addUserModal: false,
-        deleteUserModal: false,
-        updateUserModal: false,
+        addNotificationModal: false,
+        deleteNotificationModal: false,
+        updateNotificationModal: false,
       },
-      isMounted: false,
+      notificationTable: {
+        serverItemsLength: 0,
+        serverOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        rowsItem: [10, 20, 50],
+        loading: true,
+      },
       validationChecked: false,
+      isAbleToPushButton: true,
+      toasts: [],
+      selectedNotification: {},
     }
   },
-  mounted() {
-    this.isMounted = true
+  watch: {
+    'notificationTable.serverOptions'(newvalue) {
+      this.getNotification(newvalue)
+    },
+  },
+  created() {
+    this.getNotification(this.notificationTable.serverOptions)
   },
   methods: {
-    checkValidation() {
+    ...mapActions({
+      getAllNotification: 'notification/getNotification',
+      addNotificationAPI: 'notification/addNotification',
+      deleteNotificationAPI: 'notification/deleteNotification',
+      updateNotificationAPI: 'notification/updateNotification',
+    }),
+    submitToAPI(event, modalname, data) {
       // Response
+      this.isAbleToPushButton = false
       this.validationChecked = true
+      const form = event.currentTarget
+      if (form.checkValidity() === false) {
+        event.preventDefault()
+        event.stopPropagation()
+        this.isAbleToPushButton = true
+        return
+      }
+      switch (modalname) {
+        case 'addNotificationModal':
+          {
+            this.addNotification(JSON.parse(JSON.stringify(data)))
+          }
+          break
+        case 'updateNotificationModal':
+          {
+            this.updateNotification(JSON.parse(JSON.stringify(data)))
+          }
+          break
+      }
+      this.isAbleToPushButton = true
     },
-    closeModal(index) {
-      this.openedModals[index] = false
+    async showModal(modalname, data) {
+      this.selectedNotification = data ? JSON.parse(JSON.stringify(data)) : {}
+      switch (modalname) {
+        case 'updateNotificationModal':
+          {
+            let cachedItemData = JSON.parse(JSON.stringify(data))
+            this.editedItem = cachedItemData
+            // this.editedItem.data = JSON.parse(JSON.stringify(data))
+          }
+          break
+      }
+      this.openedModals[modalname] = true
+    },
+    closeModal(modalname, resetData) {
+      this.openedModals[modalname] = false
       this.validationChecked = false
+      if (resetData) {
+        switch (modalname) {
+          case 'addNotificationModal':
+            {
+              // Restore added item on clicking "No/Deny"
+              this.addedItem = {
+                data: new notificationDTO(null, null, null, null, null, null),
+              }
+            }
+            break
+        }
+      }
+    },
+    async getNotification(pageOptions) {
+      this.notificationTable.loading = true
+      const response = await this.getAllNotification(
+        pageOptions,
+        //  {pageOptions: pageOptions filter: null,}
+      )
+
+      this.items = response.data
+      this.notificationTable.serverItemsLength = response.totalElements
+      this.notificationTable.loading = false
+    },
+    async addNotification(data) {
+      this.isAbleToPushButton = false
+      const response = await this.addNotificationAPI(data)
+      if (response === true) {
+        new Toast(
+          'Notification added successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+        this.getNotification(this.notificationTable.serverOptions)
+        this.closeModal('addNotificationModal', true)
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+      }
+      this.isAbleToPushButton = true
+    },
+    async updateNotification(newNotificationData) {
+      newNotificationData.language = 'TR'
+      this.isAbleToPushButton = false
+      const response = await this.updateNotificationAPI(newNotificationData)
+      if (response === true) {
+        new Toast(
+          'Notification updated successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+        this.getNotification(this.notificationTable.serverOptions)
+        this.isAbleToPushButton = true
+        this.closeModal('updateNotificationModal')
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white align-items-center',
+        )
+        this.isAbleToPushButton = true
+      }
+    },
+    async deleteNotification(uuid) {
+      this.isAbleToPushButton = false
+      const response = await this.deleteNotificationAPI(uuid)
+      if (response === true) {
+        this.selectedNotification = {}
+        new Toast(
+          'Notification deleted successfully',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
+      } else {
+        new Toast(
+          'Something went wrong',
+          'danger',
+          true,
+          'text-white -align-items-center',
+        )
+      }
+      this.isAbleToPushButton = true
+      this.closeModal('deleteNotificationModal')
     },
   },
 }

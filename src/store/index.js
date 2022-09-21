@@ -13,6 +13,7 @@ import certificate from '@/service/Certificate'
 import experience from '@/service/Experience'
 import settings from '@/service/Settings'
 import notification from '@/service/Notification'
+import tag from '@/service/Tag'
 
 export default createStore({
   state: {
@@ -58,5 +59,6 @@ export default createStore({
     experience,
     settings,
     notification,
+    tag,
   },
 })

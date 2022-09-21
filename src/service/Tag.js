@@ -6,20 +6,19 @@ export default {
   state: {},
   mutations: {},
   actions: {
-    async getNotification(state, page) {
+    async getTag(state, page) {
       // CHECK IF USER LOGGED IN ALREADY
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
         var data = JSON.stringify({
           filters: [],
-          pageNumber: page.page - 1,
-          pageSize: page.rowsPerPage,
-          language: page.language,
+          pageNumber: page.pageOptions.page - 1,
+          pageSize: page.pageOptions.rowsPerPage,
         })
         var config = {
           method: 'post',
-          url: 'notification/get-all-by-filter',
+          url: 'tag/get-all-by-filter',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -39,22 +38,18 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async updateNotification(state, newNotificationData) {
+    async updateTag(state, newTagData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
         var data = JSON.stringify({
-          language: 'TR',
-          title: newNotificationData.title,
-          message: newNotificationData.message,
-          link: newNotificationData.link,
-          base64: newNotificationData.base64,
-          send: newNotificationData.send,
+          language: newTagData.language,
+          name: newTagData.name,
         })
 
         var config = {
           method: 'put',
-          url: 'notification/user-api/' + newNotificationData.uuid,
+          url: 'tag/user-api/' + newTagData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -75,14 +70,14 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async addNotification(state, notificationData) {
+    async addTag(state, tagData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        var data = JSON.stringify(notificationData)
+        var data = JSON.stringify(tagData)
         var config = {
           method: 'post',
-          url: 'notification/user-api',
+          url: 'tag/user-api',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -103,14 +98,14 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async deleteNotification(state, uuid) {
+    async deleteTag(state, uuid) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
 
         var config = {
           method: 'delete',
-          url: 'notification/' + uuid,
+          url: 'tag/' + uuid,
           headers: {},
         }
 

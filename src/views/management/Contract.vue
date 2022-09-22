@@ -122,7 +122,7 @@
       </CCol>
     </CRow>
 
-    <!-- Add Role -->
+    <!-- Add Contract -->
     <CModal
       size="lg"
       backdrop="static"
@@ -137,7 +137,7 @@
           class="row g-3"
           @submit.prevent="
             isAbleToPushButton
-              ? submitToAPI($event, 'addContractModal', addedItem)
+              ? submitToAPI($event, 'addContractModal', addedItem.data)
               : null
           "
           needs-validation
@@ -662,7 +662,7 @@ export default {
       switch (modalname) {
         case 'addContractModal':
           {
-            this.addRole(data)
+            this.addContract(data)
           }
           break
         case 'updateContractModal':
@@ -759,14 +759,15 @@ export default {
       this.userTable.serverItemsLength = response.totalElements
       this.userTable.loading = false
     },
-    async addRole(data) {
+    async addContract(data) {
       this.isAbleToPushButton = false
-      const response = await this.addRoleAPI(data)
+      data.roleList = await takeRoleListUUIDS(data.roleList)
+      const response = await this.addContractAPI(data)
       if (response === true) {
         this.closeModal('addContractModal', true)
-        this.getRoles(this.contractsTable.serverOptions)
+        this.getContracts(this.contractsTable.serverOptions)
         new Toast(
-          'New role ' + data.name + ' added successfully',
+          'New contract ' + data.title + ' added successfully',
           'success',
           true,
           'text-white align-items-center',
@@ -780,6 +781,11 @@ export default {
         )
       }
       this.isAbleToPushButton = true
+      function takeRoleListUUIDS() {
+        return data.roleList.map((role) => {
+          return role.uuid
+        })
+      }
     },
     async updateRole(newroleData) {
       this.isAbleToPushButton = false

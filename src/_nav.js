@@ -62,6 +62,11 @@ export default [
       },
       {
         component: 'CNavItem',
+        name: 'Contract',
+        to: '/management/contract',
+      },
+      {
+        component: 'CNavItem',
         name: 'Role',
         to: '/management/role',
       },

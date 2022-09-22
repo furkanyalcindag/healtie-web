@@ -1,33 +1,36 @@
 import router from '@/router'
 import store from '@/store/'
+
 export default {
   namespaced: true,
   state: {},
   mutations: {},
   actions: {
-    async getRoles(state, page) {
+    async getContracts(state, pageOptions) {
       // CHECK IF USER LOGGED IN ALREADY
       if (store.getters['auth/checkIfLoggedIn']) {
+        console.log(pageOptions)
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        console.log(page)
-        let filterBy = page.filter ? page.filter : []
         var data = JSON.stringify({
-          filters: filterBy,
-          pageNumber: page.page - 1,
-          pageSize: page.rowsPerPage,
-          language: page.language,
+          filters: [],
+          pageNumber: pageOptions.page - 1,
+          pageSize: pageOptions.rowsPerPage,
+          language: pageOptions.language,
         })
+
         var config = {
           method: 'post',
-          url: 'user-api/role/get-all-by-filter',
+          url: 'contract/get-all-by-filter',
           headers: {
             'Content-Type': 'application/json',
           },
           data: data,
         }
+
         const response = await axios(config)
           .then(function (response) {
+            console.log(response.data)
             return response.data
           })
           .catch(function (error) {
@@ -40,72 +43,21 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async deleteRole(state, uuid) {
-      if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        var axios = require('axios')
-        var config = {
-          method: 'delete',
-          url: 'user-api/role/' + uuid,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-        const response = await axios(config)
-          .then(function (response) {
-            console.log(JSON.stringify(response.data))
-            return true
-          })
-          .catch(function (error) {
-            console.log(error)
-            return false
-          })
-        return response
-      } else {
-        // ROLE CHECK IS NEEDED HERE
-        router.push({ name: 'Login Admin' })
-      }
-    },
-    async addRole(state, roleData) {
-      if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        var axios = require('axios')
-        var data = JSON.stringify(roleData)
-        var config = {
-          method: 'post',
-          url: 'user-api/role/',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        }
-        const response = await axios(config)
-          .then(function (response) {
-            console.log(JSON.stringify(response.data.name))
-            return true
-          })
-          .catch(function (error) {
-            console.log(error)
-            return false
-          })
-        return response
-      } else {
-        // ROLE CHECK IS NEEDED HERE
-        router.push({ name: 'Login Admin' })
-      }
-    },
-    // eslint-disable-next-line
-    async updateRole(state, roleData) {
+    async updateContract(state, contractData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
         var data = JSON.stringify({
-          language: roleData.language,
-          name: roleData.name,
+          language: contractData.language,
+          title: contractData.title,
+          content: contractData.content,
+          active: contractData.active,
+          required: contractData.required,
         })
+
         var config = {
           method: 'put',
-          url: 'user-api/role/' + roleData.uuid,
+          url: 'contract/' + contractData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -114,6 +66,60 @@ export default {
         const response = axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async deleteContract(state, uuid) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        var axios = require('axios')
+        var config = {
+          method: 'delete',
+          url: 'contract/' + uuid,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+        const response = await axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async addContract(state, contractData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        var axios = require('axios')
+        var data = JSON.stringify(contractData)
+        var config = {
+          method: 'post',
+          url: 'contract/user-api',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+        const response = await axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data.title))
             return true
           })
           .catch(function (error) {

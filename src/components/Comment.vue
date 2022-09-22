@@ -48,6 +48,19 @@
     v-else-if="comments.length > 0"
   >
     <ul :class="useGuideLines ? 'use-guide-lines' : ''">
+      <span id="add-article-comment" class="d-block text-center"
+        ><CButton
+          color="info"
+          class="ms-2 text-white align-items-center"
+          shape="rounded-pill"
+          size="sm"
+          v-c-tooltip="{
+            content: 'Yorum ekle',
+            placement: 'top',
+          }"
+          @click="showReplyEditor('#add-article-comment')"
+          >Yorum ekle <CIcon icon="cil-comment-bubble" /> </CButton
+      ></span>
       <li
         v-for="(parentComment, parentCommentIndex) in commentsDataCopy"
         :key="parentCommentIndex"
@@ -123,7 +136,7 @@
                         :key="childComment.uuid"
                       >
                         <ul class="comments">
-                          <li class="clearfix">
+                          <li class="clearfix text-break">
                             <img
                               src="https://bootdey.com/img/Content/user_1.jpg"
                               class="avatar"
@@ -587,9 +600,7 @@ export default {
         this.isAbleToPushButton = true
         return
       }
-      if (data.selectedComment) {
-        this.emitSendReplyData(data)
-      }
+      this.emitSendReplyData(data)
       this.teleportReplyEditorTo = ''
       this.addedReply = {
         text: '',

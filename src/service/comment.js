@@ -58,6 +58,7 @@ export default {
         }
         const response = await axios(config)
           .then(function (response) {
+            console.log(response)
             return response.data
           })
           .catch(function (error) {
@@ -73,10 +74,20 @@ export default {
     async addReply(state, commentUUIDandContent) {
       if (store.getters['auth/checkIfLoggedIn']) {
         var axios = require('axios')
+        let selectedComment = null
+        if(commentUUIDandContent.selectedChildComment){
+          selectedComment = await commentUUIDandContent.selectedChildComment.uuid
+        }
+        else if (commentUUIDandContent.selectedComment) {
+          selectedComment = await commentUUIDandContent.selectedComment.uuid
+        }
+        else {
+          selectedComment = null
+        }
         var data = JSON.stringify({
           language: 'TR',
           content: commentUUIDandContent.replyContent.text,
-          parentUuid: commentUUIDandContent.selectedComment.uuid,
+          parentUuid: selectedComment,
         })
 
         var config = {

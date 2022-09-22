@@ -2405,6 +2405,7 @@ export default {
         articleUUID: data.uuid,
         pageOptions: JSON.parse(JSON.stringify(this.commentData.pageOptions)),
       })
+      console.log(data)
       // let notReplacedComment = {}
       this.commentData.pageOptions.totalElements = response
         ? response.totalElements
@@ -2444,12 +2445,14 @@ export default {
       const replies = await this.getChildCommentsFromParentComment(
         commentUUIDandPageOptions,
       )
+      console.log(commentUUIDandPageOptions)
       if (replies) {
+        console.log(replies)
         // update comment replies
-        replies.data = replies.data.map((reply) => {
-          reply.replyCount = 1
-          return reply
-        })
+        // replies.data = replies.data.map((reply) => {
+        //   reply.replyCount = 1
+        //   return reply
+        // })
         // to load replies for child comments and send it to parent comment (.replies)
         if (commentUUIDandPageOptions.commentData.mainParent) {
           let mainParentUUID = commentUUIDandPageOptions.commentData.mainParent
@@ -2504,6 +2507,7 @@ export default {
     },
     async sendComment(parentCommentAndReplyContent) {
       parentCommentAndReplyContent.articleUUID = this.selectedArticle.uuid
+      console.log(parentCommentAndReplyContent)
       const response = await this.addReplyAPI(parentCommentAndReplyContent)
       if (response == true) {
         new Toast(
@@ -2512,7 +2516,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        let mainParentUUID = parentCommentAndReplyContent.selectedComment.uuid
+        let mainParentUUID = parentCommentAndReplyContent.selectedComment
+            ? parentCommentAndReplyContent.selectedComment.uuid
+            : null
         let repliedCommentUUID =
           parentCommentAndReplyContent.selectedChildComment
             ? parentCommentAndReplyContent.selectedChildComment.uuid
@@ -2529,7 +2535,28 @@ export default {
                     (repliedComment, replyCommentIndex) => {
                       if (repliedComment.uuid == repliedCommentUUID) {
                         currentAddingCommentCount = replyCommentIndex
+                        //repliedComment.replyCount++
+                        if(!repliedComment.loadedCommentCount){
+                          repliedComment.loadedCommentCount = 1
+                        }
                         repliedComment.replyCount++
+                        repliedComment.mainParent = comment.uuid
+                        repliedComment.repliedParent = repliedComment.uuid
+                        // Check the reply count again to hide the button suddenly after the reply count exceeds
+                        // IDK IF ITS NEEDED! IMPORTANT NOTE
+                        if (
+                          repliedComment.loadedCommentCount >=
+                          repliedComment.replyCount
+                        ) {
+                          repliedComment.isReplyCountExceeded = true
+                        }
+                        this.loadChildComments({
+                          pageNumber: 0,
+                          pageSize: repliedComment.loadedCommentCount,
+                          commentData: JSON.parse(
+                            JSON.stringify(repliedComment),
+                          ),
+                        })
                         return repliedComment
                       }
                       return repliedComment
@@ -2546,12 +2573,34 @@ export default {
           this.commentData.comments = await this.commentData.comments.map(
             (comment, parentCommentIndex) => {
               if (comment.uuid == mainParentUUID) {
+                if(!comment.loadedCommentCount){
+                  comment.loadedCommentCount = 1
+                }
                 comment.replyCount++
+                // Check the reply count again to hide the button suddenly after the reply count exceeds
+                // IDK IF ITS NEEDED! IMPORTANT NOTE
+                if (
+                  comment.loadedCommentCount >=
+                  comment.replyCount
+                ) {
+                  comment.isReplyCountExceeded = true
+                }
+                this.loadChildComments({
+                  pageNumber: 0,
+                  pageSize: comment.loadedCommentCount,
+                  commentData: JSON.parse(
+                    JSON.stringify(comment),
+                  ),
+                })
                 return comment
               }
               return comment
             },
           )
+        }
+        // if replied directly in article
+        else{
+          this.commentData.pageOptions.size++
         }
         this.validationChecked = false
       } else {

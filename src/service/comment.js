@@ -58,7 +58,6 @@ export default {
         }
         const response = await axios(config)
           .then(function (response) {
-            console.log(response)
             return response.data
           })
           .catch(function (error) {

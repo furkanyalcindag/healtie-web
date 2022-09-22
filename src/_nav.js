@@ -70,6 +70,21 @@ export default [
         name: 'User',
         to: '/management/user',
       },
+      {
+        component: 'CNavItem',
+        name: 'Settings',
+        to: '/management/settings',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Notification',
+        to: '/management/notification',
+      },
+      {
+        component: 'CNavItem',
+        name: 'Tag',
+        to: '/management/tag',
+      },
     ],
   },
   {

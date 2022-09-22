@@ -8,6 +8,16 @@ import comment from '@/service/comment'
 import article from '@/service/article'
 import user from '@/service/user'
 
+
+import doctor from '@/service/Doctor'
+import academicInfo from '@/service/AcademicInfo'
+import certificate from '@/service/Certificate'
+import experience from '@/service/Experience'
+import settings from '@/service/Settings'
+import notification from '@/service/Notification'
+import tag from '@/service/Tag'
+
+
 export default createStore({
   state: {
     sidebarVisible: '',
@@ -47,5 +57,13 @@ export default createStore({
     article,
     user,
     comment,
+    doctor,
+    academicInfo,
+    certificate,
+    experience,
+    settings,
+    notification,
+    tag,
+
   },
 })

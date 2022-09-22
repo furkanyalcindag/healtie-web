@@ -6,24 +6,29 @@ export default {
   state: {},
   mutations: {},
   actions: {
-    async getCategories(state, pageAndSearchValue) {
-      // CHECK IF USER LOGGED IN ALREADY
+    async getAcademicInfoByDoctor(state, pageAndData) {
       if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        let filterBy = pageAndSearchValue.filter
-          ? pageAndSearchValue.filter
-          : []
 
-        var data = JSON.stringify({
-          filters: filterBy,
-          pageNumber: pageAndSearchValue.pageOptions.page - 1,
-          pageSize: pageAndSearchValue.pageOptions.rowsPerPage,
-        })
-
+        let pageNumber = pageAndData.page - 1
+        console.log(pageNumber)
+        var data = await JSON.parse(
+          JSON.stringify({
+            filters: [],
+            pageNumber: pageAndData.page - 1,
+            pageSize: pageAndData.rowsPerPage,
+          }),
+        )
+        console.log(data)
         var config = {
-          method: 'post',
-          url: 'category/get-all-by-filter',
+          method: 'get',
+          url:
+            'academicInfo/doctor/user-api/' +
+            '?pageNumber=' +
+            data.pageNumber +
+            '&pageSize=' +
+            data.pageSize,
+
           headers: {
             'Content-Type': 'application/json',
           },
@@ -44,22 +49,53 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    // eslint-disable-next-line
-    async addCategory(state, categoryData) {
+    async updateAcademicInfo(state, newAcademicInfoData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        var data = JSON.stringify(categoryData)
-        console.log(data)
+        var data = JSON.stringify({
+          schoolName: newAcademicInfoData.schoolName,
+          profession: newAcademicInfoData.profession,
+          startYear: newAcademicInfoData.startYear,
+          graduateYear: newAcademicInfoData.graduateYear,
+        })
+
         var config = {
-          method: 'post',
-          url: 'category/user-api',
+          method: 'put',
+          url: 'academicInfo/user-api/' + newAcademicInfoData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },
           data: data,
         }
-
+        const response = axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async addAcademicInfo(state, academicInfoData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        var axios = require('axios')
+        var data = JSON.stringify(academicInfoData)
+        var config = {
+          method: 'post',
+          url: 'academicInfo/doctor-api',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
         const response = await axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data.name))
@@ -75,55 +111,18 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async deleteCategory(state, uuid) {
+    async deleteAcademicInfo(state, uuid) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
 
         var config = {
           method: 'delete',
-          url: 'category/' + uuid,
+          url: 'academicInfo/' + uuid,
           headers: {},
         }
 
         const response = await axios(config)
-          .then(function (response) {
-            console.log(JSON.stringify(response.data))
-            return true
-          })
-          .catch(function (error) {
-            console.log(error)
-            return false
-          })
-        return response
-      } else {
-        // ROLE CHECK IS NEEDED HERE
-        router.push({ name: 'Login Admin' })
-      }
-    },
-    async updateCategory(state, newCategoryData) {
-      if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        newCategoryData.parentList = !newCategoryData.parentList
-          ? []
-          : newCategoryData.parentList
-        var axios = require('axios')
-        var data = JSON.stringify({
-          language: newCategoryData.language,
-          name: newCategoryData.name,
-          parentList: newCategoryData.parentList,
-        })
-
-        var config = {
-          method: 'put',
-          url: 'category/user-api/' + newCategoryData.uuid,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        }
-
-        const response = axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data))
             return true

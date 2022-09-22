@@ -6,94 +6,48 @@ export default {
   state: {},
   mutations: {},
   actions: {
-    async addUserByRole(state, roleData) {
-      //debugger
-      if (store.getters['auth/checkIfLoggedIn']) {
-        var axios = require('axios')
-        var data = JSON.stringify(roleData)
-
-        var config = {
-          method: 'post',
-          // url: `user-api/${userData.uuid}`,
-          url: 'user-api/' + roleData.uuid,
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        }
-
-        const response = axios(config)
-          .then(function (response) {
-            console.log(JSON.stringify(response.data))
-            return true
-          })
-          .catch(function (error) {
-            console.log(error)
-            return false
-          })
-        return response
-      } else {
-        router.push({ name: 'Login Admin' })
-      }
-    },
-    async getUserByRole(state, pageAndData) {
+    async getDoctor() {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        //    debugger
         var axios = require('axios')
-        console.log(pageAndData.pageOptions)
-        let pageNumber = pageAndData.pageOptions.page - 1
-        console.log(pageNumber)
-        var data = await JSON.parse(
-          JSON.stringify({
-            filters: [],
-            pageNumber: pageAndData.pageOptions.page - 1,
-            pageSize: pageAndData.pageOptions.rowsPerPage,
-          }),
-        )
-        console.log(data)
         var config = {
           method: 'get',
-          url:
-            'user-api/get-all-by-role/' +
-            pageAndData.roleData.uuid +
-            '?pageNumber=' +
-            data.pageNumber +
-            '&pageSize=' +
-            data.pageSize,
-
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          data: data,
-        }
-
-        const response = await axios(config)
-          .then(function (response) {
-            return response.data
-          })
-          .catch(function (error) {
-            console.log(error)
-            return null
-          })
-        return response
-      } else {
-        // ROLE CHECK IS NEEDED HERE
-        router.push({ name: 'Login Admin' })
-      }
-    },
-    async deleteUser(state, uuid) {
-      if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        var axios = require('axios')
-        var config = {
-          method: 'delete',
-          url: 'user-api/user-api/' + uuid,
+          url: 'doctor/user-api/',
           headers: {},
         }
         const response = await axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data))
+            return response.data
+          })
+          .catch(function (error) {
+            console.log(error)
+            return null
+          })
+        return response
+      } else {
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async updateDoctorProfilePicture(state, doctorData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        var axios = require('axios')
+        var data = await JSON.parse(
+          JSON.stringify({
+            profileImage: doctorData.profileImage,
+          }),
+        )
+        var config = {
+          method: 'put',
+          url: 'doctor/profile-image-update',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+        const response = axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
             return true
           })
           .catch(function (error) {
@@ -105,61 +59,49 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async getUsers(state, page) {
-      // CHECK IF USER LOGGED IN ALREADY
+    async updateDoctorTitle(state, doctorData) {
       if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        var data = JSON.stringify({
-          filters: [],
-          pageNumber: page.page - 1,
-          pageSize: page.rowsPerPage,
-          language: page.language,
-        })
+        var data = await JSON.parse(
+          JSON.stringify({
+            title: doctorData,
+          }),
+        )
         var config = {
-          method: 'post',
-          url: 'user-api/get-all-by-filter',
+          method: 'put',
+          url: 'doctor/title-update/',
           headers: {
             'Content-Type': 'application/json',
           },
           data: data,
         }
-        const response = await axios(config)
+        const response = axios(config)
           .then(function (response) {
-            return response.data
+            console.log(JSON.stringify(response.data))
+            return true
           })
           .catch(function (error) {
             console.log(error)
-            return null
+            return false
           })
         return response
       } else {
-        // ROLE CHECK IS NEEDED HERE
         router.push({ name: 'Login Admin' })
       }
     },
-    async updateUser(state, userData) {
+    async updateDoctorPhone(state, doctorData) {
       if (store.getters['auth/checkIfLoggedIn']) {
-        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
+        console.log(doctorData)
         var data = await JSON.parse(
           JSON.stringify({
-            language: userData.language,
-            userName: userData.userName,
-            firstName: userData.firstName,
-            lastName: userData.lastName,
-            email: userData.email,
-            password: userData.password,
-            ageRangeEnum: userData.ageRangeEnum,
-            genderEnum: userData.genderEnum,
+            phone: doctorData,
           }),
         )
         var config = {
           method: 'put',
-          url: 'user-api/' + userData.uuid,
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          url: 'doctor/phone-update/',
+          headers: { 'Content-Type': 'application/json' },
           data: data,
         }
         const response = axios(config)
@@ -177,19 +119,23 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async addUser(state, userData) {
+    async updateDoctorAddress(state, doctorData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         var axios = require('axios')
-        var data = JSON.stringify(userData)
+        var data = await JSON.parse(
+          JSON.stringify({
+            address: doctorData,
+          }),
+        )
         var config = {
-          method: 'post',
-          url: 'user-api/',
+          method: 'put',
+          url: 'doctor/address-update/',
           headers: {
             'Content-Type': 'application/json',
           },
           data: data,
         }
-        const response = await axios(config)
+        const response = axios(config)
           .then(function (response) {
             console.log(JSON.stringify(response.data))
             return true
@@ -200,22 +146,111 @@ export default {
           })
         return response
       } else {
-        // ROLE CHECK IS NEEDED HERE
         router.push({ name: 'Login Admin' })
       }
     },
-    async updateUserName(state, userData) {
+    async updateDoctorDiplomaNo(state, doctorData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         var axios = require('axios')
         var data = await JSON.parse(
           JSON.stringify({
-            firstName: userData.firstName,
-            lastName: userData.lastName,
+            diplomaNo: doctorData,
           }),
         )
         var config = {
           method: 'put',
-          url: 'user-profile/name-update',
+          url: 'doctor/diploma-no-update/',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+        const response = axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async updateDoctorClinicName(state, doctorData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        var axios = require('axios')
+        var data = await JSON.parse(
+          JSON.stringify({
+            clinicName: doctorData,
+          }),
+        )
+        var config = {
+          method: 'put',
+          url: 'doctor/clinic-name-update/',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+        const response = axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async updateDoctorBranch(state, doctorData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        var axios = require('axios')
+        var data = await JSON.parse(
+          JSON.stringify({
+            branch: doctorData,
+          }),
+        )
+        var config = {
+          method: 'put',
+          url: 'doctor/branch-update/',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+        const response = axios(config)
+          .then(function (response) {
+            console.log(JSON.stringify(response.data))
+            return true
+          })
+          .catch(function (error) {
+            console.log(error)
+            return false
+          })
+        return response
+      } else {
+        router.push({ name: 'Login Admin' })
+      }
+    },
+
+    async updateDoctorAbout(state, doctorData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        var axios = require('axios')
+        var data = await JSON.parse(
+          JSON.stringify({
+            about: doctorData,
+          }),
+        )
+        var config = {
+          method: 'put',
+          url: 'doctor/about-update/',
           headers: {
             'Content-Type': 'application/json',
           },

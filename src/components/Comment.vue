@@ -48,7 +48,7 @@
     v-else-if="comments.length > 0"
   >
     <ul :class="useGuideLines ? 'use-guide-lines' : ''">
-      <span id="add-article-comment" class="d-block text-center"
+      <span id="add-article-comment" class="d-block text-center mb-4"
         ><CButton
           color="info"
           class="ms-2 text-white align-items-center"
@@ -69,7 +69,7 @@
           class="container bootstrap snippets bootdey"
           @show="parentComment.loadedCommentCount = 0"
         >
-          Loaded: {{ parentComment.loadedCommentCount }}
+          <!-- Loaded: {{ parentComment.loadedCommentCount }} -->
           <CRow>
             <CCol md="12">
               <div class="position-relative comments-container">

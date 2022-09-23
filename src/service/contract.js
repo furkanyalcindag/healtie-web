@@ -1,5 +1,6 @@
 import router from '@/router'
 import store from '@/store/'
+import ContractDto from '@/models/ContractDTO'
 
 export default {
   namespaced: true,
@@ -46,18 +47,20 @@ export default {
     async updateContract(state, contractData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        console.log(contractData)
         var axios = require('axios')
-        var data = JSON.stringify({
-          language: contractData.language,
-          title: contractData.title,
-          content: contractData.content,
-          active: contractData.active,
-          required: contractData.required,
-        })
+        var data = new ContractDto(
+          contractData.title,
+          contractData.content,
+          contractData.roleList,
+          contractData.active,
+          contractData.required,
+          'TR',
+        )
 
         var config = {
           method: 'put',
-          url: 'contract/' + contractData.uuid,
+          url: 'contract/user-api/' + contractData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },

@@ -96,7 +96,7 @@
                         content: 'Kullanıcılar',
                         placement: 'top',
                       }"
-                      @click="showModal('showUserModal', item)"
+                      @click="showModal('showRoleListModal', item)"
                     >
                       <CIcon icon="cil-user" />
                     </CButton>
@@ -266,7 +266,7 @@
         </CModalFooter>
       </CModalBody>
     </CModal>
-    <!-- Update Role -->
+    <!-- Update Contract -->
     <CModal
       size="lg"
       :visible="openedModals.updateContractModal"
@@ -284,7 +284,7 @@
               ? submitToAPI(
                   $event,
                   'updateContractModal',
-                  JSON.parse(JSON.stringify(editedItem)),
+                  JSON.parse(JSON.stringify(editedItem.data)),
                 )
               : null
           "
@@ -292,14 +292,81 @@
           novalidate
           :validated="validationChecked"
         >
-          <CCol md="6">
-            <CFormLabel for="update-rol-name">Rol İsmi</CFormLabel>
+          <CCol md="12">
+            <CFormLabel for="add-contract-title">Sözleşme Başlığı</CFormLabel>
             <CFormInput
-              id="update-rol-name"
+              id="add-contract-title"
               required
-              feedbackInvalid="Lütfen bir rol ismi giriniz"
-              v-model="editedItem.name"
+              v-model="editedItem.data.title"
+              feedbackInvalid="Lütfen Sözleşmenin İsmini giriniz"
             />
+          </CCol>
+
+          <CCol md="12" class="not-animated">
+            <CFormLabel for="add-contract-content">Sözleşme İçeriği</CFormLabel>
+            <CFormTextarea
+              id="add-contract-content"
+              rows="3"
+              required
+              feedbackInvalid="Biraz sosyal olmaya ne dersin?"
+              v-model="editedItem.data.content"
+              @input="validationChecked = false"
+            />
+          </CCol>
+
+          <CCol md="12">
+            <CFormLabel for="add-contract-rolelist"
+              >Sözleşmeyi kapsayan roller</CFormLabel
+            >
+            <v-select
+              id="add-contract-rolelist"
+              v-model="editedItem.data.roleSet"
+              :options="roleList.options"
+              label="name"
+              multiple
+              :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
+              @search="(search) => get_Filtered_Role_List_Options_Data(search)"
+              :loading="roleList.loading"
+            >
+              <template v-slot:no-options="{ search, searching }">
+                <template v-if="searching">
+                  Sonuç bulunamadı:
+                  <em>{{ search }}</em
+                  >.
+                </template>
+                <em v-else style="opacity: 0.5">Eklemek zorunda değilsin.</em>
+              </template>
+            </v-select>
+          </CCol>
+
+          <CCol md="6">
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="add-contract-isactive"
+                v-model="editedItem.data.active"
+              />
+              <label class="form-check-label" for="add-contract-isactive"
+                >Aktif mi?</label
+              >
+            </div>
+          </CCol>
+
+          <CCol md="6">
+            <div class="form-check form-switch">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="add-contract-isrequired"
+                v-model="editedItem.data.required"
+              />
+              <label class="form-check-label" for="add-contract-isrequired"
+                >Zorunlu mu?</label
+              >
+            </div>
           </CCol>
 
           <CModalFooter class="pe-0">
@@ -423,15 +490,15 @@
         </CForm>
       </CModalBody>
     </CModal>
-    <!-- Show user from role modal -->
+    <!-- Show roles from contract modal -->
     <CModal
       size="lg"
-      :visible="openedModals.showUserModal"
-      @close="closeModal('showUserModal')"
+      :visible="openedModals.showRoleListModal"
+      @close="closeModal('showRoleListModal')"
       backdrop="static"
     >
       <CModalHeader>
-        <CModalTitle>Kullanıcı Bilgilerini Göster</CModalTitle>
+        <CModalTitle>Sözleşmeye bağlı roller</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <CCardBody class="p-0">
@@ -439,16 +506,16 @@
             class="m-4"
             show-index
             v-model:itemsSelected="itemsSelected"
-            v-model:server-options="userTable.serverOptions"
-            :server-items-length="userTable.serverItemsLength"
-            :headers="headers2"
-            :items="items"
+            :server-items-length="roleListTable.serverItemsLength"
+            :headers="headersRoleList"
+            :items="items2"
             :theme-color="themeColor"
             buttons-pagination
-            :loading="userTable.loading"
-            :rows-items="userTable.rowsItem"
+            :rows-per-page="roleListTable.serverOptions.rowsPerPage"
+            :loading="roleListTable.loading"
+            :rows-items="roleListTable.rowsItem"
           >
-            <template #item-operations="item">
+            <!-- <template #item-operations="item">
               <div>
                 <CButtonGroup role="group" size="sm">
                   <CButton
@@ -466,14 +533,14 @@
                   </CButton>
                 </CButtonGroup>
               </div>
-            </template>
+            </template> -->
           </easy-data-table>
 
           <CButton
             color="secondary"
             class="float-md-end"
-            @click="closeModal('showUserModal')"
-            >İptal
+            @click="closeModal('showRoleListModal')"
+            >Kapat
           </CButton>
         </CCardBody>
       </CModalBody>
@@ -533,13 +600,12 @@ export default {
       ],
       items: [],
       editedItem: {
-        uuid: null,
-        name: null,
+        data: ContractDTO.createEmpty(),
       },
       addedItem: {
         data: ContractDTO.createEmpty(),
       },
-      // Category Selection
+      // Role Selection in add contract
       roleList: {
         // The parent category list inside selection in addCategory
         options: [],
@@ -550,11 +616,10 @@ export default {
         },
         loading: true,
       },
-      headers2: [
-        { text: 'İsim', value: 'firstName', sortable: true },
-        { text: 'Soyisim', value: 'lastName', sortable: true },
-        { text: 'Email', value: 'email', sortable: true },
-        { text: 'İşlemler', value: 'operations' },
+      headersRoleList: [
+        { text: 'İsim', value: 'name', sortable: true },
+        { text: 'Dili', value: 'language', sortable: true },
+        // { text: 'İşlemler', value: 'operations' },
       ],
       items2: [],
 
@@ -565,7 +630,7 @@ export default {
         deleteContractModal: false,
         updateContractModal: false,
         addUserModal: false,
-        showUserModal: false,
+        showRoleListModal: false,
         deleteUserModal: false,
       },
       validationChecked: false,
@@ -579,7 +644,7 @@ export default {
         rowsItem: [10, 20, 50],
         loading: true,
       },
-      userTable: {
+      roleListTable: {
         serverItemsLength: 0,
         serverOptions: {
           page: 1,
@@ -601,8 +666,8 @@ export default {
     'contractsTable.serverOptions'(newvalue) {
       this.getContracts(newvalue)
     },
-    'userTable.serverOptions'(newvalue) {
-      this.getUser(newvalue)
+    'roleListTable.serverOptions'() {
+      this.getRolesFromContract(this.selectedContract)
     },
   },
   methods: {
@@ -667,7 +732,7 @@ export default {
           break
         case 'updateContractModal':
           {
-            this.updateRole(data)
+            this.updateContract(data)
           }
           break
         case 'addUserModal':
@@ -684,7 +749,7 @@ export default {
         case 'updateContractModal':
           {
             let cachedItemData = JSON.parse(JSON.stringify(data))
-            this.editedItem = cachedItemData
+            this.editedItem = { data: cachedItemData }
           }
           break
         case 'addUserModal':
@@ -693,9 +758,11 @@ export default {
             this.addedItem = cachedItemData
           }
           break
-        case 'showUserModal':
+        case 'showRoleListModal':
           {
-            this.getUser(this.userTable.serverOptions, data)
+            console.log(data)
+            this.getRolesFromContract(data)
+            // this.getAllRolesAPI(this.roleListTable.serverOptions, data)
           }
           break
         case 'deleteUserModal':
@@ -752,13 +819,18 @@ export default {
       this.contractsTable.serverItemsLength = response.totalElements
       this.contractsTable.loading = false
     },
-    async getUser(pageOptions, data) {
-      this.userTable.loading = true
-      let pageAndData = { pageOptions: pageOptions, roleData: data }
-      const response = await this.showUserByAPI(pageAndData)
-      this.items = response.data
-      this.userTable.serverItemsLength = response.totalElements
-      this.userTable.loading = false
+    // eslint-disable-next-line
+    async getRolesFromContract(data) {
+      this.roleListTable.loading = true
+      this.items2 = data.roleSet
+      this.roleListTable.serverItemsLength = data.roleSet.length
+      // This for serversided data (GET)
+      // let pageAndData = { pageOptions: pageOptions, roleData: data }
+      // const response = await this.showUserByAPI(pageAndData)
+      // this.items = response.data
+      // this.roleListTable.serverItemsLength = response.totalElements
+      // this.roleListTable.loading = false
+      this.roleListTable.loading = false
     },
     async addContract(data) {
       this.isAbleToPushButton = false
@@ -788,9 +860,12 @@ export default {
         })
       }
     },
-    async updateRole(newroleData) {
+    async updateContract(newroleData) {
       this.isAbleToPushButton = false
-      const response = await this.updateRoleAPI(newroleData)
+      let cachedRoleData = await JSON.parse(JSON.stringify(newroleData))
+      cachedRoleData.roleList = await takeRoleListUUIDS()
+      delete cachedRoleData.roleSet
+      const response = await this.updateContractAPI(cachedRoleData)
       if (response === true) {
         new Toast(
           'Role updated successfully',
@@ -798,10 +873,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.getRoles(this.contractsTable.serverOptions)
-        this.isAbleToPushButton = true
+        this.getContracts(this.contractsTable.serverOptions)
         this.closeModal('updateContractModal')
-        this.editedItem = {}
+        this.editedItem = ContractDTO.createEmpty()
       } else {
         new Toast(
           'Something went wrong',
@@ -809,7 +883,12 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
+      }
+      this.isAbleToPushButton = true
+      function takeRoleListUUIDS() {
+        return cachedRoleData.roleSet.map((role) => {
+          return role.uuid
+        })
       }
     },
     async deleteContract(uuid) {
@@ -841,7 +920,7 @@ export default {
       if (response === true) {
         this.closeModal('addUserModal', true)
 
-        this.getUser(this.userTable.serverOptions)
+        this.getUser(this.roleListTable.serverOptions)
         new Toast(
           'New role ' + data.name + ' added successfully',
           'success',

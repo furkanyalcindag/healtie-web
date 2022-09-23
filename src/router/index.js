@@ -308,6 +308,11 @@ const routes = [
             component: () => import('@/views/management/Category.vue'),
           },
           {
+            path: 'contract',
+            name: 'Contract',
+            component: () => import('@/views/management/Contract.vue'),
+          },
+          {
             path: 'user',
             name: 'User',
             component: () => import('@/views/management/User.vue'),

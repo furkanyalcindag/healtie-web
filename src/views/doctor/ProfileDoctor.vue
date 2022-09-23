@@ -2154,47 +2154,6 @@
                           </div>
                         </template>
 
-                        <template #item-operations="{ data }">
-                          <CButton
-                            color="warning"
-                            class="ms-2 text-white align-items-center"
-                            shape="rounded-pill"
-                            size="sm"
-                            v-c-tooltip="{
-                              content: 'Düzenle',
-                              placement: 'top',
-                            }"
-                            @click="() => {}"
-                          >
-                            <CIcon icon="cil-pencil" />
-                          </CButton>
-                          <CButton
-                            color="danger"
-                            class="ms-2 text-white align-items-center"
-                            shape="rounded-pill"
-                            size="sm"
-                            v-c-tooltip="{
-                              content: 'Sil',
-                              placement: 'top',
-                            }"
-                            @click="deleteArticleData(data)"
-                          >
-                            <CIcon icon="cil-trash" />
-                          </CButton>
-                          <CButton
-                            color="info"
-                            class="ms-2 text-white align-items-center"
-                            shape="rounded-pill"
-                            size="sm"
-                            v-c-tooltip="{
-                              content: 'Yorumlar',
-                              placement: 'top',
-                            }"
-                            @click="showModal('showComment', data)"
-                          >
-                            <CIcon icon="cil-comment-bubble" />
-                          </CButton>
-
                         <template #item-operations="item">
                           <div>
                             <CButtonGroup role="group" size="sm">
@@ -2224,9 +2183,21 @@
                               >
                                 <CIcon icon="cil-trash" />
                               </CButton>
+                              <CButton
+                                color="info"
+                                class="ms-2 text-white align-items-center"
+                                shape="rounded-pill"
+                                size="sm"
+                                v-c-tooltip="{
+                                  content: 'Yorumlar',
+                                  placement: 'top',
+                                }"
+                                @click="showModal('showComment', item)"
+                              >
+                                <CIcon icon="cil-comment-bubble" />
+                              </CButton>
                             </CButtonGroup>
                           </div>
-
                         </template>
                       </easy-data-table>
                     </CCardBody>
@@ -2255,8 +2226,6 @@ import DoctorAcademicInfoDTO from '@/models/doctorAcademicInfoDTO'
 import DoctorCertificateDTO from '@/models/doctorCertificateDTO'
 import DoctorExperienceDTO from '@/models/doctorExperienceDTO'
 import createDoctorProfileDTO from '@/models/doctorProfileDTO'
-import { mapActions } from 'vuex'
-import Toast from '@/models/create_TOAST_dto'
 import router from '@/router'
 import createArticleDTO from '@/models/create_ARTICLE_dto'
 
@@ -2284,7 +2253,7 @@ export default {
         address: 'Ankara/Çankaya Mahalle Mah. Cadde Cad. Apt/Daire 144/7',
         about:
           'ASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSDASDDSD',
-
+      },
 
       doctorProfileData: DoctorProfileDTO.createEmpty(),
 
@@ -2299,7 +2268,6 @@ export default {
       addedAcademicInfoItem: {
         // Real data
         data: DoctorAcademicInfoDTO.createEmpty(),
-
       },
       addedCertificateItem: {
         // Real data
@@ -2328,6 +2296,48 @@ export default {
           null,
           [],
         ),
+      },
+
+      isAbleToPushButton: true,
+
+      editedItem: {
+        data: new createDoctorProfileDTO(null, null, null, null, null, null),
+      },
+      editedItemForArticle: {
+        // Real data
+        data: new createArticleDTO(
+          null,
+          'TR',
+          null,
+          new Date()
+            .toLocaleDateString('tr-TR', {
+              year: 'numeric',
+              month: 'numeric',
+              day: 'numeric',
+            })
+            .replaceAll('.', '-')
+            .split('-')
+            .reverse()
+            .join('-'),
+          null,
+          [],
+        ),
+        isDescriptionEnoughToSend: false,
+      },
+      editedItemForProfileData: {
+        data: DoctorProfileDTO.createEmpty(),
+      },
+      editedItemForInfoData: {
+        data: DoctorInfoDTO.createEmpty(),
+      },
+      editedItemForAcademicInfo: {
+        data: DoctorAcademicInfoDTO.createEmpty(),
+      },
+      editedItemForCertificate: {
+        data: DoctorCertificateDTO.createEmpty(),
+      },
+      editedItemForExperience: {
+        data: DoctorExperienceDTO.createEmpty(),
       },
 
       articleData: [
@@ -2812,7 +2822,6 @@ export default {
         ],
       },
 
-
       openedModals: {
         getDoctorProfile: false,
         getDoctorInfo: false,
@@ -2841,6 +2850,7 @@ export default {
         addArticleModal: false,
         deleteArticleModal: false,
         updateArticleModal: false,
+        showComment: false,
       },
       //TABLES
       academicInfoTable: {
@@ -2885,9 +2895,9 @@ export default {
       selectedExperience: {},
       selectedDoctor: {},
       selectedArticle: {},
+      selectedComment: {},
 
       validationChecked: false,
-
 
       commentData: {
         data: articleCommentDTO.createEmpty(),
@@ -2898,65 +2908,6 @@ export default {
           totalElements: 10,
         },
         isLoading: true,
-      },
-      selectedComment: null,
-      selectedArticle: null,
-    }
-  },
-  watch: {
-    'commentData.pageOptions.size'() {
-      console.log('Page size changed. Loading more...')
-      this.getParentCommentsFromArticle(this.selectedArticle)
-    },
-  },
-  methods: {
-    ...mapActions({
-      getParentCommentsFromArticleAPI: 'comment/getParentCommentsFromArticle',
-      getRepliesFromCommentAPI: 'comment/getRepliesFromComment',
-      addReplyAPI: 'comment/addReply',
-    }),
-
-      toasts: [],
-      isAbleToPushButton: true,
-
-      editedItem: {
-        data: new createDoctorProfileDTO(null, null, null, null, null, null),
-      },
-      editedItemForArticle: {
-        // Real data
-        data: new createArticleDTO(
-          null,
-          'TR',
-          null,
-          new Date()
-            .toLocaleDateString('tr-TR', {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-            })
-            .replaceAll('.', '-')
-            .split('-')
-            .reverse()
-            .join('-'),
-          null,
-          [],
-        ),
-        isDescriptionEnoughToSend: false,
-      },
-      editedItemForProfileData: {
-        data: DoctorProfileDTO.createEmpty(),
-      },
-      editedItemForInfoData: {
-        data: DoctorInfoDTO.createEmpty(),
-      },
-      editedItemForAcademicInfo: {
-        data: DoctorAcademicInfoDTO.createEmpty(),
-      },
-      editedItemForCertificate: {
-        data: DoctorCertificateDTO.createEmpty(),
-      },
-      editedItemForExperience: {
-        data: DoctorExperienceDTO.createEmpty(),
       },
     }
   },
@@ -2980,6 +2931,11 @@ export default {
     'editedItemForArticle.data.description'(newvalue) {
       //QQ
       this.checkDescriptionLength(newvalue)
+    },
+    // COMMENT SYSTEM
+    'commentData.pageOptions.size'() {
+      console.log('Page size changed. Loading more...')
+      this.getParentCommentsFromArticle(this.selectedArticle)
     },
   },
   async created() {
@@ -3024,6 +2980,10 @@ export default {
       addCategoryAPI: 'category/addCategory',
       deleteArticleAPI: 'article/deleteArticle',
       updateArticleAPI: 'article/updateArticle',
+      //COMMENT
+      getParentCommentsFromArticleAPI: 'comment/getParentCommentsFromArticle',
+      getRepliesFromCommentAPI: 'comment/getRepliesFromComment',
+      addReplyAPI: 'comment/addReply',
     }),
     submitToAPI(event, modalName, data) {
       this.isAbleToPushButton = false
@@ -3266,6 +3226,12 @@ export default {
             this.languageList.loading = false
           }
           break
+        case 'showComment':
+          {
+            this.getParentCommentsFromArticle(data)
+            this.selectedArticle = data
+          }
+          break
       }
 
       this.openedModals[modalname] = true
@@ -3278,17 +3244,6 @@ export default {
     checkValidation() {
       // Response
       this.validationChecked = true
-    },
-    showModal(modalname, data) {
-      switch (modalname) {
-        case 'showComment':
-          {
-            this.getParentCommentsFromArticle(data)
-            this.selectedArticle = data
-          }
-          break
-      }
-      this.openedModals[modalname] = true
     },
     async getParentCommentsFromArticle(data) {
       this.commentData.isLoading = true
@@ -3468,6 +3423,7 @@ export default {
                   comment.loadedCommentCount = 1
                 }
                 comment.replyCount++
+                comment.loadedCommentCount++
                 // Check the reply count again to hide the button suddenly after the reply count exceeds
                 // IDK IF ITS NEEDED! IMPORTANT NOTE
                 if (comment.loadedCommentCount >= comment.replyCount) {
@@ -3655,6 +3611,7 @@ export default {
       // console.log(data)
       this.openedModals.deleteAcademicData = true
       // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
+    },
 
     checkDescriptionLength(newvalue) {
       if (newvalue && newvalue.length > 20) {
@@ -3723,7 +3680,6 @@ export default {
         )
         this.isAbleToPushButton = true
       }
-
     },
     async updateUserName(newroleData) {
       this.isAbleToPushButton = false
@@ -3930,6 +3886,7 @@ export default {
     async getAcademicInfoByDoctor(pageOptions) {
       this.academicInfoTable.loading = true
       const response = await this.getAcademicInfoByDoctorAPI(pageOptions)
+      console.log(response)
       this.itemsForAcademicInfo = response.data
       this.academicInfoTable.serverItemsLength = response.totalElements
       this.academicInfoTable.loading = false

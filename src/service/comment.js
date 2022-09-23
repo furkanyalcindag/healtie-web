@@ -11,7 +11,6 @@ export default {
       // CHECK IF USER LOGGED IN ALREADY
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        console.log(articleUUIDandPageOptions)
         var axios = require('axios')
         var config = {
           method: 'get',

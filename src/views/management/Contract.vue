@@ -718,8 +718,9 @@ export default {
         switch (modalname) {
           case 'addContractModal':
             {
-              let cachedAddedItemData = { name: null }
-              this.addedItem = cachedAddedItemData
+              this.addedItem = {
+                data: ContractDTO.createEmpty(),
+              }
             }
             break
           case 'addUserModal':

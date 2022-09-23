@@ -3423,6 +3423,7 @@ export default {
                   comment.loadedCommentCount = 1
                 }
                 comment.replyCount++
+                comment.loadedCommentCount++
                 // Check the reply count again to hide the button suddenly after the reply count exceeds
                 // IDK IF ITS NEEDED! IMPORTANT NOTE
                 if (comment.loadedCommentCount >= comment.replyCount) {

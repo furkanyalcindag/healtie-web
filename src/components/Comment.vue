@@ -412,72 +412,85 @@
         }})
       </div>
     </ul>
-    <!-- Reply editor -->
-    <Teleport v-if="teleportReplyEditorTo" :to="teleportReplyEditorTo">
-      <div class="position-relative">
-        <div class="clearfix">
-          <!-- Reply editor -->
-          <div id="reply-editor" class="comment">
-            <p class="comment-info">
-              <span class="d-flex align-items-center justify-content-between">
-                <span> Yorum ekle </span>
-                <span> Butonlar </span>
-              </span>
-            </p>
-            <CForm
-              class="row g-3"
-              @submit.prevent="
-                isAbleToPushButton
-                  ? submitToAPI($event, null, {
-                      replyContent: addedReply,
-                      selectedComment: selectedComment,
-                      selectedChildComment: selectedChildComment,
-                    })
-                  : null
-              "
-              needs-validation
-              novalidate
-              :validated="validationChecked"
-            >
-              <p>
-                <CCol class="not-animated">
-                  <CFormTextarea
-                    id="add-reply"
-                    rows="3"
-                    required
-                    feedbackInvalid="Biraz sosyal olmaya ne dersin?"
-                    v-model="addedReply.text"
-                    @input="validationChecked = false"
-                  />
-                </CCol>
-              </p>
-              <span
-                class="p-0 d-flex align-items-center justify-content-between m-0"
-              >
-                <span> </span>
-                <CButton
-                  color="info"
-                  class="text-white align-items-center ml-auto"
-                  shape="rounded-pill"
-                  size="sm"
-                  v-c-tooltip="{
-                    content: 'Cevabını Yayınla',
-                    placement: 'top',
-                  }"
-                  type="submit"
-                >
-                  Ekle
-                </CButton>
-              </span>
-            </CForm>
-          </div>
-        </div>
-      </div>
-    </Teleport>
   </div>
   <div v-else>
+    <span id="add-article-comment" class="d-block text-center mb-4"
+      ><CButton
+        color="info"
+        class="ms-2 text-white align-items-center"
+        shape="rounded-pill"
+        size="sm"
+        v-c-tooltip="{
+          content: 'Yorum ekle',
+          placement: 'top',
+        }"
+        @click="showReplyEditor('#add-article-comment')"
+        >Yorum ekle <CIcon icon="cil-comment-bubble" /> </CButton
+    ></span>
     <div class="comment-show-reply">Henüz gösterilecek yorum yok</div>
   </div>
+  <!-- Reply editor -->
+  <Teleport v-if="teleportReplyEditorTo" :to="teleportReplyEditorTo">
+    <div class="position-relative">
+      <div class="clearfix">
+        <!-- Reply editor -->
+        <div id="reply-editor" class="comment">
+          <p class="comment-info">
+            <span class="d-flex align-items-center justify-content-between">
+              <span> Yorum ekle </span>
+              <span> Butonlar </span>
+            </span>
+          </p>
+          <CForm
+            class="row g-3"
+            @submit.prevent="
+              isAbleToPushButton
+                ? submitToAPI($event, null, {
+                    replyContent: addedReply,
+                    selectedComment: selectedComment,
+                    selectedChildComment: selectedChildComment,
+                  })
+                : null
+            "
+            needs-validation
+            novalidate
+            :validated="validationChecked"
+          >
+            <p>
+              <CCol class="not-animated">
+                <CFormTextarea
+                  id="add-reply"
+                  rows="3"
+                  required
+                  feedbackInvalid="Biraz sosyal olmaya ne dersin?"
+                  v-model="addedReply.text"
+                  @input="validationChecked = false"
+                />
+              </CCol>
+            </p>
+            <span
+              class="p-0 d-flex align-items-center justify-content-between m-0"
+            >
+              <span> </span>
+              <CButton
+                color="info"
+                class="text-white align-items-center ml-auto"
+                shape="rounded-pill"
+                size="sm"
+                v-c-tooltip="{
+                  content: 'Cevabını Yayınla',
+                  placement: 'top',
+                }"
+                type="submit"
+              >
+                Ekle
+              </CButton>
+            </span>
+          </CForm>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script>

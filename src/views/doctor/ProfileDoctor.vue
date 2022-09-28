@@ -1647,6 +1647,33 @@
                       <CListGroupItem>
                         <CRow>
                           <CCol :sm="2"
+                            ><span class="fw-bolder">Diploma NO:</span></CCol
+                          >
+                          <CCol :sm="10">
+                            {{ doctorInfoData.diplomaNo }}
+                            <CButton
+                              color="warning"
+                              class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
+                              shape="rounded-pill"
+                              size="sm"
+                              v-c-tooltip="{
+                                content: 'Düzenle',
+                                placement: 'top',
+                              }"
+                              @click="
+                                showModal(
+                                  'updateDoctorDiplomaNo',
+                                  editedItemForInfoData,
+                                )
+                              "
+                            >
+                              <CIcon icon="cil-pencil" /> </CButton
+                          ></CCol>
+                        </CRow>
+                      </CListGroupItem>
+                      <CListGroupItem>
+                        <CRow>
+                          <CCol :sm="2"
                             ><span class="fw-bolder">Title:</span></CCol
                           >
                           <CCol :sm="10"
@@ -1718,33 +1745,6 @@
                               @click="
                                 showModal(
                                   'updateDoctorClinicName',
-                                  editedItemForInfoData,
-                                )
-                              "
-                            >
-                              <CIcon icon="cil-pencil" /> </CButton
-                          ></CCol>
-                        </CRow>
-                      </CListGroupItem>
-                      <CListGroupItem>
-                        <CRow>
-                          <CCol :sm="2"
-                            ><span class="fw-bolder">Diploma NO:</span></CCol
-                          >
-                          <CCol :sm="10">
-                            {{ doctorInfoData.diplomaNo }}
-                            <CButton
-                              color="warning"
-                              class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
-                              shape="rounded-pill"
-                              size="sm"
-                              v-c-tooltip="{
-                                content: 'Düzenle',
-                                placement: 'top',
-                              }"
-                              @click="
-                                showModal(
-                                  'updateDoctorDiplomaNo',
                                   editedItemForInfoData,
                                 )
                               "
@@ -2072,7 +2072,7 @@
                           --easy-table-body-row-font-size: 16px;
                           --easy-table-header-font-size: 16px;
                         "
-                        v-model:itemsSelected="itemsSelected"
+                        v-model:itemsSelected="itemsSelectedForArticle"
                         v-model:server-options="articleTable.serverOptions"
                         :server-items-length="articleTable.serverItemsLength"
                         :headers="headersForArticle"
@@ -2265,6 +2265,8 @@ export default {
 
       experienceData: DoctorExperienceDTO.createEmpty(),
 
+      // articleData: createArticleDTO.createEmpty(),
+
       addedAcademicInfoItem: {
         // Real data
         data: DoctorAcademicInfoDTO.createEmpty(),
@@ -2298,465 +2300,19 @@ export default {
         ),
       },
 
-      isAbleToPushButton: true,
 
-      editedItem: {
-        data: new createDoctorProfileDTO(null, null, null, null, null, null),
-      },
-      editedItemForArticle: {
-        // Real data
-        data: new createArticleDTO(
-          null,
-          'TR',
-          null,
-          new Date()
-            .toLocaleDateString('tr-TR', {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-            })
-            .replaceAll('.', '-')
-            .split('-')
-            .reverse()
-            .join('-'),
-          null,
-          [],
-        ),
-        isDescriptionEnoughToSend: false,
-      },
-      editedItemForProfileData: {
-        data: DoctorProfileDTO.createEmpty(),
-      },
-      editedItemForInfoData: {
-        data: DoctorInfoDTO.createEmpty(),
-      },
-      editedItemForAcademicInfo: {
-        data: DoctorAcademicInfoDTO.createEmpty(),
-      },
-      editedItemForCertificate: {
-        data: DoctorCertificateDTO.createEmpty(),
-      },
-      editedItemForExperience: {
-        data: DoctorExperienceDTO.createEmpty(),
-      },
-
-      articleData: [
-        {
-          totalPage: 0,
-          data: {
-            uuid: '534dd3f0-5db8-4892-b42a-0e7f341f6dc5',
-            title: 'ABCdiler neden yumak şeyleri sever?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: 567578,
-            saveCount: 12500,
-            commentCount: 1250,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: -1,
-            saveCount: -1,
-            commentCount: -1,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: -1,
-            saveCount: -1,
-            commentCount: -1,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: 567578,
-            saveCount: 12500,
-            commentCount: 1250,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: -1,
-            saveCount: -1,
-            commentCount: -1,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: -1,
-            saveCount: -1,
-            commentCount: -1,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: 567578,
-            saveCount: 12500,
-            commentCount: 1250,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: -1,
-            saveCount: -1,
-            commentCount: -1,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: -1,
-            saveCount: -1,
-            commentCount: -1,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: 567578,
-            saveCount: 12500,
-            commentCount: 1250,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: -1,
-            saveCount: -1,
-            commentCount: -1,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-        {
-          totalPage: 0,
-          data: {
-            title: 'kediler neden mama yerine noodleyi tercih eder?',
-            author: 'Hasan bey',
-            publishedDate: 'M.Ö 124',
-            likeCount: -1,
-            saveCount: -1,
-            commentCount: -1,
-            tags: [
-              {
-                name: 'kedi',
-              },
-              {
-                name: 'mama',
-              },
-              {
-                name: 'hayvanlar',
-              },
-            ],
-            categories: [
-              {
-                name: 'Veteriner',
-              },
-              {
-                name: 'Hayvanlar',
-              },
-              {
-                name: 'Kediler',
-              },
-            ],
-          },
-        },
-      ],
       rowsPerPage: 10,
       themeColor: '#321fdb',
       itemsSelected: [],
+      itemsSelectedForArticle: [],
 
       //Items
-      itemsForDoctorProfile: [],
+
       itemsForAcademicInfo: [],
       itemsForCertificate: [],
       itemsForExperience: [],
       itemsForArticle: [],
       //Headers
-      headersForDoctorProfile: [
-        { text: 'İsim', value: 'firstName', sortable: true },
-        { text: 'Soyisim', value: 'lastName' },
-        { text: 'Email', value: 'email' },
-        { text: 'Telefon', value: 'telNo' },
-        { text: 'Adres', value: 'address' },
-      ],
       headersForAcademicInfo: [
         { text: 'Okul', value: 'schoolName', sortable: true },
         { text: 'Uzmanlık Alanı', value: 'profession', sortable: true },
@@ -2811,7 +2367,7 @@ export default {
         },
         loading: true,
       },
-      // Tag selection QQ
+      // Tag selection
       tagList: {
         options: [
           { name: 'Depresyon', language: 'TR' },
@@ -2887,7 +2443,7 @@ export default {
           rowsPerPage: 10,
         },
         rowsItem: [10, 20, 50],
-        loading: false,
+        loading: true,
       },
 
       selectedAcademicInfo: {},
@@ -2925,11 +2481,9 @@ export default {
       this.getExperienceByDoctor(newvalue)
     },
     'articleTable.serverOptions'(newvalue) {
-      //QQ
-      this.getArticles(newvalue)
+      this.getArticlesByDoctor(newvalue)
     },
     'editedItemForArticle.data.description'(newvalue) {
-      //QQ
       this.checkDescriptionLength(newvalue)
     },
     // COMMENT SYSTEM
@@ -2943,7 +2497,7 @@ export default {
     await this.getAcademicInfoByDoctor(this.academicInfoTable.serverOptions)
     await this.getCertificateByDoctor(this.certificateTable.serverOptions)
     await this.getExperienceByDoctor(this.experienceTable.serverOptions)
-    this.getArticles(this.articleTable.serverOptions) //QQ
+    await this.getArticlesByDoctor(this.articleTable.serverOptions)
   },
   methods: {
     ...mapActions({
@@ -2975,7 +2529,7 @@ export default {
       deleteExperienceAPI: 'experience/deleteExperience',
       //ARTICLE
       getAllCategories: 'category/getCategories',
-      getAllArticles: 'article/getArticles',
+      getAllArticles: 'article/getArticleByDoctor',
       getAllLanguages: 'language/getLanguages',
       addCategoryAPI: 'category/addCategory',
       deleteArticleAPI: 'article/deleteArticle',
@@ -2988,13 +2542,12 @@ export default {
     submitToAPI(event, modalName, data) {
       this.isAbleToPushButton = false
       this.validationChecked = true
-      this.checkDescriptionLength(this.editedItemForArticle.data.description) //QQ
+      this.checkDescriptionLength(this.editedItemForArticle.data.description)
       const form = event.currentTarget
       if (
         this.editedItemForArticle.isDescriptionEnoughToSend === false &&
         this.$refs['article-description']
       ) {
-        //QQ
         event.preventDefault()
         event.stopPropagation()
         this.isAbleToPushButton = true
@@ -3215,7 +2768,7 @@ export default {
             this.editedItemForExperience = cachedItemData
           }
           break
-        case 'updateArticleModal': //QQ
+        case 'updateArticleModal':
           {
             this.editedItemForArticle.data = JSON.parse(JSON.stringify(data))
             this.categoryList.loading = true
@@ -3575,7 +3128,7 @@ export default {
               this.editedItemForExperience = cachedProfileData
             }
             break
-          case 'addArticleModal': //QQ
+          case 'addArticleModal':
             {
               // Restore added item on clicking "No/Deny"
               this.addedItemForArticle = {
@@ -3635,7 +3188,7 @@ export default {
           }
         }
       }
-    }, //QQ
+    },
 
     async getDoctor() {
       const response = await this.getDoctorAPI()
@@ -3650,8 +3203,8 @@ export default {
         response.about,
       )
       this.doctorInfoData = new DoctorInfoDTO(
-        response.branch,
         response.title,
+        response.branch,
         response.clinicName,
         response.diplomaNo,
       )
@@ -4107,12 +3660,20 @@ export default {
       this.closeModal('deleteExperience')
     },
 
-    async getArticles(pageOptions) {
+    /*    async getArticles(pageOptions) {
       this.articleTable.loading = true
       const response = await this.getAllArticles({
         pageOptions: pageOptions,
         filter: null,
       })
+      this.itemsForArticle = response.data
+      this.articleTable.serverItemsLength = response.totalElements
+      this.articleTable.loading = false
+    },*/
+    async getArticlesByDoctor(pageOptions, data) {
+      this.articleTable.loading = true
+      let pageAndData = { pageOptions: pageOptions, doctorData: data }
+      const response = await this.getAllArticles(pageAndData)
       this.itemsForArticle = response.data
       this.articleTable.serverItemsLength = response.totalElements
       this.articleTable.loading = false
@@ -4128,7 +3689,7 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.getArticles(this.articleTable.serverOptions)
+        this.getArticlesByDoctor(this.articleTable.serverOptions)
         this.isAbleToPushButton = true
         this.closeModal('updateArticleModal')
       } else {
@@ -4169,7 +3730,7 @@ export default {
       this.closeModal('deleteArticleModal')
     },
 
-    // This two For to filter the selection list by search value //QQ
+    // This two For to filter the selection list by search value
     async get_Filtered_Parent_List_Options_Data(searched) {
       this.categoryList.loading = true
       // Filtered version(if) and unfiltered version(else)
@@ -4202,7 +3763,7 @@ export default {
         return data.map((category) => {
           return { uuid: category.uuid, name: category.name }
         })
-      } //QQ
+      }
     },
     async get_Filtered_Language_Options_Data(searched) {
       this.languageList.loading = true

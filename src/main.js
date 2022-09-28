@@ -17,6 +17,9 @@ import 'vue-select/dist/vue-select.css'
 import Vue3EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
 
+import VueCtkDateTimePicker from 'vue-ctk-date-time-picker'
+import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css'
+
 const app = createApp(App)
 app.use(store)
 app.use(router)
@@ -29,6 +32,7 @@ app.component('DocsExample', DocsExample)
 app.component('EasyDataTable', Vue3EasyDataTable)
 app.component(LightEditor)
 app.component('v-select', vSelect)
+app.component('VueCtkDateTimePicker', VueCtkDateTimePicker)
 
 // CHECK IF USER LOGGED IN ALREADY
 if (store.getters['auth/checkIfLoggedIn']) {

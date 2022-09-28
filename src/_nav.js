@@ -90,6 +90,11 @@ export default [
         name: 'Tag',
         to: '/management/tag',
       },
+      {
+        component: 'CNavItem',
+        name: 'Chat Room',
+        to: '/management/chatRoom',
+      },
     ],
   },
   {

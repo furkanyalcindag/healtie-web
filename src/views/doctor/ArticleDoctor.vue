@@ -32,11 +32,11 @@
                 v-model="addedItem.data.title"
               />
             </CCol>
-            <CCol md="6">
-              <CFormLabel for="add-article-tags">Etiketler</CFormLabel>
+            <!--            <CCol md="6">
+              <CFormLabel for="add-article-tagList">Etiketler</CFormLabel>
               <v-select
-                id="add-article-tags"
-                v-model="addedItem.data.tags"
+                id="add-article-tagList"
+                v-model="addedItem.data.tagList"
                 :options="tagList.options"
                 multiple
                 label="name"
@@ -51,24 +51,44 @@
                   <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
                 </template>
               </v-select>
+            </CCol>-->
+            <CCol md="6">
+              <CFormLabel for="add-article-tagList"
+                >İlgili Etiketleri Seçiniz</CFormLabel
+              >
+              <v-select
+                id="add-article-tagList"
+                v-model="addedItem.data.tagList"
+                :options="tagList.options"
+                label="name"
+                multiple
+                :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
+                @search="(search) => get_Filtered_tagList_Options_Data(search)"
+                :loading="tagList.loading"
+              >
+                <template v-slot:no-options="{ search, searching }">
+                  <template v-if="searching">
+                    Sonuç bulunamadı:
+                    <em>{{ search }}</em
+                    >.
+                  </template>
+                  <em v-else style="opacity: 0.5">Bir daha dene.</em>
+                </template>
+                <template #search="{ attributes, events }">
+                  <input
+                    class="form-control vs__search"
+                    feedbackInvalid="Lütfen bir etiket adı giriniz"
+                    :required="!addedItem.data.tagList.length > 0"
+                    v-bind="attributes"
+                    v-on="events"
+                  />
+                </template>
+              </v-select>
             </CCol>
             <CCol md="6">
-              <CFormLabel for="add-article-tags"
+              <CFormLabel for="add-category-parent-category"
                 >İlgili Kategorileri Seçiniz</CFormLabel
               >
-              <!-- <CFormSelect
-                size="lg"
-                multiple
-                required
-                aria-label="Multiple select example"
-              >
-                <option value="1">Dermatoloji</option>
-                <option value="2">Kadın Doğum</option>
-                <option value="3">Nöroloji</option>
-                <option value="4">Üroloji</option>
-                <option value="5">Nöroloji</option>
-                <option value="6">Nöroloji</option>
-              </CFormSelect> -->
               <v-select
                 id="add-category-parent-category"
                 v-model="addedItem.data.categoryList"
@@ -168,14 +188,22 @@ export default {
             .split('-')
             .reverse()
             .join('-'),
-          null,
+          [],
           [],
         ),
 
         isDescriptionEnoughToSend: false,
       },
       // Tag selection
-      tagList: {
+      tagList:{
+        options:[],
+        parentListSearcherDefaultServerOptions: {
+          page: 1,
+          rowsPerPage: 50,
+        },
+        loading: true,
+      },
+/*      tagList: {
         options: [
           { name: 'Depresyon', language: 'TR' },
           { name: 'Hayvan', language: 'TR' },
@@ -183,7 +211,7 @@ export default {
           { name: 'Tatlılar', language: 'TR' },
           { name: 'Obezler', language: 'TR' },
         ],
-      },
+      },*/
       // Category Selection
       categoryList: {
         // The parent category list inside selection in addCategory
@@ -210,9 +238,11 @@ export default {
   },
   created() {
     this.get_Filtered_Category_List_Options_Data()
+    this.get_Filtered_tagList_Options_Data()
   },
   methods: {
     ...mapActions({
+      getAlltagList:'tag/getTag',
       getAllCategories: 'category/getCategories',
       addArticleAPI: 'article/addArticle',
     }),
@@ -249,6 +279,41 @@ export default {
         // Reducing if the data is too heavy to handle
         return data.map((category) => {
           return { uuid: category.uuid, name: category.name }
+        })
+      }
+    },
+    async get_Filtered_tagList_Options_Data(searched) {
+      this.tagList.loading = true
+      if (searched) {
+        let filterBy = [
+          {
+            key: 'name',
+            operation: ':',
+            type: 'name',
+            value: searched,
+          },
+        ]
+        let searchedFor = {
+          pageOptions:
+          this.tagList.parentListSearcherDefaultServerOptions,
+          filter: filterBy,
+        }
+        const response = await this.getAlltagList(searchedFor)
+        this.tagList.options = reduceDataHeaviless(response.data)
+      } else {
+        let searchedFor = {
+          pageOptions:
+          this.tagList.parentListSearcherDefaultServerOptions,
+          filter: null,
+        }
+        const response = await this.getAlltagList(searchedFor)
+        this.tagList.options = reduceDataHeaviless(response.data)
+      }
+      this.tagList.loading = false
+      function reduceDataHeaviless(data) {
+        // Reducing if the data is too heavy to handle
+        return data.map((tag) => {
+          return { uuid: tag.uuid, name: tag.name }
         })
       }
     },
@@ -300,6 +365,7 @@ export default {
     },
     async addArticle(data) {
       data.categoryList = await takeCategoryListUUIDS(data.categoryList)
+      data.tagList=await taketagListUUIDS(data.tagList)
       console.log(data)
       const response = await this.addArticleAPI(data)
       if (response === true) {
@@ -321,7 +387,7 @@ export default {
           [],
         )),
           new Toast(
-            'Category added successfully',
+            'Article added successfully',
             'success',
             true,
             'text-white align-items-center',
@@ -341,6 +407,12 @@ export default {
           return category.uuid
         })
       }
+      function taketagListUUIDS() {
+        return data.tagList.map((tag) => {
+          return tag.uuid
+        })
+      }
+
     },
     closeModal(index) {
       this.openedModals[index] = false

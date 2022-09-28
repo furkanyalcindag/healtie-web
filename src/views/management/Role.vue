@@ -350,7 +350,7 @@
             v-model:server-options="userTable.serverOptions"
             :server-items-length="userTable.serverItemsLength"
             :headers="headers2"
-            :items="items"
+            :items="items2"
             :theme-color="themeColor"
             buttons-pagination
             :loading="userTable.loading"
@@ -489,6 +489,7 @@ export default {
   },
   created() {
     this.getRoles(this.roleTable.serverOptions)
+    this.getUser(this.roleTable.serverOptions)
   },
   watch: {
     'roleTable.serverOptions'(newvalue) {
@@ -608,7 +609,7 @@ export default {
       this.userTable.loading = true
       let pageAndData = { pageOptions: pageOptions, roleData: data }
       const response = await this.showUserByAPI(pageAndData)
-      this.items = response.data
+      this.items2 = response.data
       this.userTable.serverItemsLength = response.totalElements
       this.userTable.loading = false
     },

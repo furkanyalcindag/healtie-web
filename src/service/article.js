@@ -2,6 +2,7 @@
 import router from '@/router'
 import store from '@/store/'
 import createArticleDTO from '@/models/create_ARTICLE_dto'
+import axios from "axios";
 export default {
   namespaced: true,
   state: {},
@@ -124,7 +125,7 @@ export default {
           articleData.categoryListForArticle.length > 0
             ? articleData.categoryListForArticle
             : []
-        
+
         delete articleData.categoryListForArticle
 
         let updatedArticle = new createArticleDTO(
@@ -156,6 +157,52 @@ export default {
           .catch(function (error) {
             console.log(error)
             return false
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async getArticleByDoctor(state, pageAndData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        //    debugger
+        var axios = require('axios')
+        console.log(pageAndData.pageOptions)
+        let pageNumber = pageAndData.pageOptions.page - 1
+        console.log(pageNumber)
+        var data = await JSON.parse(
+          JSON.stringify({
+            filters: [],
+            pageNumber: pageAndData.pageOptions.page - 1,
+            pageSize: pageAndData.pageOptions.rowsPerPage,
+          }),
+        )
+        console.log(data)
+        var config = {
+          method: 'get',
+          url:
+            'article/user-api/' +
+       //     pageAndData.doctorData.uuid +
+            '?pageNumber=' +
+            data.pageNumber +
+            '&pageSize=' +
+            data.pageSize,
+
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+
+        const response = await axios(config)
+          .then(function (response) {
+            return response.data
+          })
+          .catch(function (error) {
+            console.log(error)
+            return null
           })
         return response
       } else {

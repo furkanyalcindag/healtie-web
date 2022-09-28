@@ -332,6 +332,11 @@ const routes = [
             name: 'Tag',
             component: () => import('@/views/management/Tag.vue'),
           },
+          {
+            path: 'chatRoom',
+            name: 'Chat Room',
+            component: () => import('@/views/management/ChatRoom.vue'),
+          },
         ],
       },
       {

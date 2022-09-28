@@ -14,6 +14,7 @@ import experience from '@/service/Experience'
 import settings from '@/service/Settings'
 import notification from '@/service/Notification'
 import tag from '@/service/Tag'
+import chatRoom from '@/service/ChatRoom'
 
 export default createStore({
   state: {
@@ -60,5 +61,6 @@ export default createStore({
     settings,
     notification,
     tag,
+    chatRoom,
   },
 })

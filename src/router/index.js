@@ -281,16 +281,6 @@ const routes = [
             name: 'AdminArticleList',
             component: () => import('@/views/admin/ListArticle.vue'),
           },
-          {
-            path: '/admin/login-admin',
-            name: 'Login Admin',
-            component: () => import('@/views/admin/LoginAdmin.vue'),
-          },
-          {
-            path: '/admin/register-admin',
-            name: 'Register Admin',
-            component: () => import('@/views/admin/RegisterAdmin.vue'),
-          },
         ],
       },
       {
@@ -381,8 +371,8 @@ const routes = [
   },
   {
     path: '/pages',
-    redirect: '/pages/404',
     name: 'Pages',
+    redirect: '/pages/404',
     component: {
       render() {
         return h(resolveComponent('router-view'))
@@ -408,6 +398,28 @@ const routes = [
         path: 'register',
         name: 'Register',
         component: () => import('@/views/pages/Register'),
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    name: 'Login Admin',
+    redirect: '/admin/login-admin',
+    component: {
+      render() {
+        return h(resolveComponent('router-view'))
+      },
+    },
+    children: [
+      {
+        path: '/admin/login-admin',
+        name: 'Login Admin',
+        component: () => import('@/views/admin/LoginAdmin.vue'),
+      },
+      {
+        path: '/admin/register-admin',
+        name: 'Register Admin',
+        component: () => import('@/views/admin/RegisterAdmin.vue'),
       },
     ],
   },

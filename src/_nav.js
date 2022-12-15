@@ -1,15 +1,15 @@
 export default [
-  {
+  /* {
     component: 'CNavItem',
     name: 'Dashboard',
-    to: '/dashboard',
+    to: '/dashboard's,
     icon: 'cil-speedometer',
     badge: {
       color: 'primary',
       text: 'NEW',
     },
-  },
-  {
+  }, */
+  /* {
     component: 'CNavTitle',
     name: 'Theme',
   },
@@ -24,10 +24,10 @@ export default [
     name: 'Typography',
     to: '/theme/typography',
     icon: 'cil-pencil',
-  },
+  }, */
   {
     component: 'CNavTitle',
-    name: 'Components',
+    name: 'CONTROL PANEL',
   },
   {
     component: 'CNavGroup',
@@ -193,6 +193,7 @@ export default [
       },
     ],
   },
+  /* 
   {
     component: 'CNavGroup',
     name: 'Buttons',
@@ -362,7 +363,7 @@ export default [
         to: '/pages/500',
       },
     ],
-  },
+  }, */
 
   // {
   //   component: 'CNavItem',

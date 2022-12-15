@@ -1,9 +1,20 @@
 export default class notificationDTO {
   static createEmpty() {
-    return new notificationDTO(null, null, null, null, null, false, [], [])
+    return new notificationDTO(
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      false,
+      [],
+      [],
+    )
   }
   static createFromJson(data) {
     return new notificationDTO(
+      data.uuid ?? null,
       data.language ?? null,
       data.title ?? null,
       data.message ?? null,
@@ -15,6 +26,7 @@ export default class notificationDTO {
     )
   }
   constructor(
+    uuid,
     language,
     title,
     message,
@@ -24,6 +36,7 @@ export default class notificationDTO {
     gendersToSend,
     agesToSend,
   ) {
+    this.uuid = uuid
     this.language = language
     this.title = title
     this.message = message

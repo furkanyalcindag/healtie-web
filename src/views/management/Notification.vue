@@ -152,10 +152,52 @@
                   v-model="addedItem.data.send"
                 />
                 <label class="form-check-label" for="flexSwitchCheckDefault"
-                  >Güncel mi?</label
+                  >Güncel mi? (Gönderildi mi?)</label
                 >
               </div>
             </CCol>
+            <!-- For GENDER list multiple selection -->
+            <CFormLabel for="add-category-parent-category"
+              >Cinsiyet Seçimi</CFormLabel
+            >
+            <v-select
+              id="add-category-parent-category"
+              v-model="addedItem.data.gendersToSend"
+              :options="genderSelectionList.options"
+              label="Gender"
+              multiple
+              :loading="genderSelectionList.loading"
+            >
+              <template v-slot:no-options="{ search, searching }">
+                <template v-if="searching">
+                  Sonuç bulunamadı:
+                  <em>{{ search }}</em
+                  >.
+                </template>
+                <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              </template>
+            </v-select>
+            <!-- For AGE list multiple selection -->
+            <CFormLabel for="add-category-parent-category"
+              >Yaş Seçimi</CFormLabel
+            >
+            <v-select
+              id="add-category-parent-category"
+              v-model="addedItem.data.agesToSend"
+              :options="ageSelectionList.options"
+              label="Gender"
+              multiple
+              :loading="ageSelectionList.loading"
+            >
+              <template v-slot:no-options="{ search, searching }">
+                <template v-if="searching">
+                  Sonuç bulunamadı:
+                  <em>{{ search }}</em
+                  >.
+                </template>
+                <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              </template>
+            </v-select>
             <CCol md="6">
               <CFormLabel for="add-notification-image">Resim Yükle</CFormLabel>
               <CInputGroup class="mb-3">
@@ -203,32 +245,6 @@
             novalidate
             :validated="validationChecked"
           >
-            <CCol md="6">
-              <div
-                class="rounder d-flex justify-content-center align-items-center"
-                style="height: 9rem"
-              >
-                <CAvatar
-                  :src="avatar"
-                  status="success"
-                  style="transform: scale(4)"
-                >
-                </CAvatar>
-              </div>
-            </CCol>
-            <CCol md="6">
-              <CFormLabel for="add-notification-image">Resim Yükle</CFormLabel>
-              <CInputGroup class="mb-3">
-                <CFormInput type="file" id="inputGroupFile02" />
-                <CInputGroupText
-                  component="label"
-                  required
-                  for="inputGroupFile02"
-                  >Yükle</CInputGroupText
-                >
-              </CInputGroup>
-            </CCol>
-
             <CCol md="6">
               <CFormLabel for="update-notification-title">Başlık</CFormLabel>
               <CFormInput
@@ -282,6 +298,73 @@
                   >Güncel mi?</label
                 >
               </div>
+            </CCol>
+            <!-- For GENDER list multiple selection -->
+            <CFormLabel for="update-gender-selections"
+              >Cinsiyet Seçimi</CFormLabel
+            >
+            <v-select
+              id="update-gender-selections"
+              v-model="editedItem.gendersToSend"
+              :options="genderSelectionList.options"
+              label="Gender"
+              multiple
+              :loading="genderSelectionList.loading"
+            >
+              <template v-slot:no-options="{ search, searching }">
+                <template v-if="searching">
+                  Sonuç bulunamadı:
+                  <em>{{ search }}</em
+                  >.
+                </template>
+                <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              </template>
+            </v-select>
+            <!-- For AGE list multiple selection -->
+            <CFormLabel for="add-category-parent-category"
+              >Yaş Seçimi</CFormLabel
+            >
+            <v-select
+              id="add-category-parent-category"
+              v-model="editedItem.agesToSend"
+              :options="ageSelectionList.options"
+              label="Gender"
+              multiple
+              :loading="ageSelectionList.loading"
+            >
+              <template v-slot:no-options="{ search, searching }">
+                <template v-if="searching">
+                  Sonuç bulunamadı:
+                  <em>{{ search }}</em
+                  >.
+                </template>
+                <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
+              </template>
+            </v-select>
+            <CCol md="6">
+              <div
+                class="rounder d-flex justify-content-center align-items-center"
+                style="height: 9rem"
+              >
+                <CAvatar
+                  :src="avatar"
+                  status="success"
+                  style="transform: scale(4)"
+                >
+                </CAvatar>
+              </div>
+            </CCol>
+            <CCol md="6">
+              <CFormLabel for="add-notification-image">Resim Yükle</CFormLabel>
+              <CInputGroup class="mb-3">
+                <CFormInput type="file" id="inputGroupFile02" />
+                <CInputGroupText
+                  component="label"
+                  required
+                  for="inputGroupFile02"
+                  >Yükle</CInputGroupText
+                >
+              </CInputGroup>
             </CCol>
 
             <CModalFooter class="pe-0">
@@ -359,11 +442,11 @@ export default {
       items: [],
       addedItem: {
         // Real data
-        data: new notificationDTO(null, null, null, null, null, null),
+        data: notificationDTO.createEmpty(),
       },
       editedItem: {
         // Real data
-        data: new notificationDTO(null, null, null, null, null, null),
+        data: notificationDTO.createEmpty(),
       },
       themeColor: '#321fdb',
       itemsSelected: [],
@@ -379,6 +462,37 @@ export default {
           rowsPerPage: 10,
         },
         rowsItem: [10, 20, 50],
+        loading: true,
+      },
+      // Gender Selection
+      genderSelectionList: {
+        // The language list inside selection in addCategory
+        options: ['OTHER', 'MALE', 'FEMALE', 'TRANSGENDER'],
+        // Language Selection server options for getting options in selection in addCategory
+        genderSearcherDefaultServerOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
+        loading: true,
+      },
+      // Gender Selection
+      ageSelectionList: {
+        // The language list inside selection in addCategory
+        options: [
+          '_UNSPECIFIED',
+          '_0_17',
+          '_18_24',
+          '_25_34',
+          '_35_44',
+          '_45_54',
+          '_55_64',
+          '_65_PLUS',
+        ],
+        // Language Selection server options for getting options in selection in addCategory
+        ageSearcherDefaultServerOptions: {
+          page: 1,
+          rowsPerPage: 10,
+        },
         loading: true,
       },
       validationChecked: false,
@@ -432,9 +546,18 @@ export default {
       switch (modalname) {
         case 'updateNotificationModal':
           {
-            let cachedItemData = JSON.parse(JSON.stringify(data))
+            this.genderSelectionList.loading = false
+            this.ageSelectionList.loading = false
+            let cachedItemData = notificationDTO.createFromJson(
+              JSON.parse(JSON.stringify(data)),
+            )
             this.editedItem = cachedItemData
-            // this.editedItem.data = JSON.parse(JSON.stringify(data))
+          }
+          break
+        case 'addNotificationModal':
+          {
+            this.genderSelectionList.loading = false
+            this.ageSelectionList.loading = false
           }
           break
       }
@@ -449,7 +572,7 @@ export default {
             {
               // Restore added item on clicking "No/Deny"
               this.addedItem = {
-                data: new notificationDTO(null, null, null, null, null, null),
+                data: notificationDTO.createEmpty(),
               }
             }
             break

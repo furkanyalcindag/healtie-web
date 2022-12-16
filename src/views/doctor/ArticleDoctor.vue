@@ -88,11 +88,11 @@
             </CCol>
             <!-- Article Categories -->
             <CCol md="6">
-              <CFormLabel for="add-category-parent-category"
+              <CFormLabel for="add-article-category"
                 >İlgili Kategorileri Seçiniz</CFormLabel
               >
               <v-select
-                id="add-category-parent-category"
+                id="add-article-category"
                 v-model="addedItem.data.categoryList"
                 :options="categoryList.options"
                 label="name"

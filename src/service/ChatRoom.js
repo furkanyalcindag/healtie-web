@@ -6,23 +6,20 @@ export default {
   state: {},
   mutations: {},
   actions: {
-    async getTag(state, pageAndSearchValue) {
+    async getChatRoom(state, page) {
       // CHECK IF USER LOGGED IN ALREADY
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        let filterBy = pageAndSearchValue.filter
-          ? pageAndSearchValue.filter
-          : []
-
         var data = JSON.stringify({
-          filters: filterBy,
-          pageNumber: pageAndSearchValue.pageOptions.page - 1,
-          pageSize: pageAndSearchValue.pageOptions.rowsPerPage,
+          filters: [],
+          pageNumber: page.page - 1,
+          pageSize: page.rowsPerPage,
+          language: page.language,
         })
         var config = {
           method: 'post',
-          url: 'tag/get-all-by-filter',
+          url: 'chat-room/get-all-by-filter',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -42,18 +39,25 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async updateTag(state, newTagData) {
+    async updateChatRoom(state, newChatRoomData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
         var data = JSON.stringify({
-          language: newTagData.language,
-          name: newTagData.name,
+          language: 'TR',
+          name: newChatRoomData.name,
+          userLimit: newChatRoomData.userLimit,
+          colorCode: newChatRoomData.colorCode,
+          approved: newChatRoomData.approved,
+          startTime: newChatRoomData.startTime,
+          endTime: newChatRoomData.endTime,
+          doctorUUId: newChatRoomData.doctorUUId,
+          chatRoomStatusEnum: newChatRoomData.chatRoomStatusEnum,
         })
 
         var config = {
           method: 'put',
-          url: 'tag/user-api/' + newTagData.uuid,
+          url: 'chat-room/user-api/' + newChatRoomData.uuid,
           headers: {
             'Content-Type': 'application/json',
           },
@@ -74,14 +78,15 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async addTag(state, tagData) {
+    async addChatRoom(state, chatRoomData) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
-        var data = JSON.stringify(tagData)
+        console.log(chatRoomData)
+        var data = JSON.stringify(chatRoomData)
         var config = {
           method: 'post',
-          url: 'tag/user-api',
+          url: 'chat-room/user-api',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -102,14 +107,14 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
-    async deleteTag(state, uuid) {
+    async deleteChatRoom(state, uuid) {
       if (store.getters['auth/checkIfLoggedIn']) {
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
         var axios = require('axios')
 
         var config = {
           method: 'delete',
-          url: 'tag/' + uuid,
+          url: 'chat-room/' + uuid,
           headers: {},
         }
 

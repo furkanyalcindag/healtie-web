@@ -235,6 +235,145 @@ export default {
         router.push({ name: 'Login Admin' })
       }
     },
+    async getUserByChatRoom(state, pageAndData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        //    debugger
+        var axios = require('axios')
+        console.log(pageAndData.pageOptions)
+        let pageNumber = pageAndData.pageOptions.page - 1
+        console.log(pageNumber)
+        var data = await JSON.parse(
+          JSON.stringify({
+            filters: [],
+            pageNumber: pageAndData.pageOptions.page - 1,
+            pageSize: pageAndData.pageOptions.rowsPerPage,
+          }),
+        )
+        console.log(data)
+        var config = {
+          method: 'get',
+          url:
+            'user-api/get-users-by-chat-room/' +
+            pageAndData.chatRoomData.uuid +
+            '?pageNumber=' +
+            data.pageNumber +
+            '&pageSize=' +
+            data.pageSize,
+
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+
+        const response = await axios(config)
+          .then(function (response) {
+            return response.data
+          })
+          .catch(function (error) {
+            console.log(error)
+            return null
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async getApprovedUserByChatRoom(state, pageAndData) {
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        //    debugger
+        var axios = require('axios')
+        console.log(pageAndData.pageOptions)
+        let pageNumber = pageAndData.pageOptions.page - 1
+        console.log(pageNumber)
+        var data = await JSON.parse(
+          JSON.stringify({
+            filters: [],
+            pageNumber: pageAndData.pageOptions.page - 1,
+            pageSize: pageAndData.pageOptions.rowsPerPage,
+          }),
+        )
+        console.log(data)
+        var config = {
+          method: 'get',
+          url:
+            'user-api/get-approved-users-by-chat-room/' +
+            pageAndData.chatRoomData.uuid +
+            '?pageNumber=' +
+            data.pageNumber +
+            '&pageSize=' +
+            data.pageSize,
+
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+
+        const response = await axios(config)
+          .then(function (response) {
+            return response.data
+          })
+          .catch(function (error) {
+            console.log(error)
+            return null
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
+    async getNonApprovedUserByChatRoom(state, pageAndData) {
+      // debugger
+      if (store.getters['auth/checkIfLoggedIn']) {
+        // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
+        //    debugger
+        var axios = require('axios')
+        console.log(pageAndData.pageOptions)
+        let pageNumber = pageAndData.pageOptions.page - 1
+        console.log(pageNumber)
+        var data = await JSON.parse(
+          JSON.stringify({
+            filters: [],
+            pageNumber: pageAndData.pageOptions.page - 1,
+            pageSize: pageAndData.pageOptions.rowsPerPage,
+          }),
+        )
+        console.log(data)
+        var config = {
+          method: 'get',
+          url:
+            'user-api/get-non-approved-users-by-chat-room/' +
+            pageAndData.chatRoomData.uuid +
+            '?pageNumber=' +
+            data.pageNumber +
+            '&pageSize=' +
+            data.pageSize,
+
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          data: data,
+        }
+
+        const response = await axios(config)
+          .then(function (response) {
+            return response.data
+          })
+          .catch(function (error) {
+            console.log(error)
+            return null
+          })
+        return response
+      } else {
+        // ROLE CHECK IS NEEDED HERE
+        router.push({ name: 'Login Admin' })
+      }
+    },
   },
   getters: {},
 }

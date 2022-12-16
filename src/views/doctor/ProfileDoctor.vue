@@ -1314,7 +1314,6 @@
     >
       <CModalHeader>
         <CModalTitle>Makale Düzenle</CModalTitle>
-        {{ editedItemForArticle }}
       </CModalHeader>
       <CModalBody>
         <CForm

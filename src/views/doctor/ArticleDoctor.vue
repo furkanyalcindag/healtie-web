@@ -23,6 +23,7 @@
             novalidate
             :validated="validationChecked"
           >
+            <!-- Article Title  -->
             <CCol md="6">
               <CFormLabel for="add-article-title">Makale Başlığı</CFormLabel>
               <CFormInput
@@ -52,6 +53,7 @@
                 </template>
               </v-select>
             </CCol>-->
+            <!-- Article Tags -->
             <CCol md="6">
               <CFormLabel for="add-article-tagList"
                 >İlgili Etiketleri Seçiniz</CFormLabel
@@ -78,13 +80,13 @@
                   <input
                     class="form-control vs__search"
                     feedbackInvalid="Lütfen bir etiket adı giriniz"
-                    :required="!addedItem.data.tagList.length > 0"
                     v-bind="attributes"
                     v-on="events"
                   />
                 </template>
               </v-select>
             </CCol>
+            <!-- Article Categories -->
             <CCol md="6">
               <CFormLabel for="add-category-parent-category"
                 >İlgili Kategorileri Seçiniz</CFormLabel
@@ -113,13 +115,13 @@
                   <input
                     class="form-control vs__search"
                     feedbackInvalid="Lütfen bir kategori adı giriniz"
-                    :required="!addedItem.data.categoryList.length > 0"
                     v-bind="attributes"
                     v-on="events"
                   />
                 </template>
               </v-select>
             </CCol>
+            <!-- Article Published Date -->
             <CCol md="6">
               <CFormLabel for="add-article-publishedDate"
                 >Yayımlanma Tarihi</CFormLabel
@@ -132,6 +134,7 @@
                 v-model="addedItem.data.publishedDate"
               />
             </CCol>
+            <!-- Article Description -->
             <CCol md="12">
               <CFormLabel for="add-article-content" class="m-2"
                 >Makale İçeriği</CFormLabel
@@ -140,11 +143,6 @@
                 v-model="addedItem.data.description"
                 ref="article-description"
               />
-              <div
-                class="prose lg:prose-xl"
-                v-html="addedItem.data.description"
-                required
-              ></div>
             </CCol>
             <CModalFooter class="pe-0">
               <CButton color="success" type="submit" class="m-2">
@@ -174,36 +172,20 @@ export default {
       items: [],
       addedItem: {
         // Real data
-        data: new createArticleDTO(
-          null,
-          'TR',
-          null,
-          new Date()
-            .toLocaleDateString('tr-TR', {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-            })
-            .replaceAll('.', '-')
-            .split('-')
-            .reverse()
-            .join('-'),
-          [],
-          [],
-        ),
+        data: createArticleDTO.createEmpty(),
 
         isDescriptionEnoughToSend: false,
       },
       // Tag selection
-      tagList:{
-        options:[],
+      tagList: {
+        options: [],
         parentListSearcherDefaultServerOptions: {
           page: 1,
           rowsPerPage: 50,
         },
         loading: true,
       },
-/*      tagList: {
+      /*      tagList: {
         options: [
           { name: 'Depresyon', language: 'TR' },
           { name: 'Hayvan', language: 'TR' },
@@ -242,7 +224,7 @@ export default {
   },
   methods: {
     ...mapActions({
-      getAlltagList:'tag/getTag',
+      getAlltagList: 'tag/getTag',
       getAllCategories: 'category/getCategories',
       addArticleAPI: 'article/addArticle',
     }),
@@ -259,16 +241,14 @@ export default {
           },
         ]
         let searchedFor = {
-          pageOptions:
-            this.categoryList.parentListSearcherDefaultServerOptions,
+          pageOptions: this.categoryList.parentListSearcherDefaultServerOptions,
           filter: filterBy,
         }
         const response = await this.getAllCategories(searchedFor)
         this.categoryList.options = reduceDataHeaviless(response.data)
       } else {
         let searchedFor = {
-          pageOptions:
-            this.categoryList.parentListSearcherDefaultServerOptions,
+          pageOptions: this.categoryList.parentListSearcherDefaultServerOptions,
           filter: null,
         }
         const response = await this.getAllCategories(searchedFor)
@@ -294,16 +274,14 @@ export default {
           },
         ]
         let searchedFor = {
-          pageOptions:
-          this.tagList.parentListSearcherDefaultServerOptions,
+          pageOptions: this.tagList.parentListSearcherDefaultServerOptions,
           filter: filterBy,
         }
         const response = await this.getAlltagList(searchedFor)
         this.tagList.options = reduceDataHeaviless(response.data)
       } else {
         let searchedFor = {
-          pageOptions:
-          this.tagList.parentListSearcherDefaultServerOptions,
+          pageOptions: this.tagList.parentListSearcherDefaultServerOptions,
           filter: null,
         }
         const response = await this.getAlltagList(searchedFor)
@@ -364,35 +342,20 @@ export default {
       this.isAbleToPushButton = true
     },
     async addArticle(data) {
-      data.categoryList = await takeCategoryListUUIDS(data.categoryList)
-      data.tagList=await taketagListUUIDS(data.tagList)
       console.log(data)
+      data.categoryList = await takeCategoryListUUIDS(data.categoryList)
+      data.tagList = await taketagListUUIDS(data.tagList)
       const response = await this.addArticleAPI(data)
       if (response === true) {
-        ;(this.addedItem.data = new createArticleDTO(
-          '',
-          'TR',
-          '',
-          new Date()
-            .toLocaleDateString('tr-TR', {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-            })
-            .replaceAll('.', '-')
-            .split('-')
-            .reverse()
-            .join('-'),
-          [],
-          [],
-        )),
+        ;(this.addedItem.data = createArticleDTO.createEmpty()),
           new Toast(
             'Article added successfully',
             'success',
             true,
             'text-white align-items-center',
           )
-          this.validationChecked = false
+        this.validationChecked = false
+        this.addedItem.isDescriptionEnoughToSend = false
       } else {
         new Toast(
           'Something went wrong',
@@ -412,7 +375,6 @@ export default {
           return tag.uuid
         })
       }
-
     },
     closeModal(index) {
       this.openedModals[index] = false

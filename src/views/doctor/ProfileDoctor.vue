@@ -2225,7 +2225,7 @@ import DoctorInfoDTO from '@/models/doctorInfoDTO'
 import DoctorAcademicInfoDTO from '@/models/doctorAcademicInfoDTO'
 import DoctorCertificateDTO from '@/models/doctorCertificateDTO'
 import DoctorExperienceDTO from '@/models/doctorExperienceDTO'
-import createDoctorProfileDTO from '@/models/doctorProfileDTO'
+// import createDoctorProfileDTO from '@/models/doctorProfileDTO'
 import router from '@/router'
 import createArticleDTO from '@/models/create_ARTICLE_dto'
 
@@ -2299,7 +2299,6 @@ export default {
           [],
         ),
       },
-
 
       rowsPerPage: 10,
       themeColor: '#321fdb',

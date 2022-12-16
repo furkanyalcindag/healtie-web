@@ -81,9 +81,9 @@
           :validated="validationChecked"
         >
           <CCol md="6">
-            <CFormLabel for="update-phone">Telefon Numarası</CFormLabel>
+            <CFormLabel for="update-profile-phone">Telefon Numarası</CFormLabel>
             <CFormInput
-              id="update-phone"
+              id="update-profile-phone"
               required
               feedbackInvalid="Lütfen bir telefon numarası giriniz"
               v-model="editedItemForProfileData.phone"
@@ -130,19 +130,12 @@
           novalidate
           :validated="validationChecked"
         >
-          <CCol md="6">
-            <CFormLabel for="update-address">Adres</CFormLabel>
+          <CCol md="12">
+            <CFormLabel for="update-profile-address">Adres</CFormLabel>
             <CFormTextarea
-              id="add-reply"
-              rows="3"
+              id="update-profile-address"
               required
-              feedbackInvalid="Biraz sosyal olmaya ne dersin?"
-              v-model="addedReply.text"
-              @input="validationChecked = false"
-            />
-            <CFormInput
-              id="update-address"
-              required
+              rows="4"
               feedbackInvalid="Lütfen bir adres bilgisi giriniz"
               v-model="editedItemForProfileData.address"
             />
@@ -181,7 +174,6 @@
               ? submitToAPI(
                   $event,
                   'updateDoctorTitle',
-
                   editedItemForInfoData.title,
                 )
               : null
@@ -191,9 +183,9 @@
           :validated="validationChecked"
         >
           <CCol md="6">
-            <CFormLabel for="update-title">Ünvan</CFormLabel>
+            <CFormLabel for="update-profile-title">Ünvan</CFormLabel>
             <CFormInput
-              id="update-title"
+              id="update-profile-title"
               required
               feedbackInvalid="Lütfen bir ünvan bilgisi giriniz"
               v-model="editedItemForInfoData.title"
@@ -241,9 +233,9 @@
           :validated="validationChecked"
         >
           <CCol md="6">
-            <CFormLabel for="update-branch">Branş</CFormLabel>
+            <CFormLabel for="update-profile-branch">Branş</CFormLabel>
             <CFormInput
-              id="update-branch"
+              id="update-profile-branch"
               required
               feedbackInvalid="Lütfen bir branş giriniz"
               v-model="editedItemForInfoData.branch"
@@ -291,9 +283,9 @@
           :validated="validationChecked"
         >
           <CCol md="6">
-            <CFormLabel for="update-clinic-name">Klinik</CFormLabel>
+            <CFormLabel for="update-profile-clinic-name">Klinik</CFormLabel>
             <CFormInput
-              id="update-clinic-name"
+              id="update-profile-clinic-name"
               required
               feedbackInvalid="Lütfen bir klinik adı giriniz"
               v-model="editedItemForInfoData.clinicName"
@@ -343,9 +335,11 @@
           :validated="validationChecked"
         >
           <CCol md="6">
-            <CFormLabel for="update-diploma-no">Diploma Numarası</CFormLabel>
+            <CFormLabel for="update-profile-diploma-no"
+              >Diploma Numarası</CFormLabel
+            >
             <CFormInput
-              id="update-diploma-no"
+              id="update-profile-diploma-no"
               required
               feedbackInvalid="Lütfen bir klinik adı giriniz"
               v-model="editedItemForInfoData.diplomaNo"
@@ -394,11 +388,12 @@
           novalidate
           :validated="validationChecked"
         >
-          <CCol md="6">
-            <CFormLabel for="update-about">Hakkımda</CFormLabel>
-            <CFormInput
-              id="update-about"
+          <CCol md="12">
+            <CFormLabel for="update-profile-about">Hakkımda</CFormLabel>
+            <CFormTextarea
+              id="update-profile-about"
               required
+              rows="10"
               feedbackInvalid="Lütfen hakkınızda bir şeyler giriniz"
               v-model="editedItemForProfileData.about"
             />
@@ -1518,9 +1513,11 @@
           </CCol>
         </CCardHeader>
         <CCardBody>
+          <!-- Profile Infos Such As FirstName Lastname Branch... -->
           <CRow>
+            <!-- Left Side -->
             <CCol :sm="12" :md="4" class="mb-3">
-              <CCard>
+              <CCard class="h-100">
                 <CCardBody>
                   <CCardTitle>
                     <div
@@ -1535,89 +1532,11 @@
                           class="position-relative"
                         >
                         </CAvatar>
-                        <CButton
-                          style="transform: translateX(545%) translateY(140%)"
-                          color="warning"
-                          class="ms-2 text-white align-items-end position-absolute end-0 top-0 m-1"
-                          shape="rounded-pill"
-                          size="sm"
-                          v-c-tooltip="{
-                            content: 'Düzenle',
-                            placement: 'top',
-                          }"
-                          @click="
-                            showModal(
-                              'updateDoctorProfilePicture',
-                              editedItemForProfileData,
-                            )
-                          "
-                        >
-                          <CIcon icon="cil-pencil" />
-                        </CButton>
                       </div>
                     </div>
-                  </CCardTitle>
-                </CCardBody>
-
-                <CListGroup
-                  flush
-                  @submit.prevent="
-                    submitToAPI($event, 'getDoctorProfile', doctorProfileData)
-                  "
-                >
-                  <CListGroupItem
-                    ><span class="fw-bolder">İsim Soyisim: </span>
-                    {{
-                      ' ' +
-                      doctorProfileData.firstName +
-                      ' ' +
-                      doctorProfileData.lastName
-                    }}
                     <CButton
                       color="warning"
-                      class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
-                      shape="rounded-pill"
-                      size="sm"
-                      v-c-tooltip="{
-                        content: 'Düzenle',
-                        placement: 'top',
-                      }"
-                      @click="
-                        showModal('updateUserName', editedItemForProfileData)
-                      "
-                    >
-                      <CIcon icon="cil-pencil" />
-                    </CButton>
-                  </CListGroupItem>
-                  <CListGroupItem
-                    ><span class="fw-bolder">Email: </span>
-                    {{ ' ' + doctorProfileData.email }}
-                  </CListGroupItem>
-                  <CListGroupItem
-                    ><span class="fw-bolder">Tel No: </span>
-                    {{ ' ' + doctorProfileData.phone }}
-                    <CButton
-                      color="warning"
-                      class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
-                      shape="rounded-pill"
-                      size="sm"
-                      v-c-tooltip="{
-                        content: 'Düzenle',
-                        placement: 'top',
-                      }"
-                      @click="
-                        showModal('updateDoctorPhone', editedItemForProfileData)
-                      "
-                    >
-                      <CIcon icon="cil-pencil" />
-                    </CButton>
-                  </CListGroupItem>
-                  <CListGroupItem
-                    ><span class="fw-bolder">Adres: </span>
-                    {{ ' ' + doctorProfileData.address }}
-                    <CButton
-                      color="warning"
-                      class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
+                      class="text-white align-items-end position-absolute end-0 top-0 m-3"
                       shape="rounded-pill"
                       size="sm"
                       v-c-tooltip="{
@@ -1626,20 +1545,101 @@
                       }"
                       @click="
                         showModal(
-                          'updateDoctorAddress',
+                          'updateDoctorProfilePicture',
                           editedItemForProfileData,
                         )
                       "
                     >
                       <CIcon icon="cil-pencil" />
                     </CButton>
-                  </CListGroupItem>
-                </CListGroup>
+                  </CCardTitle>
+                  <CListGroup
+                    flush
+                    @submit.prevent="
+                      submitToAPI($event, 'getDoctorProfile', doctorProfileData)
+                    "
+                  >
+                    <CListGroupItem
+                      ><span class="fw-bolder">İsim Soyisim: </span>
+                      {{
+                        ' ' +
+                        doctorProfileData.firstName +
+                        ' ' +
+                        doctorProfileData.lastName
+                      }}
+                      <CButton
+                        color="warning"
+                        class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
+                        shape="rounded-pill"
+                        size="sm"
+                        v-c-tooltip="{
+                          content: 'Düzenle',
+                          placement: 'top',
+                        }"
+                        @click="
+                          showModal('updateUserName', editedItemForProfileData)
+                        "
+                      >
+                        <CIcon icon="cil-pencil" />
+                      </CButton>
+                    </CListGroupItem>
+                    <CListGroupItem
+                      ><span class="fw-bolder">Email: </span>
+                      {{ ' ' + doctorProfileData.email }}
+                    </CListGroupItem>
+                    <CListGroupItem
+                      ><span class="fw-bolder">Tel No: </span>
+                      {{ ' ' + doctorProfileData.phone }}
+                      <CButton
+                        color="warning"
+                        class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
+                        shape="rounded-pill"
+                        size="sm"
+                        v-c-tooltip="{
+                          content: 'Düzenle',
+                          placement: 'top',
+                        }"
+                        @click="
+                          showModal(
+                            'updateDoctorPhone',
+                            editedItemForProfileData,
+                          )
+                        "
+                      >
+                        <CIcon icon="cil-pencil" />
+                      </CButton>
+                    </CListGroupItem>
+                    <CListGroupItem
+                      ><span class="fw-bolder">Adres: </span>
+                      {{ ' ' + doctorProfileData.address }}
+                      <CButton
+                        color="warning"
+                        class="ms-2 text-white align-items-center position-absolute end-0 top-0 m-1"
+                        shape="rounded-pill"
+                        size="sm"
+                        v-c-tooltip="{
+                          content: 'Düzenle',
+                          placement: 'top',
+                        }"
+                        @click="
+                          showModal(
+                            'updateDoctorAddress',
+                            editedItemForProfileData,
+                          )
+                        "
+                      >
+                        <CIcon icon="cil-pencil" />
+                      </CButton>
+                    </CListGroupItem>
+                  </CListGroup>
+                </CCardBody>
               </CCard>
             </CCol>
+            <!-- Right Side -->
             <CCol :sm="12" :md="8">
               <CRow class="align-self-start">
                 <CCol class="align-self-start" :sm="12">
+                  <!-- Doctor Informations -->
                   <CCallout
                     color="primary"
                     class="position-relative mt-0 me-0 ms-0"
@@ -1649,9 +1649,14 @@
                       flush
                       style="min-height: 10.2rem"
                       @submit.prevent="
-                        submitToAPI($event, 'getDoctorInfo', doctorInfoData)
+                        submitToAPI(
+                          $event,
+                          'getDoctorInfo',
+                          doctorInfoData.title,
+                        )
                       "
                     >
+                      <!-- Title -->
                       <CListGroupItem>
                         <CRow>
                           <CCol :sm="2"
@@ -1680,6 +1685,7 @@
                           </CCol>
                         </CRow>
                       </CListGroupItem>
+                      <!-- Branch -->
                       <CListGroupItem>
                         <CRow>
                           <CCol :sm="2"
@@ -1707,6 +1713,7 @@
                           ></CCol>
                         </CRow>
                       </CListGroupItem>
+                      <!-- Clinic Name -->
                       <CListGroupItem>
                         <CRow>
                           <CCol :sm="2"
@@ -1734,6 +1741,7 @@
                           ></CCol>
                         </CRow>
                       </CListGroupItem>
+                      <!-- Diploma NO -->
                       <CListGroupItem>
                         <CRow>
                           <CCol :sm="2"
@@ -1763,6 +1771,7 @@
                       </CListGroupItem>
                     </CListGroup>
                   </CCallout>
+                  <!-- About You -->
                   <CCallout
                     color="primary"
                     class="position-relative mt-0 me-0 ms-0 mb-3"
@@ -1805,6 +1814,7 @@
               </CRow>
             </CCol>
           </CRow>
+          <!-- Bottom Ones( Tables ) -->
           <CRow>
             <CCol>
               <CRow class="align-self-start">
@@ -3658,8 +3668,8 @@ export default {
         response.about,
       )
       this.doctorInfoData = new DoctorInfoDTO(
-        response.branch,
         response.title,
+        response.branch,
         response.clinicName,
         response.diplomaNo,
       )
@@ -3765,9 +3775,9 @@ export default {
         this.isAbleToPushButton = true
       }
     },
-    async updateDoctorTitle(newroleData) {
+    async updateDoctorTitle(newDoctorTitle) {
       this.isAbleToPushButton = false
-      const response = await this.updateDoctorTitleAPI(newroleData)
+      const response = await this.updateDoctorTitleAPI(newDoctorTitle)
       if (response === true) {
         new Toast(
           'Title updated successfully',

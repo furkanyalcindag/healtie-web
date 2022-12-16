@@ -2944,7 +2944,7 @@ export default {
     },
     'articleTable.serverOptions'(newvalue) {
       //QQ
-      this.getArticles(newvalue)
+      this.getArticlesByDoctor(newvalue)
     },
     'editedItemForArticle.data.description'(newvalue) {
       //QQ
@@ -2961,7 +2961,7 @@ export default {
     await this.getAcademicInfoByDoctor(this.academicInfoTable.serverOptions)
     await this.getCertificateByDoctor(this.certificateTable.serverOptions)
     await this.getExperienceByDoctor(this.experienceTable.serverOptions)
-    this.getArticles(this.articleTable.serverOptions) //QQ
+    await this.getArticlesByDoctor(this.articleTable.serverOptions) //QQ
   },
   methods: {
     ...mapActions({
@@ -2993,7 +2993,7 @@ export default {
       deleteExperienceAPI: 'experience/deleteExperience',
       //ARTICLE
       getAllCategories: 'category/getCategories',
-      getAllArticles: 'article/getArticles',
+      getAllArticles: 'article/getArticleByDoctor',
       getAllLanguages: 'language/getLanguages',
       addCategoryAPI: 'category/addCategory',
       deleteArticleAPI: 'article/deleteArticle',
@@ -4125,12 +4125,11 @@ export default {
       this.closeModal('deleteExperience')
     },
 
-    async getArticles(pageOptions) {
+    async getArticlesByDoctor(pageOptions, data) {
+      console.log("GETTING ARTICLES BY DOCTOR")
       this.articleTable.loading = true
-      const response = await this.getAllArticles({
-        pageOptions: pageOptions,
-        filter: null,
-      })
+      let pageAndData = { pageOptions: pageOptions, doctorData: data }
+      const response = await this.getAllArticles(pageAndData)
       this.itemsForArticle = response.data
       this.articleTable.serverItemsLength = response.totalElements
       this.articleTable.loading = false

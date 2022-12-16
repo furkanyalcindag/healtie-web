@@ -1314,6 +1314,7 @@
     >
       <CModalHeader>
         <CModalTitle>Makale Düzenle</CModalTitle>
+        {{ editedItemForArticle }}
       </CModalHeader>
       <CModalBody>
         <CForm
@@ -1336,8 +1337,35 @@
           </CCol>
           <!-- Article tags -->
           <CCol md="6">
-            <CFormLabel for="add-article-tags">Etiketler</CFormLabel>
+            <CFormLabel for="update-article-tagList">Etiketler</CFormLabel>
             <v-select
+              id="update-article-tagList"
+              v-model="editedItemForArticle.data.tagList"
+              :options="tagList.options"
+              label="name"
+              multiple
+              :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
+              @search="(search) => get_Filtered_tagList_Options_Data(search)"
+              :loading="tagList.loading"
+            >
+              <template v-slot:no-options="{ search, searching }">
+                <template v-if="searching">
+                  Sonuç bulunamadı:
+                  <em>{{ search }}</em
+                  >.
+                </template>
+                <em v-else style="opacity: 0.5">Bir daha dene.</em>
+              </template>
+              <template #search="{ attributes, events }">
+                <input
+                  class="form-control vs__search"
+                  feedbackInvalid="Lütfen bir etiket adı giriniz"
+                  v-bind="attributes"
+                  v-on="events"
+                />
+              </template>
+            </v-select>
+            <!-- <v-select
               id="add-article-tags"
               v-model="editedItemForArticle.data.tags"
               :options="tagList.options"
@@ -1353,7 +1381,7 @@
                 </template>
                 <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
               </template>
-            </v-select>
+            </v-select> -->
           </CCol>
           <!-- Article published Date -->
           <CCol md="6">
@@ -1374,7 +1402,7 @@
           >
           <v-select
             id="edit-category-parent-category"
-            v-model="editedItemForArticle.data.categoryListForArticle"
+            v-model="editedItemForArticle.data.categoryList"
             :options="categoryList.options"
             label="name"
             multiple
@@ -1394,9 +1422,7 @@
               <input
                 class="form-control vs__search"
                 feedbackInvalid="Lütfen bir kategori adı giriniz"
-                :required="
-                  !(editedItemForArticle.data.categoryListForArticle.length > 0)
-                "
+                :required="!(editedItemForArticle.data.categoryList.length > 0)"
                 v-bind="attributes"
                 v-on="events"
               />
@@ -1438,11 +1464,6 @@
               v-model="editedItemForArticle.data.description"
               ref="article-description"
             />
-            <div
-              class="prose lg:prose-xl"
-              v-html="editedItemForArticle.data.description"
-              required
-            ></div>
           </CCol>
           <CModalFooter class="pe-0">
             <CButton color="secondary" @click="closeModal('updateArticleModal')"
@@ -2297,23 +2318,7 @@ export default {
       },
       addedItemForArticle: {
         // Real data
-        data: new createArticleDTO(
-          null,
-          'TR',
-          null,
-          new Date()
-            .toLocaleDateString('tr-TR', {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-            })
-            .replaceAll('.', '-')
-            .split('-')
-            .reverse()
-            .join('-'),
-          null,
-          [],
-        ),
+        data: createArticleDTO.createEmpty(),
       },
 
       isAbleToPushButton: true,
@@ -2323,23 +2328,7 @@ export default {
       },
       editedItemForArticle: {
         // Real data
-        data: new createArticleDTO(
-          null,
-          'TR',
-          null,
-          new Date()
-            .toLocaleDateString('tr-TR', {
-              year: 'numeric',
-              month: 'numeric',
-              day: 'numeric',
-            })
-            .replaceAll('.', '-')
-            .split('-')
-            .reverse()
-            .join('-'),
-          null,
-          [],
-        ),
+        data: createArticleDTO.createEmpty(),
         isDescriptionEnoughToSend: false,
       },
       editedItemForProfileData: {
@@ -2831,13 +2820,12 @@ export default {
       },
       // Tag selection QQ
       tagList: {
-        options: [
-          { name: 'Depresyon', language: 'TR' },
-          { name: 'Hayvan', language: 'TR' },
-          { name: 'Çocuk', language: 'TR' },
-          { name: 'Tatlılar', language: 'TR' },
-          { name: 'Obezler', language: 'TR' },
-        ],
+        options: [],
+        parentListSearcherDefaultServerOptions: {
+          page: 1,
+          rowsPerPage: 50,
+        },
+        loading: true,
       },
 
       openedModals: {
@@ -3002,6 +2990,8 @@ export default {
       getParentCommentsFromArticleAPI: 'comment/getParentCommentsFromArticle',
       getRepliesFromCommentAPI: 'comment/getRepliesFromComment',
       addReplyAPI: 'comment/addReply',
+      //TAGS
+      getAlltagList: 'tag/getTag',
     }),
     submitToAPI(event, modalName, data) {
       this.isAbleToPushButton = false
@@ -3236,13 +3226,26 @@ export default {
           break
         case 'updateArticleModal': //QQ
           {
-            this.editedItemForArticle.data = JSON.parse(JSON.stringify(data))
+            this.editedItemForArticle.data =
+              createArticleDTO.createArticleFromJson({
+                title: data.title,
+                language: data.language,
+                description: data.description,
+                publishedDate: data.publishedDate,
+                tagList: data.tagListForArticle,
+                categoryList: data.categoryListForArticle,
+              })
+            // this.editedItemForArticle.data = JSON.parse(JSON.stringify(data))
+            this.editedItemForArticle.data.uuid = data.uuid
+            console.log(this.editedItemForArticle)
             this.categoryList.loading = true
             this.languageList.loading = true
             this.get_Filtered_Parent_List_Options_Data()
             //this.get_Filtered_Language_Options_Data()
+            this.get_Filtered_tagList_Options_Data()
             this.categoryList.loading = false
             this.languageList.loading = false
+            this.tagList.loading = false
           }
           break
         case 'showComment':
@@ -3598,23 +3601,7 @@ export default {
             {
               // Restore added item on clicking "No/Deny"
               this.addedItemForArticle = {
-                data: new createArticleDTO(
-                  null,
-                  'TR',
-                  null,
-                  new Date()
-                    .toLocaleDateString('tr-TR', {
-                      year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
-                    })
-                    .replaceAll('.', '-')
-                    .split('-')
-                    .reverse()
-                    .join('-'),
-                  null,
-                  [],
-                ),
+                data: createArticleDTO.createEmpty(),
               }
             }
             break
@@ -3658,7 +3645,7 @@ export default {
 
     async getDoctor() {
       const response = await this.getDoctorAPI()
-      console.log(response)
+      // console.log(response)
       this.doctorProfileData = new DoctorProfileDTO(
         response.photoLink,
         response.firstName,
@@ -4127,7 +4114,7 @@ export default {
     },
 
     async getArticlesByDoctor(pageOptions, data) {
-      console.log("GETTING ARTICLES BY DOCTOR")
+      console.log('GETTING ARTICLES BY DOCTOR')
       this.articleTable.loading = true
       let pageAndData = { pageOptions: pageOptions, doctorData: data }
       const response = await this.getAllArticles(pageAndData)
@@ -4135,10 +4122,9 @@ export default {
       this.articleTable.serverItemsLength = response.totalElements
       this.articleTable.loading = false
     },
-    async updateArticle(newCategoryData) {
+    async updateArticle(newArticleData) {
       this.isAbleToPushButton = false
-      newCategoryData.categoryListForArticle = await takeParentListUUIDS()
-      const response = await this.updateArticleAPI(newCategoryData)
+      const response = await this.updateArticleAPI(newArticleData)
       if (response === true) {
         new Toast(
           'Category updated successfully',
@@ -4146,7 +4132,7 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.getArticles(this.articleTable.serverOptions)
+        this.getArticlesByDoctor(this.articleTable.serverOptions)
         this.isAbleToPushButton = true
         this.closeModal('updateArticleModal')
       } else {
@@ -4159,7 +4145,7 @@ export default {
         this.isAbleToPushButton = true
       }
       function takeParentListUUIDS() {
-        return newCategoryData.categoryListForArticle.map((category) => {
+        return newArticleData.categoryListForArticle.map((category) => {
           return category.uuid
         })
       }
@@ -4187,7 +4173,7 @@ export default {
       this.closeModal('deleteArticleModal')
     },
 
-    // This two For to filter the selection list by search value //QQ
+    // Those three For to filter the selection list by search value //QQ
     async get_Filtered_Parent_List_Options_Data(searched) {
       this.categoryList.loading = true
       // Filtered version(if) and unfiltered version(else)
@@ -4245,6 +4231,39 @@ export default {
         this.languageList.options = response.data
       }
       this.languageList.loading = false
+    },
+    async get_Filtered_tagList_Options_Data(searched) {
+      this.tagList.loading = true
+      if (searched) {
+        let filterBy = [
+          {
+            key: 'name',
+            operation: ':',
+            type: 'name',
+            value: searched,
+          },
+        ]
+        let searchedFor = {
+          pageOptions: this.tagList.parentListSearcherDefaultServerOptions,
+          filter: filterBy,
+        }
+        const response = await this.getAlltagList(searchedFor)
+        this.tagList.options = reduceDataHeaviless(response.data)
+      } else {
+        let searchedFor = {
+          pageOptions: this.tagList.parentListSearcherDefaultServerOptions,
+          filter: null,
+        }
+        const response = await this.getAlltagList(searchedFor)
+        this.tagList.options = reduceDataHeaviless(response.data)
+      }
+      this.tagList.loading = false
+      function reduceDataHeaviless(data) {
+        // Reducing if the data is too heavy to handle
+        return data.map((tag) => {
+          return { uuid: tag.uuid, name: tag.name }
+        })
+      }
     },
     async doAction(actionName, data) {
       switch (actionName) {

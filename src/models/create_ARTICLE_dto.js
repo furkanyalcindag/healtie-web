@@ -19,6 +19,23 @@ export default class createArticleDTO {
       [],
     )
   }
+  static createArticleFromJson({
+    title,
+    language,
+    description,
+    publishedDate,
+    tagList,
+    categoryList,
+  }) {
+    return new createArticleDTO(
+      title,
+      language,
+      description,
+      publishedDate,
+      tagList,
+      categoryList,
+    )
+  }
   constructor(
     title,
     language,

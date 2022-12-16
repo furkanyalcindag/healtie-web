@@ -110,22 +110,28 @@ export default {
     },
     async updateArticle(state, articleData) {
       if (store.getters['auth/checkIfLoggedIn']) {
+        // console.log(articleData)
         // ROLE CHECK IS NEEDED HERE DUE BY SECURITY
-        articleData.tags =
-          articleData.tags && articleData.tags.length > 0
-            ? articleData.tags
-            : []
-        // filter the tags DTO CAN BE USED INSTEAD
-        articleData.tags = articleData.tags.map((tag) => {
-          return { name: tag.name, language: tag.language }
+        /* articleData.tagList =
+          articleData.tagListForArticle && articleData.tagListForArticle.length > 0
+            ? articleData.tagListForArticle
+            : [] */
+        // filter the tags DTO CAN BE USED INSTEAD -------------IMPORTANT
+        articleData.tagList = articleData.tagList.map((tag) => {
+          return tag.uuid
         })
 
-        articleData.categoryList =
+        /* articleData.categoryList =
           articleData.categoryListForArticle &&
           articleData.categoryListForArticle.length > 0
             ? articleData.categoryListForArticle
-            : []
-
+            : [] */
+        // filter the categories DTO CAN BE USED INSTEAD -------------IMPORTANT
+        articleData.categoryList = articleData.categoryList.map((category) => {
+          return category.uuid
+        })
+        
+        delete articleData.tagListForArticle
         delete articleData.categoryListForArticle
 
         let updatedArticle = new createArticleDTO(
@@ -133,7 +139,7 @@ export default {
           articleData.language,
           articleData.description,
           articleData.publishedDate,
-          articleData.tags,
+          articleData.tagList,
           articleData.categoryList,
         )
 

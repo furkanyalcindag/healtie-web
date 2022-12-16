@@ -3,6 +3,8 @@ import auth from '@/service/auth'
 import role from '@/service/role'
 import category from '@/service/category'
 import language from '@/service/language'
+import comment from '@/service/comment'
+import contract from '@/service/contract'
 
 import article from '@/service/article'
 import user from '@/service/user'
@@ -13,6 +15,7 @@ import certificate from '@/service/Certificate'
 import experience from '@/service/Experience'
 import settings from '@/service/Settings'
 import notification from '@/service/Notification'
+import tag from '@/service/Tag'
 
 export default createStore({
   state: {
@@ -52,11 +55,14 @@ export default createStore({
     language,
     article,
     user,
+    comment,
+    contract,
     doctor,
     academicInfo,
     certificate,
     experience,
     settings,
     notification,
+    tag,
   },
 })

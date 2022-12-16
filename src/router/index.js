@@ -308,6 +308,11 @@ const routes = [
             component: () => import('@/views/management/Category.vue'),
           },
           {
+            path: 'contract',
+            name: 'Contract',
+            component: () => import('@/views/management/Contract.vue'),
+          },
+          {
             path: 'user',
             name: 'User',
             component: () => import('@/views/management/User.vue'),
@@ -326,6 +331,11 @@ const routes = [
             path: 'notification',
             name: 'Notification',
             component: () => import('@/views/management/Notification.vue'),
+          },
+          {
+            path: 'tag',
+            name: 'Tag',
+            component: () => import('@/views/management/Tag.vue'),
           },
         ],
       },

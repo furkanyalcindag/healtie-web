@@ -3101,6 +3101,7 @@ export default {
 
         case 'addAcademicInfoModal':
           {
+            console.log(JSON.parse(JSON.stringify(data)))
             this.addAcademicInfo(JSON.parse(JSON.stringify(data)))
           }
           break

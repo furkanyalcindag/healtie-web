@@ -71,6 +71,7 @@
         </CCard>
       </CCol>
     </CRow>
+    <!-- Add user modal -->
     <CModal
       size="lg"
       backdrop="static"
@@ -183,6 +184,7 @@
         </CForm>
       </CModalBody>
     </CModal>
+    <!-- Update user modal -->
     <CModal
       size="lg"
       :visible="openedModals.updateUserModal"
@@ -208,6 +210,7 @@
           novalidate
           :validated="validationChecked"
         >
+          <!-- username -->
           <CCol md="6">
             <CFormLabel for="update-user-userName">İsim</CFormLabel>
             <CFormInput
@@ -217,6 +220,7 @@
               v-model="editedItem.userName"
             />
           </CCol>
+          <!-- firstname -->
           <CCol md="6">
             <CFormLabel for="update-user-firstName">İsim</CFormLabel>
             <CFormInput
@@ -226,6 +230,7 @@
               v-model="editedItem.firstName"
             />
           </CCol>
+          <!-- lastname -->
           <CCol xs="6">
             <CFormLabel for="update-user-lastName">Soyisim</CFormLabel>
             <CFormInput
@@ -235,6 +240,7 @@
               v-model="editedItem.lastName"
             />
           </CCol>
+          <!-- email -->
           <CCol xs="6">
             <CFormLabel for="add-user-email">Email</CFormLabel>
             <CFormInput
@@ -245,27 +251,31 @@
               feedbackInvalid="Lütfen bir email giriniz"
             />
           </CCol>
+          <!-- age enum -->
           <CCol md="6">
             <CFormLabel for="add-user-ageRangeEnum">Yaş Aralığı</CFormLabel>
             <CFormSelect
               id="add-user-age"
               required
               feedbackInvalid="Lütfen yaş aralığı seçiniz"
+              v-model="editedItem.ageRangeEnum"
             >
               <option selected="" disabled="" value="">Seçiniz...</option>
               <option value="_UNSPECIFIED">Belirtmek istemiyorum</option>
             </CFormSelect>
           </CCol>
-
+          <!-- gender enum -->
           <CCol md="6">
             <CFormLabel for="add-doctor-branch">Cinsiyet</CFormLabel>
             <CFormSelect
               id="add-user-gender"
               required
               feedbackInvalid="Lütfen Cinsiyet seçiniz"
+              v-model="editedItem.genderEnum"
             >
               <option selected="" disabled="" value="">Seçiniz...</option>
               <option value="FEMALE">Kadın</option>
+              <option value="MALE">Erkek</option>
             </CFormSelect>
           </CCol>
           <CModalFooter class="pe-0">
@@ -281,6 +291,7 @@
         </CForm>
       </CModalBody>
     </CModal>
+    <!-- Delete user modal -->
     <CModal
       size="lg"
       :visible="openedModals.deleteUserModal"

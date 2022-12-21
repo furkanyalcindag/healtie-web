@@ -253,9 +253,7 @@
             </template>
           </v-select>
           <!-- For language selection -->
-          <CFormLabel for="add-language-to-category"
-            >Üst kategorileri</CFormLabel
-          >
+          <CFormLabel for="add-language-to-category">Kategori Dili</CFormLabel>
           <v-select
             id="add-language-to-category"
             v-model="editedItem.data.language"

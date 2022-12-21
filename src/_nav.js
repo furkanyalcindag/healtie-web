@@ -1,5 +1,5 @@
 export default [
-  {
+  /* {
     component: 'CNavItem',
     name: 'Dashboard',
     to: '/dashboard',
@@ -24,10 +24,10 @@ export default [
     name: 'Typography',
     to: '/theme/typography',
     icon: 'cil-pencil',
-  },
+  }, */
   {
     component: 'CNavTitle',
-    name: 'Components',
+    name: 'Management',
   },
   {
     component: 'CNavGroup',
@@ -115,7 +115,7 @@ export default [
       },
     ],
   },
-  {
+  /* {
     component: 'CNavGroup',
     name: 'Base',
     to: '/base',
@@ -330,7 +330,7 @@ export default [
       text: 'NEW',
       shape: 'pill',
     },
-  },
+  }, */
   {
     component: 'CNavTitle',
     name: 'Extras',

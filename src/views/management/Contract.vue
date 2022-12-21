@@ -1,4 +1,3 @@
-/* eslint-disable */
 <template>
   <div>
     <CRow>
@@ -100,7 +99,7 @@
                     >
                       <CIcon icon="cil-user" />
                     </CButton>
-                    <CButton
+                    <!-- <CButton
                       color="info"
                       class="ms-2 text-white align-items-center"
                       shape="rounded-pill"
@@ -112,7 +111,7 @@
                       @click="showModal('addUserModal', item)"
                     >
                       <CIcon icon="cil-user-plus" />
-                    </CButton>
+                    </CButton> -->
                   </CButtonGroup>
                 </div>
               </template>
@@ -314,7 +313,6 @@
             />
           </CCol>
 
-          {{ editedItem.data.roleSet }}
           <CCol md="12">
             <CFormLabel for="add-contract-rolelist"
               >Sözleşmeyi kapsayan roller</CFormLabel
@@ -385,7 +383,7 @@
         </CForm>
       </CModalBody>
     </CModal>
-    <!-- Add user from role modal -->
+    <!-- Add user from role modal
     <CModal
       size="lg"
       :visible="openedModals.addUserModal"
@@ -490,7 +488,7 @@
           </CModalFooter>
         </CForm>
       </CModalBody>
-    </CModal>
+    </CModal> -->
     <!-- Show roles from contract modal -->
     <CModal
       size="lg"
@@ -546,7 +544,7 @@
         </CCardBody>
       </CModalBody>
     </CModal>
-    <!-- Delete user from role modal -->
+    <!-- Delete user from role modal
     <CModal
       size="lg"
       v-model:visible="openedModals.deleteUserModal"
@@ -574,7 +572,7 @@
           >
         </CModalFooter>
       </CModalBody>
-    </CModal>
+    </CModal> -->
   </div>
 </template>
 
@@ -765,13 +763,13 @@ export default {
             this.get_Filtered_Role_List_Options_Data()
           }
           break
-        case 'addUserModal':
+        /* case 'addUserModal':
           {
             this.selectedContract = data ? JSON.parse(JSON.stringify(data)) : {}
             let cachedItemData = JSON.parse(JSON.stringify(data))
             this.addedItem = cachedItemData
           }
-          break
+          break */
         case 'showRoleListModal':
           {
             this.selectedContract = data ? JSON.parse(JSON.stringify(data)) : {}
@@ -780,11 +778,11 @@ export default {
             // this.getAllRolesAPI(this.roleListTable.serverOptions, data)
           }
           break
-        case 'deleteUserModal':
+        /* case 'deleteUserModal':
           {
             this.selectedUser = data
           }
-          break
+          break */
         case 'deleteContractModal':
           {
             this.selectedContract = data ? JSON.parse(JSON.stringify(data)) : {}
@@ -929,7 +927,7 @@ export default {
       }
       this.closeModal('deleteContractModal')
     },
-    async addUser(data) {
+    /* async addUser(data) {
       this.isAbleToPushButton = false
       const response = await this.addUserAPI(data)
       if (response === true) {
@@ -951,8 +949,8 @@ export default {
         )
       }
       this.isAbleToPushButton = true
-    },
-    async deleteUser(uuid) {
+    }, */
+    /* async deleteUser(uuid) {
       this.isAbleToPushButton = false
       console.log(uuid)
       const response = await this.deleteUserAPI(uuid)
@@ -970,7 +968,7 @@ export default {
         this.isAbleToPushButton = true
       }
       this.closeModal('deleteUserModal')
-    },
+    }, */
   },
 }
 </script>

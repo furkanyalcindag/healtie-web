@@ -154,6 +154,7 @@
               id="add-user-age"
               required
               feedbackInvalid="Lütfen yaş aralığı seçiniz"
+              v-model="addedItem.ageRangeEnum"
             >
               <option selected="" disabled="" value="">Seçiniz...</option>
               <option value="_UNSPECIFIED">Belirtmek istemiyorum</option>
@@ -166,6 +167,7 @@
               id="add-user-genderEnum"
               required
               feedbackInvalid="Lütfen Cinsiyet seçiniz"
+              v-model="addedItem.genderEnum"
             >
               <option selected="" disabled="" value="">Seçiniz...</option>
               <option value="FEMALE">Kadın</option>
@@ -326,6 +328,7 @@
 import avatar from '@/assets/images/avatars/8.jpg'
 import { mapActions } from 'vuex'
 import Toast from '@/models/create_TOAST_dto'
+import userInfoDTO from '@/models/userInfoDTO'
 export default {
   name: 'Colors',
   components: {
@@ -346,28 +349,8 @@ export default {
         { text: 'Kaydetme Sayısı', value: 'savedCount' },
         { text: 'İşlemler', value: 'operations' },
       ],
-      editedItem: {
-        uuid: null,
-        firstName: null,
-        lastName: null,
-        username: null,
-        ageRangeEnum: null,
-        genderEnum: null,
-        email: null,
-        password: null,
-        confirmPassword: null,
-      },
-      addedItem: {
-        uuid: null,
-        firstName: null,
-        lastName: null,
-        username: null,
-        ageRangeEnum: null,
-        genderEnum: null,
-        email: null,
-        password: null,
-        confirmPassword: null,
-      },
+      editedItem: userInfoDTO.createEmpty(),
+      addedItem: userInfoDTO.createEmpty(),
       items: [],
       themeColor: '#321fdb',
       itemsSelected: [],
@@ -461,16 +444,7 @@ export default {
         switch (modalname) {
           case 'addUserModal':
             {
-              let cachedAddedItemData = {
-                username: null,
-                firstName: null,
-                lastName: null,
-                email: null,
-                password: null,
-                ageRangeEnum: null,
-                genderEnum: null,
-              }
-              this.addedItem = cachedAddedItemData
+              this.addedItem = userInfoDTO.createEmpty()
             }
             break
           case 'deleteUserModal':
@@ -523,7 +497,7 @@ export default {
         this.getUsers(this.userTable.serverOptions)
         this.isAbleToPushButton = true
         this.closeModal('updateUserModal')
-        this.editedItem = {}
+        this.editedItem = userInfoDTO.createEmpty()
       } else {
         new Toast(
           'Something went wrong',
@@ -552,15 +526,6 @@ export default {
         this.isAbleToPushButton = true
       }
       this.closeModal('deleteUserModal')
-    },
-    createToast(content, color, isautoHided, classes, delay) {
-      this.toasts.push({
-        content: content,
-        color: color,
-        autohide: isautoHided,
-        classes: classes,
-        delay: delay,
-      })
     },
   },
 }

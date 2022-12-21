@@ -1,16 +1,29 @@
-export default class createUserInfoDTO {
+export default class userInfoDTO {
   static createEmpty() {
-    return new createUserInfoDTO('', '', '', '', '', '')
+    return new userInfoDTO({
+      uuid: null,
+      userName: null,
+      firstName: null,
+      lastName: null,
+      email: null,
+      password: null,
+      genderEnum: null,
+      ageRangeEnum: null,
+      confirmPassword: null,
+    })
   }
-  constructor(
-    userName,
-    firstName,
-    lastName,
-    email,
-    password,
-    ageRangeEnum,
-    genderEnum,
-  ) {
+  constructor({
+    uuid = null,
+    userName = null,
+    firstName = null,
+    lastName = null,
+    email = null,
+    password = null,
+    ageRangeEnum = null,
+    genderEnum = null,
+    confirmPassword = null,
+  }) {
+    this.uuid = uuid
     this.userName = userName
     this.firstName = firstName
     this.lastName = lastName
@@ -18,5 +31,6 @@ export default class createUserInfoDTO {
     this.password = password
     this.ageRangeEnum = ageRangeEnum
     this.genderEnum = genderEnum
+    this.confirmPassword = confirmPassword
   }
 }

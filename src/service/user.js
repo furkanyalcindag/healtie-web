@@ -88,7 +88,8 @@ export default {
         var axios = require('axios')
         var config = {
           method: 'delete',
-          url: 'user-api/user-api/' + uuid,
+          // url: 'user-api/user-api/' + uuid,
+          url: 'user-api/' + uuid,
           headers: {},
         }
         const response = await axios(config)

@@ -93,7 +93,7 @@
                       shape="rounded-pill"
                       size="sm"
                       v-c-tooltip="{
-                        content: 'Kullanıcılar',
+                        content: 'Roller',
                         placement: 'top',
                       }"
                       @click="showModal('showRoleListModal', item)"
@@ -274,7 +274,7 @@
       backdrop="static"
     >
       <CModalHeader>
-        <CModalTitle>Rol Bilgilerini Düzenle</CModalTitle>
+        <CModalTitle>Sözleşme Bilgilerini Düzenle</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <CForm
@@ -680,7 +680,7 @@ export default {
       getAllRolesAPI: 'role/getRoles',
 
       addUserAPI: 'user/addUserByRole',
-      showUserByAPI: 'user/getUserByRole',
+      getUsersByRoleAPI: 'user/getUserByRole',
       deleteUserAPI: 'user/deleteUser',
     }),
     // This one for to filter the selection list by search value
@@ -826,7 +826,7 @@ export default {
       this.roleListTable.serverItemsLength = data.roleSet.length
       // This for serversided data (GET)
       // let pageAndData = { pageOptions: pageOptions, roleData: data }
-      // const response = await this.showUserByAPI(pageAndData)
+      // const response = await this.getUsersByRoleAPI(pageAndData)
       // this.items = response.data
       // this.roleListTable.serverItemsLength = response.totalElements
       // this.roleListTable.loading = false

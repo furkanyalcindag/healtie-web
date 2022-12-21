@@ -489,14 +489,15 @@ export default {
   },
   created() {
     this.getRoles(this.roleTable.serverOptions)
-    this.getUser(this.roleTable.serverOptions)
   },
   watch: {
     'roleTable.serverOptions'(newvalue) {
       this.getRoles(newvalue)
     },
     'userTable.serverOptions'(newvalue) {
-      this.getUser(newvalue)
+      console.log('userTable.serverOptions CHANGEDDDDDDDDDDDd')
+      console.log(this.selectedRole)
+      this.getUser(newvalue, this.selectedRole)
     },
   },
   methods: {
@@ -506,8 +507,8 @@ export default {
       addRoleAPI: 'role/addRole',
       updateRoleAPI: 'role/updateRole',
       addUserAPI: 'user/addUserByRole',
-      showUserByAPI: 'user/getUserByRole',
-      deleteUserAPI: 'user/deleteUser',
+      getUsersByRoleAPI: 'user/getUserByRole',
+      deleteUserFromRoleAPI: 'user/deleteUser',
     }),
     submitToAPI(event, modalname, data) {
       // Response
@@ -540,10 +541,15 @@ export default {
       this.isAbleToPushButton = true
     },
     showModal(modalname, data) {
-      this.selectedRole = data ? JSON.parse(JSON.stringify(data)) : {}
       switch (modalname) {
+        case 'deleteRoleModal':
+          {
+            this.selectedRole = data ? JSON.parse(JSON.stringify(data)) : {}
+          }
+          break
         case 'updateRoleModal':
           {
+            this.selectedRole = data ? JSON.parse(JSON.stringify(data)) : {}
             let cachedItemData = JSON.parse(JSON.stringify(data))
             this.editedItem = cachedItemData
           }
@@ -556,6 +562,7 @@ export default {
           break
         case 'showUserModal':
           {
+            this.selectedRole = data ? JSON.parse(JSON.stringify(data)) : {}
             this.getUser(this.userTable.serverOptions, data)
           }
           break
@@ -607,8 +614,9 @@ export default {
     },
     async getUser(pageOptions, data) {
       this.userTable.loading = true
+      console.log('getUser INVOKED', pageOptions)
       let pageAndData = { pageOptions: pageOptions, roleData: data }
-      const response = await this.showUserByAPI(pageAndData)
+      const response = await this.getUsersByRoleAPI(pageAndData)
       this.items2 = response.data
       this.userTable.serverItemsLength = response.totalElements
       this.userTable.loading = false
@@ -663,8 +671,13 @@ export default {
       this.isAbleToPushButton = false
       const response = await this.deleteRoleAPI(uuid)
       if (response === true) {
-        this.isAbleToPushButton = true
         this.selectedRole = {}
+        new Toast(
+          'Succesfully deleted',
+          'success',
+          true,
+          'text-white align-items-center',
+        )
       } else {
         new Toast(
           'Something went wrong',
@@ -672,8 +685,8 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
+      this.isAbleToPushButton = true
       this.closeModal('deleteRoleModal')
     },
     async addUser(data) {
@@ -702,10 +715,8 @@ export default {
     async deleteUser(uuid) {
       this.isAbleToPushButton = false
       console.log(uuid)
-      const response = await this.deleteUserAPI(uuid)
+      const response = await this.deleteUserFromRoleAPI(uuid)
       if (response === true) {
-        this.isAbleToPushButton = true
-        this.selectedUser = {}
         new Toast('Silindi', 'success', true, 'text-white align-items-center')
       } else {
         new Toast(
@@ -714,18 +725,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
+      this.isAbleToPushButton = true
       this.closeModal('deleteUserModal')
-    },
-    createToast(content, color, isautoHided, classes, delay) {
-      this.toasts.push({
-        content: content,
-        color: color,
-        autohide: isautoHided,
-        classes: classes,
-        delay: delay,
-      })
     },
   },
 }

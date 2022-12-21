@@ -107,7 +107,6 @@
           <CFormLabel for="add-category-parent-category"
             >Üst kategorileri</CFormLabel
           >
-          {{ addedItem.data.parentList }}
           <v-select
             id="add-category-parent-category"
             v-model="addedItem.data.parentList"
@@ -233,13 +232,13 @@
           <CFormLabel for="edit-category-parent-category"
             >Üst kategorileri</CFormLabel
           >
-          {{ editedItem.data.parentList }}
           <v-select
             id="edit-category-parent-category"
             v-model="editedItem.data.parentList"
             :options="parentCategoryList.options"
             label="name"
             multiple
+            @option:selected="(option, opt2) => cancel_Selected_Option(option)"
             :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
             @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
             :loading="parentCategoryList.loading"
@@ -380,6 +379,24 @@ export default {
     this.getCategories(this.categoryTable.serverOptions)
   },
   methods: {
+    // This is when u dont want the user to select something in vue-select (v-select)
+    // ex: u shouldnt be able to select same category when updating parent categories.
+    async cancel_Selected_Option(selectedOptions) {
+      selectedOptions.map((selectedOption) => {
+        if (this.selectedCategory.uuid == selectedOption.uuid) {
+          this.editedItem.data.parentList =
+            this.editedItem.data.parentList.filter(
+              (parentCategory) => selectedOption.uuid != parentCategory.uuid,
+            )
+          new Toast(
+            'You cant select same category as parent List',
+            'danger',
+            true,
+            'text-white -align-items-center',
+          )
+        }
+      })
+    },
     ...mapActions({
       getAllCategories: 'category/getCategories',
       getAllLanguages: 'language/getLanguages',

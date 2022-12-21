@@ -314,6 +314,7 @@
             />
           </CCol>
 
+          {{ editedItem.data.roleSet }}
           <CCol md="12">
             <CFormLabel for="add-contract-rolelist"
               >Sözleşmeyi kapsayan roller</CFormLabel
@@ -660,7 +661,7 @@ export default {
   },
   created() {
     this.getContracts(this.contractsTable.serverOptions)
-    this.get_Filtered_Role_List_Options_Data()
+    // this.get_Filtered_Role_List_Options_Data()
   },
   watch: {
     'contractsTable.serverOptions'(newvalue) {
@@ -744,22 +745,36 @@ export default {
       this.isAbleToPushButton = true
     },
     showModal(modalname, data) {
-      this.selectedContract = data ? JSON.parse(JSON.stringify(data)) : {}
       switch (modalname) {
+        case 'addContractModal':
+          {
+            this.get_Filtered_Role_List_Options_Data()
+          }
+          break
         case 'updateContractModal':
           {
+            this.selectedContract = data ? JSON.parse(JSON.stringify(data)) : {}
             let cachedItemData = JSON.parse(JSON.stringify(data))
             this.editedItem = { data: cachedItemData }
+            this.editedItem.data.roleSet = this.editedItem.data.roleSet.map(
+              (option) => ({
+                uuid: option.uuid,
+                name: option.name,
+              }),
+            )
+            this.get_Filtered_Role_List_Options_Data()
           }
           break
         case 'addUserModal':
           {
+            this.selectedContract = data ? JSON.parse(JSON.stringify(data)) : {}
             let cachedItemData = JSON.parse(JSON.stringify(data))
             this.addedItem = cachedItemData
           }
           break
         case 'showRoleListModal':
           {
+            this.selectedContract = data ? JSON.parse(JSON.stringify(data)) : {}
             console.log(data)
             this.getRolesFromContract(data)
             // this.getAllRolesAPI(this.roleListTable.serverOptions, data)

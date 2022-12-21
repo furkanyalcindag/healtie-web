@@ -6,6 +6,14 @@
           <CCard class="mx-4">
             <CCardBody class="p-4">
               <CForm>
+                <CButton
+                  color="dark"
+                  variant="outline"
+                  class="mt-3"
+                  @click="navigateTo('Login Admin')"
+                >
+                  Giriş sayfasına dön
+                </CButton>
                 <h1>Kaydol</h1>
                 <p class="text-medium-emphasis">Yeni Bir Hesap Oluştur</p>
                 <CInputGroup class="mb-3">
@@ -122,7 +130,14 @@
 </template>
 
 <script>
+import router from '@/router'
+
 export default {
   name: 'Register Doctor',
+  methods: {
+    async navigateTo(pageName) {
+      router.push({ name: pageName })
+    },
+  },
 }
 </script>

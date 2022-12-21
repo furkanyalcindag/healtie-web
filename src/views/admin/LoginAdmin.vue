@@ -67,7 +67,12 @@
                 <div>
                   <h2>Kaydol</h2>
                   <p>Bir hesabınız yok mu?</p>
-                  <CButton color="light" variant="outline" class="mt-3">
+                  <CButton
+                    color="light"
+                    variant="outline"
+                    class="mt-3"
+                    @click="navigateTo('Register Admin')"
+                  >
                     Şimdi Hesap Aç
                   </CButton>
                 </div>
@@ -81,8 +86,9 @@
 </template>
 
 <script>
-// import router from '@/router'
+import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'Login Admin',
   data() {
@@ -116,6 +122,10 @@ export default {
         this.failedToLoginText = 'Kullanıcı adınız veya şifre yanlış.'
         this.isFailedToLogin = true
       }
+    },
+
+    async navigateTo(pageName) {
+      router.push({ name: pageName })
     },
 
     created() {

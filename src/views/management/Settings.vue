@@ -155,7 +155,9 @@
           <CForm
             class="row g-3"
             @submit.prevent="
-              submitToAPI($event, 'updateSettingsModal', editedItem)
+              isAbleToPushButton
+                ? submitToAPI($event, 'updateSettingsModal', editedItem)
+                : null
             "
             needs-validation
             novalidate
@@ -332,7 +334,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     async showModal(modalname, data) {
       this.selectedSettings = data ? JSON.parse(JSON.stringify(data)) : {}
@@ -362,6 +363,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
     async getSettings(pageOptions) {
       this.settingsTable.loading = true
@@ -375,7 +377,6 @@ export default {
       this.settingsTable.loading = false
     },
     async addSettings(data) {
-      this.isAbleToPushButton = false
       const response = await this.addSettingsAPI(data)
       if (response === true) {
         new Toast(
@@ -394,11 +395,9 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateSettings(newSettingsData) {
       newSettingsData.language = 'TR'
-      this.isAbleToPushButton = false
       const response = await this.updateSettingsAPI(newSettingsData)
       if (response === true) {
         new Toast(
@@ -408,7 +407,6 @@ export default {
           'text-white align-items-center',
         )
         this.getSettings(this.settingsTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateSettingsModal')
       } else {
         new Toast(
@@ -417,7 +415,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteSettings(uuid) {
@@ -439,8 +436,11 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteSettingsModal')
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
   },
 }

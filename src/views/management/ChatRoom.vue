@@ -713,7 +713,13 @@ export default {
       }
     },
     async showModal(modalname, data) {
+      console.log(modalname)
       switch (modalname) {
+        case 'deleteChatRoomModal':
+          {
+            this.selectedChatRoom = data ? JSON.parse(JSON.stringify(data)) : {}
+          }
+          break
         case 'updateChatRoomModal':
           {
             let cachedItemData = JSON.parse(JSON.stringify(data))

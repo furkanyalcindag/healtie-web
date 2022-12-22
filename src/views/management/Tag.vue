@@ -185,7 +185,9 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            submitToAPI($event, 'updateTagModal', editedItem.data)
+            isAbleToPushButton
+              ? submitToAPI($event, 'updateTagModal', editedItem.data)
+              : null
           "
           needs-validation
           novalidate
@@ -345,7 +347,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     // This is For to filter the selection list by search value
 
@@ -410,6 +411,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
     async getTag(pageOptions) {
       this.tagTable.loading = true
@@ -422,7 +424,6 @@ export default {
       this.tagTable.loading = false
     },
     async addTag(data) {
-      this.isAbleToPushButton = false
       const response = await this.addTagAPI(data)
       if (response === true) {
         new Toast(
@@ -441,10 +442,8 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateTag(newTagData) {
-      this.isAbleToPushButton = false
       const response = await this.updateTagAPI(newTagData)
       if (response === true) {
         new Toast(
@@ -454,7 +453,6 @@ export default {
           'text-white align-items-center',
         )
         this.getTag(this.tagTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateTagModal')
       } else {
         new Toast(
@@ -463,7 +461,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteTag(uuid) {
@@ -485,8 +482,11 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteTagModal')
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
   },
 }

@@ -413,7 +413,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     showModal(modalname, data) {
       this.selectedUser = data ? JSON.parse(JSON.stringify(data)) : {}
@@ -454,6 +453,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
     async getUsers(pageOptions) {
       this.userTable.loading = true
@@ -463,7 +463,6 @@ export default {
       this.userTable.loading = false
     },
     async addUser(data) {
-      this.isAbleToPushButton = false
       const response = await this.addUserAPI(data)
       if (response === true) {
         this.closeModal('addUserModal', true)
@@ -482,10 +481,8 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateUser(newuserData) {
-      this.isAbleToPushButton = false
       const response = await this.updateUserAPI(newuserData)
       if (response === true) {
         new Toast(
@@ -495,7 +492,6 @@ export default {
           'text-white align-items-center',
         )
         this.getUsers(this.userTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateUserModal')
         this.editedItem = userInfoDTO.createEmpty()
       } else {
@@ -505,7 +501,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteUser(uuid) {
@@ -513,7 +508,6 @@ export default {
       console.log(uuid)
       const response = await this.deleteUserAPI(uuid)
       if (response === true) {
-        this.isAbleToPushButton = true
         this.selectedUser = {}
         new Toast('Silindi', 'success', true, 'text-white align-items-center')
       } else {
@@ -523,9 +517,12 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
       this.closeModal('deleteUserModal')
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
   },
 }

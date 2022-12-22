@@ -298,7 +298,9 @@
           <CForm
             class="row g-3"
             @submit.prevent="
-              submitToAPI($event, 'updateChatRoomModal', editedItem)
+              isAbleToPushButton
+                ? submitToAPI($event, 'updateChatRoomModal', editedItem)
+                : null
             "
             needs-validation
             novalidate
@@ -709,7 +711,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     async showModal(modalname, data) {
       switch (modalname) {
@@ -759,6 +760,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
     async getChatRoom(pageOptions) {
       this.chatRoomTable.loading = true
@@ -772,7 +774,6 @@ export default {
       this.chatRoomTable.loading = false
     },
     async addChatRoom(data) {
-      this.isAbleToPushButton = false
       data.startTime = this.formatDateToISO(this.addedItem.startTime)
       data.endTime = this.formatDateToISO(this.addedItem.endTime)
       const response = await this.addChatRoomAPI(data)
@@ -794,7 +795,6 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateChatRoom(newChatRoomData) {
       newChatRoomData.language = 'TR'
@@ -807,7 +807,6 @@ export default {
       if (!this.editedItem.endTime.includes('T')) {
         newChatRoomData.endTime = this.formatDateToISO(this.editedItem.endTime)
       }
-      this.isAbleToPushButton = false
       const response = await this.updateChatRoomAPI(newChatRoomData)
       if (response === true) {
         new Toast(
@@ -817,7 +816,6 @@ export default {
           'text-white align-items-center',
         )
         this.getChatRoom(this.chatRoomTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateChatRoomModal')
       } else {
         new Toast(
@@ -826,7 +824,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteChatRoom(uuid) {
@@ -848,7 +845,6 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteChatRoomModal')
     },
     async getUser(pageOptions, data) {
@@ -863,6 +859,10 @@ export default {
     formatDateToISO(date) {
       let splittedTime = date.split(' ')
       return splittedTime[0] + 'T' + splittedTime[1] + 'Z'
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
     /*
     async getApprovedUser(pageOptions, data) {

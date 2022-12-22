@@ -740,7 +740,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     showModal(modalname, data) {
       switch (modalname) {
@@ -824,6 +823,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
     async getContracts(pageOptions) {
       this.contractsTable.loading = true
@@ -846,7 +846,6 @@ export default {
       this.roleListTable.loading = false
     },
     async addContract(data) {
-      this.isAbleToPushButton = false
       data.roleList = await takeRoleListUUIDS(data.roleList)
       const response = await this.addContractAPI(data)
       if (response === true) {
@@ -866,7 +865,6 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       function takeRoleListUUIDS() {
         return data.roleList.map((role) => {
           return role.uuid
@@ -874,7 +872,6 @@ export default {
       }
     },
     async updateContract(newroleData) {
-      this.isAbleToPushButton = false
       let cachedRoleData = await JSON.parse(JSON.stringify(newroleData))
       cachedRoleData.roleList = await takeRoleListUUIDS()
       delete cachedRoleData.roleSet
@@ -897,7 +894,6 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       function takeRoleListUUIDS() {
         return cachedRoleData.roleSet.map((role) => {
           return role.uuid
@@ -926,6 +922,10 @@ export default {
         this.isAbleToPushButton = true
       }
       this.closeModal('deleteContractModal')
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
     /* async addUser(data) {
       this.isAbleToPushButton = false

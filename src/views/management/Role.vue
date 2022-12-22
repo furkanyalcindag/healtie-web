@@ -124,6 +124,7 @@
           novalidate
           :validated="validationChecked"
         >
+          {{ isAbleToPushButton }}
           <CCol md="6">
             <CFormLabel for="add-rol-name">Rol adı</CFormLabel>
             <CFormInput
@@ -538,7 +539,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     showModal(modalname, data) {
       switch (modalname) {
@@ -604,6 +604,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
     async getRoles(pageOptions) {
       this.roleTable.loading = true
@@ -622,7 +623,6 @@ export default {
       this.userTable.loading = false
     },
     async addRole(data) {
-      this.isAbleToPushButton = false
       const response = await this.addRoleAPI(data)
       if (response === true) {
         this.closeModal('addRoleModal', true)
@@ -641,10 +641,8 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateRole(newroleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateRoleAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -654,7 +652,6 @@ export default {
           'text-white align-items-center',
         )
         this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateRoleModal')
         this.editedItem = {}
       } else {
@@ -664,11 +661,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteRole(uuid) {
-      this.isAbleToPushButton = false
       const response = await this.deleteRoleAPI(uuid)
       if (response === true) {
         this.selectedRole = {}
@@ -686,11 +681,9 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteRoleModal')
     },
     async addUser(data) {
-      this.isAbleToPushButton = false
       const response = await this.addUserAPI(data)
       if (response === true) {
         this.closeModal('addUserModal', true)
@@ -710,7 +703,6 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async deleteUser(uuid) {
       this.isAbleToPushButton = false
@@ -726,8 +718,11 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteUserModal')
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
   },
 }

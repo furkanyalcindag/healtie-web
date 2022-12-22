@@ -575,7 +575,13 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            submitToAPI($event, 'updateAcademicInfo', editedItemForAcademicInfo)
+            isAbleToPushButton
+              ? submitToAPI(
+                  $event,
+                  'updateAcademicInfo',
+                  editedItemForAcademicInfo,
+                )
+              : null
           "
           needs-validation
           novalidate
@@ -781,7 +787,13 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            submitToAPI($event, 'updateCertificate', editedItemForCertificate)
+            isAbleToPushButton
+              ? submitToAPI(
+                  $event,
+                  'updateCertificate',
+                  editedItemForCertificate,
+                )
+              : null
           "
           needs-validation
           novalidate
@@ -997,7 +1009,9 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            submitToAPI($event, 'updateExperience', editedItemForExperience)
+            isAbleToPushButton
+              ? submitToAPI($event, 'updateExperience', editedItemForExperience)
+              : null
           "
           needs-validation
           novalidate
@@ -1319,7 +1333,13 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            submitToAPI($event, 'updateArticleModal', editedItemForArticle.data)
+            isAbleToPushButton
+              ? submitToAPI(
+                  $event,
+                  'updateArticleModal',
+                  editedItemForArticle.data,
+                )
+              : null
           "
           needs-validation
           novalidate
@@ -3116,7 +3136,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     showModal(modalname, data) {
       this.selectedDoctor = data ? JSON.parse(JSON.stringify(data)) : {}
@@ -3469,7 +3488,6 @@ export default {
       } else {
         new Toast('Error', 'danger', true, 'text-white align-items-center')
       }
-      this.isAbleToPushButton = true
     },
     closeModal(index, resetData) {
       this.openedModals[index] = false
@@ -3606,6 +3624,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
 
     addAcademicData(data) {
@@ -3662,7 +3681,6 @@ export default {
       )
     },
     async updateDoctorProfilePicture(newroleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateDoctorProfilePictureAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -3672,7 +3690,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateDoctorProfilePicture')
         let cachedEditedItemData = this.editedItemForProfileData
         this.doctorInfoData = cachedEditedItemData
@@ -3683,11 +3700,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async updateUserName(newroleData) {
-      this.isAbleToPushButton = false
       console.log(newroleData)
       const response = await this.updateUserNameAPI(newroleData)
       if (response === true) {
@@ -3698,7 +3713,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateUserName')
         let cachedEditedItemData = this.editedItemForProfileData
         this.doctorProfileData = cachedEditedItemData
@@ -3709,11 +3723,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async updateDoctorPhone(newroleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateDoctorPhoneAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -3723,7 +3735,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateDoctorPhone')
         let cachedEditedItemData = this.editedItemForProfileData
         this.doctorProfileData = cachedEditedItemData
@@ -3734,11 +3745,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async updateDoctorAddress(newroleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateDoctorAddressAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -3748,7 +3757,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateDoctorAddress')
         let cachedEditedItemData = this.editedItemForProfileData
         this.doctorProfileData = cachedEditedItemData
@@ -3759,11 +3767,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async updateDoctorTitle(newDoctorTitle) {
-      this.isAbleToPushButton = false
       const response = await this.updateDoctorTitleAPI(newDoctorTitle)
       if (response === true) {
         new Toast(
@@ -3773,7 +3779,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateDoctorTitle')
         let cachedEditedItemData = this.editedItemForInfoData
         this.doctorInfoData = cachedEditedItemData
@@ -3784,11 +3789,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async updateDoctorBranch(newroleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateDoctorBranchAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -3798,7 +3801,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateDoctorBranch')
         let cachedEditedItemData = this.editedItemForInfoData
         this.doctorInfoData = cachedEditedItemData
@@ -3809,11 +3811,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async updateDoctorClinicName(newroleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateDoctorClinicNameAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -3823,7 +3823,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateDoctorClinicName')
         let cachedEditedItemData = this.editedItemForInfoData
         this.doctorInfoData = cachedEditedItemData
@@ -3834,11 +3833,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async updateDoctorDiplomaNo(newroleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateDoctorDiplomaNoAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -3848,7 +3845,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateDoctorDiplomaNo')
         let cachedEditedItemData = this.editedItemForInfoData
         this.doctorInfoData = cachedEditedItemData
@@ -3859,11 +3855,9 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async updateDoctorAbout(newroleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateDoctorAboutAPI(newroleData)
       if (response === true) {
         new Toast(
@@ -3873,7 +3867,6 @@ export default {
           'text-white align-items-center',
         )
         //  this.getRoles(this.roleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateDoctorAbout')
         let cachedEditedItemData = this.editedItemForProfileData
         this.doctorProfileData = cachedEditedItemData
@@ -3884,7 +3877,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
 
@@ -3915,10 +3907,8 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateAcademicInfo(newuserData) {
-      this.isAbleToPushButton = false
       const response = await this.updateAcademicInfoAPI(newuserData)
       if (response === true) {
         new Toast(
@@ -3928,7 +3918,6 @@ export default {
           'text-white align-items-center',
         )
         this.getAcademicInfoByDoctor(this.academicInfoTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateAcademicInfo', true)
       } else {
         new Toast(
@@ -3937,7 +3926,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteAcademicInfo(uuid) {
@@ -3959,7 +3947,6 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteAcademicInfo')
     },
 
@@ -3989,10 +3976,8 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateCertificate(newuserData) {
-      this.isAbleToPushButton = false
       const response = await this.updateCertificateAPI(newuserData)
       if (response === true) {
         new Toast(
@@ -4002,7 +3987,6 @@ export default {
           'text-white align-items-center',
         )
         this.getCertificateByDoctor(this.certificateTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateCertificate', true)
       } else {
         new Toast(
@@ -4011,7 +3995,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteCertificate(uuid) {
@@ -4033,7 +4016,6 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteCertificate')
     },
 
@@ -4064,10 +4046,8 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateExperience(newuserData) {
-      this.isAbleToPushButton = false
       const response = await this.updateExperienceAPI(newuserData)
       if (response === true) {
         new Toast(
@@ -4077,7 +4057,6 @@ export default {
           'text-white align-items-center',
         )
         this.getExperienceByDoctor(this.experienceTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateExperience', true)
       } else {
         new Toast(
@@ -4086,7 +4065,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteExperience(uuid) {
@@ -4108,7 +4086,6 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteExperience')
     },
 
@@ -4122,7 +4099,6 @@ export default {
       this.articleTable.loading = false
     },
     async updateArticle(newArticleData) {
-      this.isAbleToPushButton = false
       const response = await this.updateArticleAPI(newArticleData)
       if (response === true) {
         new Toast(
@@ -4132,7 +4108,6 @@ export default {
           'text-white align-items-center',
         )
         this.getArticlesByDoctor(this.articleTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateArticleModal')
       } else {
         new Toast(
@@ -4141,7 +4116,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
       function takeParentListUUIDS() {
         return newArticleData.categoryListForArticle.map((category) => {
@@ -4168,7 +4142,6 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteArticleModal')
     },
 
@@ -4272,6 +4245,10 @@ export default {
           }
           break
       }
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
   },
 }

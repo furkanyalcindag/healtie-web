@@ -239,7 +239,9 @@
           <CForm
             class="row g-3"
             @submit.prevent="
-              submitToAPI($event, 'updateNotificationModal', editedItem)
+              isAbleToPushButton
+                ? submitToAPI($event, 'updateNotificationModal', editedItem)
+                : null
             "
             needs-validation
             novalidate
@@ -539,7 +541,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     async showModal(modalname, data) {
       this.selectedNotification = data ? JSON.parse(JSON.stringify(data)) : {}
@@ -578,6 +579,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
     async getNotification(pageOptions) {
       this.notificationTable.loading = true
@@ -591,7 +593,6 @@ export default {
       this.notificationTable.loading = false
     },
     async addNotification(data) {
-      this.isAbleToPushButton = false
       const response = await this.addNotificationAPI(data)
       if (response === true) {
         new Toast(
@@ -610,11 +611,9 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
     },
     async updateNotification(newNotificationData) {
       newNotificationData.language = 'TR'
-      this.isAbleToPushButton = false
       const response = await this.updateNotificationAPI(newNotificationData)
       if (response === true) {
         new Toast(
@@ -624,7 +623,6 @@ export default {
           'text-white align-items-center',
         )
         this.getNotification(this.notificationTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateNotificationModal')
       } else {
         new Toast(
@@ -633,7 +631,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
     },
     async deleteNotification(uuid) {
@@ -655,8 +652,11 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteNotificationModal')
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
   },
 }

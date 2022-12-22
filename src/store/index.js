@@ -48,6 +48,9 @@ export default createStore({
     createToast({ commit }, toast) {
       commit('updateToasts', toast)
     },
+    invokeSendButtonDelay() {
+      return new Promise((resolve) => setTimeout(resolve, 2000)) // wait 2 sec
+    },
   },
   modules: {
     auth,

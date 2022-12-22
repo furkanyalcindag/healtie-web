@@ -213,7 +213,9 @@
         <CForm
           class="row g-3"
           @submit.prevent="
-            submitToAPI($event, 'updateCategoryModal', editedItem.data)
+            isAbleToPushButton
+              ? submitToAPI($event, 'updateCategoryModal', editedItem.data)
+              : null
           "
           needs-validation
           novalidate
@@ -425,7 +427,6 @@ export default {
           }
           break
       }
-      this.isAbleToPushButton = true
     },
     // This two For to filter the selection list by search value
     async get_Filtered_Parent_List_Options_Data(searched) {
@@ -521,7 +522,7 @@ export default {
       }
       this.openedModals[modalname] = true
     },
-    closeModal(modalname, resetData) {
+    async closeModal(modalname, resetData) {
       this.openedModals[modalname] = false
       this.validationChecked = false
       if (resetData) {
@@ -536,6 +537,7 @@ export default {
             break
         }
       }
+      this.queueEnableSendButton()
     },
     async getCategories(pageOptions) {
       this.categoryTable.loading = true
@@ -548,7 +550,6 @@ export default {
       this.categoryTable.loading = false
     },
     async addCategory(data) {
-      this.isAbleToPushButton = false
       data.parentList = await takeParentListUUIDS()
       const response = await this.addCategoryAPI(data)
       if (response === true) {
@@ -568,7 +569,6 @@ export default {
           'text-white align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       function takeParentListUUIDS() {
         return data.parentList.map((parentCategory) => {
           return parentCategory.uuid
@@ -576,7 +576,6 @@ export default {
       }
     },
     async updateCategory(newCategoryData) {
-      this.isAbleToPushButton = false
       newCategoryData.parentList = await takeParentListUUIDS()
       const response = await this.updateCategoryAPI(newCategoryData)
       if (response === true) {
@@ -587,7 +586,6 @@ export default {
           'text-white align-items-center',
         )
         this.getCategories(this.categoryTable.serverOptions)
-        this.isAbleToPushButton = true
         this.closeModal('updateCategoryModal')
       } else {
         new Toast(
@@ -596,7 +594,6 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
       }
       function takeParentListUUIDS() {
         return newCategoryData.parentList.map((parentCategory) => {
@@ -623,8 +620,11 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.isAbleToPushButton = true
       this.closeModal('deleteCategoryModal')
+    },
+    async queueEnableSendButton() {
+      await this.$store.dispatch('invokeSendButtonDelay')
+      this.isAbleToPushButton = true
     },
   },
 }

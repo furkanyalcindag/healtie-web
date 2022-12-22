@@ -51,7 +51,7 @@ export default {
           approved: newChatRoomData.approved,
           startTime: newChatRoomData.startTime,
           endTime: newChatRoomData.endTime,
-          doctorUUId: newChatRoomData.doctorUUId,
+          doctorUUID: newChatRoomData.doctorUUID,
           chatRoomStatusEnum: newChatRoomData.chatRoomStatusEnum,
         })
 

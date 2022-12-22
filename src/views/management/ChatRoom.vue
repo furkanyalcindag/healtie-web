@@ -154,26 +154,35 @@
                 <option value="PRIVATE">Private</option>
               </CFormSelect>
             </CCol>
+            <!-- Start Date and Time -->
             <CCol md="6">
               <CFormLabel for="add-chat-room-start-time"
-                >Başlangıç Zamanı</CFormLabel
+                >Başlangıç Tarihi</CFormLabel
               >
               <VueCtkDateTimePicker
                 id="EnabledDisabledDatesPicker"
-                v-model="addedItem.startTime.firstHalf"
+                v-model="addedItem.startTime"
                 locale="tr"
-                format="YYYY-MM-DD"
-                formatted="ll"
-                label="Başlangıç gününü seçiniz"
-                only-date
-                no-label
+                :minDate="new Date().toISOString()"
+                format="YYYY-MM-DD HH:mm:ss.SSSS"
+                label="Başlangıç zamanını seçiniz"
+                buttonNowTranslation="Şimdiki Zaman"
+                @is-hidden="validateAddedItemDateRange()"
               />
+              <CFormInput
+                required
+                style="display: none"
+                v-model="addedItem.startTime"
+                autocomplete="off"
+                feedbackInvalid="Lütfen bir tarih giriniz"
+              ></CFormInput>
             </CCol>
-            <CCol md="6">
+            <!-- Start Time -->
+            <!-- <CCol md="6">
+              {{ addedItem.startTime.endHalf }}
               <CFormLabel for="add-chat-room-start-time"
                 >Başlangıç Saati</CFormLabel
               >
-
               <VueCtkDateTimePicker
                 id="EnabledDisabledDatesPicker"
                 v-model="addedItem.startTime.endHalf"
@@ -183,8 +192,8 @@
                 only-time
                 no-label
               />
-            </CCol>
-            <CCol md="6">
+            </CCol> -->
+            <!-- <CCol md="6">
               <CFormLabel for="add-chat-room-end-time">Bitiş Zamanı</CFormLabel>
 
               <VueCtkDateTimePicker
@@ -196,9 +205,27 @@
                 only-date
                 no-label
               />
-            </CCol>
+            </CCol> -->
+            <!-- End Time -->
             <CCol md="6">
-              <CFormLabel for="add-chat-room-end-time">Bitiş Saati</CFormLabel>
+              <CFormLabel for="add-chat-room-end-time">Bitiş Tarihi</CFormLabel>
+              <VueCtkDateTimePicker
+                id="EnabledDisabledDatesPicker"
+                v-model="addedItem.endTime"
+                locale="tr"
+                :minDate="addedItem.startTime"
+                format="YYYY-MM-DD HH:mm:ss.SSSS"
+                label="Bitiş zamanını seçiniz"
+                buttonNowTranslation="Şimdiki Zaman"
+                @is-hidden="validateAddedItemDateRange()"
+              />
+              <CFormInput
+                required
+                style="display: none"
+                v-model="addedItem.endTime"
+                autocomplete="off"
+                feedbackInvalid="Lütfen bir tarih giriniz"
+              ></CFormInput>
               <!--              <CFormInput
                 id="add-chat-room-start-time"
                 required
@@ -206,7 +233,7 @@
                 v-model="addedItem.data.startTime"
                 autocomplete="off"
               />-->
-              <VueCtkDateTimePicker
+              <!-- <VueCtkDateTimePicker
                 id="EnabledDisabledDatesPicker"
                 v-model="addedItem.endTime.endHalf"
                 locale="tr"
@@ -214,10 +241,10 @@
                 formatted="hh:mm"
                 only-time
                 no-label
-              />
+              /> -->
             </CCol>
 
-            <CCol md="6">
+            <CCol md="12">
               <CFormLabel for="add-chat-room-doctor-uuid"
                 >Doktor UUID</CFormLabel
               >
@@ -327,31 +354,53 @@
                 <option value="PRIVATE">Private</option>
               </CFormSelect>
             </CCol>
+            <!-- Start time -->
             <CCol md="6">
               <CFormLabel for="update-chat-room-start-time"
-                >Başlangıç Zamanı</CFormLabel
+                >Başlangıç Tarihi</CFormLabel
               >
+              <VueCtkDateTimePicker
+                id="EnabledDisabledDatesPicker"
+                v-model="editedItem.startTime"
+                locale="tr"
+                :minDate="new Date().toISOString()"
+                format="YYYY-MM-DD HH:mm:ss.SSSS"
+                label="Başlangıç zamanını seçiniz"
+                buttonNowTranslation="Şimdiki Zaman"
+                @is-hidden="validateEditedItemDateRange()"
+              />
               <CFormInput
-                id="update-chat-room-start-time"
                 required
-                feedbackInvalid="Lütfen bir başlangıç zamanı giriniz"
+                style="display: none"
                 v-model="editedItem.startTime"
                 autocomplete="off"
-              />
+                feedbackInvalid="Lütfen bir tarih giriniz"
+              ></CFormInput>
             </CCol>
+            <!-- End time -->
             <CCol md="6">
               <CFormLabel for="update-chat-room-end-time"
-                >Bitiş Zamanı</CFormLabel
+                >Bitiş Tarihi</CFormLabel
               >
+              <VueCtkDateTimePicker
+                id="EnabledDisabledDatesPicker"
+                v-model="editedItem.endTime"
+                locale="tr"
+                :minDate="editedItem.startTime"
+                format="YYYY-MM-DD HH:mm:ss.SSSS"
+                label="Bitiş zamanını seçiniz"
+                buttonNowTranslation="Şimdiki Zaman"
+                @is-hidden="validateEditedItemDateRange()"
+              />
               <CFormInput
-                id="update-chat-room-end-time"
                 required
-                feedbackInvalid="Lütfen bir bitiş zamanı giriniz"
+                style="display: none"
                 v-model="editedItem.endTime"
                 autocomplete="off"
-              />
+                feedbackInvalid="Lütfen bir tarih giriniz"
+              ></CFormInput>
             </CCol>
-            <CCol md="6">
+            <CCol md="12">
               <CFormLabel for="update-chat-room-doctor-uuid"
                 >Doktor UUID</CFormLabel
               >
@@ -539,8 +588,8 @@ export default {
       addedItem: {
         // Real data
         data: new chatRoomDTO(null, null, null, null, null, null, null, null),
-        startTime: { firstHalf: null, endHalf: null },
-        endTime: { firstHalf: null, endHalf: null },
+        startTime: new Date().toISOString(),
+        endTime: null,
       },
       editedItem: {
         // Real data
@@ -589,8 +638,44 @@ export default {
   },
   created() {
     this.getChatRoom(this.chatRoomTable.serverOptions)
+    console.log(new Date().toString())
   },
   methods: {
+    // Checks if start time is lesser than end time or equal then validate it false
+    async validateAddedItemDateRange() {
+      if (this.addedItem.startTime | (this.addedItem.endTime != null)) {
+        // Formatting dates to ISO format
+        if (
+          Date.parse(this.formatDateToISO(this.addedItem.startTime)) >=
+          Date.parse(this.formatDateToISO(this.addedItem.endTime))
+        ) {
+          this.addedItem.endTime = null
+          new Toast(
+            'Cant select EndTime equal-lesser than StartTime',
+            'danger',
+            true,
+            'text-white -align-items-center',
+          )
+        }
+      }
+    },
+    async validateEditedItemDateRange() {
+      if (this.editedItem.startTime | (this.editedItem.endTime != null)) {
+        // Formatting dates to ISO format
+        if (
+          Date.parse(this.formatDateToISO(this.editedItem.startTime)) >=
+          Date.parse(this.formatDateToISO(this.editedItem.endTime))
+        ) {
+          this.editedItem.endTime = null
+          new Toast(
+            'Cant select EndTime equal-lesser than StartTime',
+            'danger',
+            true,
+            'text-white -align-items-center',
+          )
+        }
+      }
+    },
     ...mapActions({
       getAllChatRoom: 'chatRoom/getChatRoom',
       addChatRoomAPI: 'chatRoom/addChatRoom',
@@ -657,8 +742,6 @@ export default {
             {
               // Restore added item on clicking "No/Deny"
               this.addedItem = {
-                startTime: { firstHalf: null, endHalf: null },
-                endTime: { firstHalf: null, endHalf: null },
                 data: new chatRoomDTO(
                   null,
                   null,
@@ -669,6 +752,8 @@ export default {
                   null,
                   null,
                 ),
+                startTime: new Date().toISOString(),
+                endTime: null,
               }
             }
             break
@@ -687,17 +772,9 @@ export default {
       this.chatRoomTable.loading = false
     },
     async addChatRoom(data) {
-      let formattedStartTime = await (this.addedItem.startTime.firstHalf +
-        'T' +
-        this.addedItem.startTime.endHalf +
-        'Z')
-      let formattedEndTime = await (this.addedItem.endTime.firstHalf +
-        'T' +
-        this.addedItem.endTime.endHalf +
-        'Z')
       this.isAbleToPushButton = false
-      data.startTime = formattedStartTime
-      data.endTime = formattedEndTime
+      data.startTime = this.formatDateToISO(this.addedItem.startTime)
+      data.endTime = this.formatDateToISO(this.addedItem.endTime)
       const response = await this.addChatRoomAPI(data)
 
       if (response === true) {
@@ -721,6 +798,15 @@ export default {
     },
     async updateChatRoom(newChatRoomData) {
       newChatRoomData.language = 'TR'
+      // Check date if not updated
+      if (!this.editedItem.startTime.includes('T')) {
+        newChatRoomData.startTime = this.formatDateToISO(
+          this.editedItem.startTime,
+        )
+      }
+      if (!this.editedItem.endTime.includes('T')) {
+        newChatRoomData.endTime = this.formatDateToISO(this.editedItem.endTime)
+      }
       this.isAbleToPushButton = false
       const response = await this.updateChatRoomAPI(newChatRoomData)
       if (response === true) {
@@ -772,6 +858,11 @@ export default {
       this.items2 = response.data
       this.userTable.serverItemsLength = response.totalElements
       this.userTable.loading = false
+    },
+    // Keep in mint it only works for our system. This wont work globally. --------------IMPORTANT
+    formatDateToISO(date) {
+      let splittedTime = date.split(' ')
+      return splittedTime[0] + 'T' + splittedTime[1] + 'Z'
     },
     /*
     async getApprovedUser(pageOptions, data) {

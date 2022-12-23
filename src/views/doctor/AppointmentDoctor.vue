@@ -24,14 +24,14 @@
             class="m-4"
             show-index
             v-model:itemsSelected="itemsSelected"
-            v-model:server-options="categoryTable.serverOptions"
-            :server-items-length="categoryTable.serverItemsLength"
+            v-model:server-options="patientAppointmentsTable.serverOptions"
+            :server-items-length="patientAppointmentsTable.serverItemsLength"
             :headers="headers"
             :items="items"
             :theme-color="themeColor"
             buttons-pagination
-            :loading="categoryTable.loading"
-            :rows-items="categoryTable.rowsItem"
+            :loading="patientAppointmentsTable.loading"
+            :rows-items="patientAppointmentsTable.rowsItem"
           >
             <template #item-operations="item">
               <div>
@@ -313,8 +313,10 @@ export default {
     return {
       avatar: avatar,
       headers: [
-        { text: 'Kategori Adı', value: 'name', sortable: true },
-        { text: 'Toplam Makale Sayısı', value: 'articleCount' },
+        { text: 'Hasta Adı Soyadı', value: 'name', sortable: true },
+        { text: 'Telefon', value: 'articleCount' },
+        { text: 'Telefon', value: 'address' },
+        { text: 'Not', value: 'note' },
         { text: 'İşlemler', value: 'operations' },
       ],
       items: [],
@@ -355,7 +357,7 @@ export default {
         deleteCategoryModal: false,
         updateCategoryModal: false,
       },
-      categoryTable: {
+      patientAppointmentsTable: {
         serverItemsLength: 0,
         serverOptions: {
           page: 1,
@@ -370,12 +372,12 @@ export default {
     }
   },
   watch: {
-    'categoryTable.serverOptions'(newvalue) {
-      this.getCategories(newvalue)
+    'patientAppointmentsTable.serverOptions'(newvalue) {
+      this.getPatientAppointments(newvalue)
     },
   },
   created() {
-    this.getCategories(this.categoryTable.serverOptions)
+    this.getPatientAppointments(this.patientAppointmentsTable.serverOptions)
   },
   methods: {
     // This is when u dont want the user to select something in vue-select (v-select)
@@ -397,11 +399,11 @@ export default {
       })
     },
     ...mapActions({
-      getAllCategories: 'category/getCategories',
+      getPatientAppointmentsAPI: 'doctor/getPatientAppointments',
       getAllLanguages: 'language/getLanguages',
-      addCategoryAPI: 'category/addCategory',
-      deleteCategoryAPI: 'category/deleteCategory',
-      updateCategoryAPI: 'category/updateCategory',
+      addCategoryAPI: 'doctor/addCategory',
+      deleteCategoryAPI: 'doctor/deleteCategory',
+      updateCategoryAPI: 'doctor/updateCategory',
     }),
     submitToAPI(event, modalname, data) {
       // Response
@@ -445,7 +447,7 @@ export default {
             this.parentCategoryList.parentListSearcherDefaultServerOptions,
           filter: filterBy,
         }
-        const response = await this.getAllCategories(searchedFor)
+        const response = await this.getPatientAppointmentsAPI(searchedFor)
         this.parentCategoryList.options = reduceDataHeaviless(response.data)
       } else {
         let searchedFor = {
@@ -453,7 +455,7 @@ export default {
             this.parentCategoryList.parentListSearcherDefaultServerOptions,
           filter: null,
         }
-        const response = await this.getAllCategories(searchedFor)
+        const response = await this.getPatientAppointmentsAPI(searchedFor)
         this.parentCategoryList.options = reduceDataHeaviless(response.data)
       }
       this.parentCategoryList.loading = false
@@ -539,15 +541,18 @@ export default {
       }
       this.queueEnableSendButton()
     },
-    async getCategories(pageOptions) {
-      this.categoryTable.loading = true
-      const response = await this.getAllCategories({
+
+    // eslint-disable-next-line no-unused-vars
+    async getPatientAppointments(pageOptions) {
+      this.patientAppointmentsTable.loading = true
+      /*const response = await this.getPatientAppointmentsAPI({
         pageOptions: pageOptions,
         filter: null,
       })
       this.items = response.data
-      this.categoryTable.serverItemsLength = response.totalElements
-      this.categoryTable.loading = false
+      this.patientAppointmentsTable.serverItemsLength = response.totalElements
+      */
+      this.patientAppointmentsTable.loading = false
     },
     async addCategory(data) {
       data.parentList = await takeParentListUUIDS()
@@ -559,7 +564,7 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.getCategories(this.categoryTable.serverOptions)
+        this.reloadTable()
         this.closeModal('addCategoryModal', true)
       } else {
         new Toast(
@@ -585,7 +590,7 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.getCategories(this.categoryTable.serverOptions)
+        this.reloadTable()
         this.closeModal('updateCategoryModal')
       } else {
         new Toast(
@@ -606,6 +611,7 @@ export default {
       const response = await this.deleteCategoryAPI(uuid)
       if (response === true) {
         this.selectedCategory = {}
+        this.reloadTable()
         new Toast(
           'Category deleted successfully',
           'success',
@@ -625,6 +631,18 @@ export default {
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')
       this.isAbleToPushButton = true
+    },
+    async reloadTable(tableName) {
+      switch (tableName) {
+        // Main table
+        default:
+          {
+            this.getPatientAppointments(
+              this.patientAppointmentsTable.serverOptions,
+            )
+          }
+          break
+      }
     },
   },
 }

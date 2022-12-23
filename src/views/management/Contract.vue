@@ -821,6 +821,11 @@ export default {
               this.selectedUser = {}
             }
             break
+          case 'deleteContractModal':
+            {
+              this.selectedContract = {}
+            }
+            break
         }
       }
       this.queueEnableSendButton()
@@ -849,14 +854,14 @@ export default {
       data.roleList = await takeRoleListUUIDS(data.roleList)
       const response = await this.addContractAPI(data)
       if (response === true) {
-        this.closeModal('addContractModal', true)
-        this.getContracts(this.contractsTable.serverOptions)
         new Toast(
           'New contract ' + data.title + ' added successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.closeModal('addContractModal', true)
+        this.getContracts(this.contractsTable.serverOptions)
       } else {
         new Toast(
           'Something went wrong',
@@ -864,6 +869,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
       function takeRoleListUUIDS() {
         return data.roleList.map((role) => {
@@ -893,6 +899,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
       function takeRoleListUUIDS() {
         return cachedRoleData.roleSet.map((role) => {
@@ -904,14 +911,14 @@ export default {
       this.isAbleToPushButton = false
       const response = await this.deleteContractAPI(uuid)
       if (response === true) {
-        this.isAbleToPushButton = true
-        this.selectedContract = {}
         new Toast(
           'Contract deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getContracts(this.contractsTable.serverOptions)
+        this.closeModal('deleteContractModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -919,9 +926,8 @@ export default {
           true,
           'text-white align-items-center',
         )
-        this.isAbleToPushButton = true
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteContractModal')
     },
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')

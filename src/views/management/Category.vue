@@ -535,6 +535,11 @@ export default {
               }
             }
             break
+          case 'deleteCategoryModal':
+            {
+              this.selectedCategory = {}
+            }
+            break
         }
       }
       this.queueEnableSendButton()
@@ -568,6 +573,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
       function takeParentListUUIDS() {
         return data.parentList.map((parentCategory) => {
@@ -594,6 +600,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
       function takeParentListUUIDS() {
         return newCategoryData.parentList.map((parentCategory) => {
@@ -605,13 +612,14 @@ export default {
       this.isAbleToPushButton = false
       const response = await this.deleteCategoryAPI(uuid)
       if (response === true) {
-        this.selectedCategory = {}
         new Toast(
           'Category deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getCategories(this.categoryTable.serverOptions)
+        this.closeModal('deleteCategoryModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -619,8 +627,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteCategoryModal')
     },
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')

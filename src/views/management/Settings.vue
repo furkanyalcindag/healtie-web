@@ -361,6 +361,11 @@ export default {
               }
             }
             break
+          case 'deleteSettingsModal':
+            {
+              this.selectedSettings = {}
+            }
+            break
         }
       }
       this.queueEnableSendButton()
@@ -394,6 +399,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateSettings(newSettingsData) {
@@ -415,19 +421,21 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteSettings(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteSettingsAPI(uuid)
       if (response === true) {
-        this.selectedSettings = {}
         new Toast(
           'Settings deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getSettings(this.settingsTable.serverOptions)
+        this.closeModal('deleteSettingsModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -435,8 +443,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteSettingsModal')
     },
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')

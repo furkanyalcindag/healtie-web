@@ -577,6 +577,9 @@ export default {
               }
             }
             break
+          case 'deleteNotificationModal':
+            this.selectedNotification = {}
+            break
         }
       }
       this.queueEnableSendButton()
@@ -610,6 +613,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateNotification(newNotificationData) {
@@ -631,19 +635,21 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteNotification(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteNotificationAPI(uuid)
       if (response === true) {
-        this.selectedNotification = {}
         new Toast(
           'Notification deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getNotification(this.notificationTable.serverOptions)
+        this.closeModal('deleteNotificationModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -651,8 +657,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteNotificationModal')
     },
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')

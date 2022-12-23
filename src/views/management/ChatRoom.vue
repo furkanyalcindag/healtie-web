@@ -764,6 +764,11 @@ export default {
               }
             }
             break
+          case 'deleteChatRoomModal':
+            {
+              this.selectedChatRoom = {}
+            }
+            break
         }
       }
       this.queueEnableSendButton()
@@ -800,11 +805,12 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateChatRoom(newChatRoomData) {
       newChatRoomData.language = 'TR'
-      // Check date if not updated
+      // Check date if not updated then conver the value to ISO format
       if (!this.editedItem.startTime.includes('T')) {
         newChatRoomData.startTime = this.formatDateToISO(
           this.editedItem.startTime,
@@ -830,19 +836,21 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteChatRoom(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteChatRoomAPI(uuid)
       if (response === true) {
-        this.selectedChatRoom = {}
         new Toast(
           'ChatRoom deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getChatRoom(this.chatRoomTable.serverOptions)
+        this.closeModal('deleteChatRoomModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -850,8 +858,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteChatRoomModal')
     },
     async getUser(pageOptions, data) {
       this.userTable.loading = true
@@ -861,7 +869,7 @@ export default {
       this.userTable.serverItemsLength = response.totalElements
       this.userTable.loading = false
     },
-    // Keep in mint it only works for our system. This wont work globally. --------------IMPORTANT
+    // Keep in mind that this only works for our system. This wont work globally. --------------IMPORTANT
     formatDateToISO(date) {
       let splittedTime = date.split(' ')
       return splittedTime[0] + 'T' + splittedTime[1] + 'Z'

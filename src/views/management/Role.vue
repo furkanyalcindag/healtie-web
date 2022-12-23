@@ -602,6 +602,16 @@ export default {
               this.selectedUser = {}
             }
             break
+          case 'updateRoleModal':
+            {
+              this.editedItem = {}
+            }
+            break
+          case 'deleteRoleModal':
+            {
+              this.selectedRole = {}
+            }
+            break
         }
       }
       this.queueEnableSendButton()
@@ -625,14 +635,14 @@ export default {
     async addRole(data) {
       const response = await this.addRoleAPI(data)
       if (response === true) {
-        this.closeModal('addRoleModal', true)
-        this.getRoles(this.roleTable.serverOptions)
         new Toast(
           'New role ' + data.name + ' added successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.closeModal('addRoleModal', true)
+        this.getRoles(this.roleTable.serverOptions)
       } else {
         new Toast(
           'Something went wrong',
@@ -640,6 +650,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateRole(newroleData) {
@@ -652,8 +663,7 @@ export default {
           'text-white align-items-center',
         )
         this.getRoles(this.roleTable.serverOptions)
-        this.closeModal('updateRoleModal')
-        this.editedItem = {}
+        this.closeModal('updateRoleModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -661,18 +671,20 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteRole(uuid) {
       const response = await this.deleteRoleAPI(uuid)
       if (response === true) {
-        this.selectedRole = {}
         new Toast(
           'Succesfully deleted',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getRoles(this.roleTable.serverOptions)
+        this.closeModal('deleteRoleModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -680,21 +692,21 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteRoleModal')
     },
     async addUser(data) {
       const response = await this.addUserAPI(data)
       if (response === true) {
-        this.closeModal('addUserModal', true)
-
-        this.getUser(this.userTable.serverOptions)
         new Toast(
           'New role ' + data.name + ' added successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        // SECOND ARGUMENT DATA SHOULDNT BE NULL -------IMPORTANT
+        this.getUser(this.userTable.serverOptions, this.selectedRole)
+        this.closeModal('addUserModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -702,6 +714,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteUser(uuid) {
@@ -710,6 +723,8 @@ export default {
       const response = await this.deleteUserFromRoleAPI(uuid)
       if (response === true) {
         new Toast('Silindi', 'success', true, 'text-white align-items-center')
+        this.getUser(this.userTable.serverOptions, this.selectedRole)
+        this.closeModal('deleteUserModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -717,8 +732,8 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteUserModal')
     },
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')

@@ -3582,6 +3582,11 @@ export default {
               this.editedItemForAcademicInfo = cachedProfileData
             }
             break
+          case 'deleteAcademicInfo':
+            {
+              this.selectedAcademicInfo = {}
+            }
+            break
 
           case 'addCertificateModal':
             {
@@ -3596,6 +3601,11 @@ export default {
                 JSON.stringify(this.certificateData),
               )
               this.editedItemForCertificate = cachedProfileData
+            }
+            break
+          case 'deleteCertificate':
+            {
+              this.selectedCertificate = {}
             }
             break
 
@@ -3614,6 +3624,12 @@ export default {
               this.editedItemForExperience = cachedProfileData
             }
             break
+          case 'deleteExperience':
+            {
+              this.selectedExperience = {}
+            }
+            break
+
           case 'addArticleModal': //QQ
             {
               // Restore added item on clicking "No/Deny"
@@ -3622,11 +3638,17 @@ export default {
               }
             }
             break
+          case 'deleteArticleModal':
+            {
+              this.selectedArticle = {}
+            }  
+            break
         }
       }
       this.queueEnableSendButton()
     },
 
+    // UNUSED ----------IMPORTANT
     addAcademicData(data) {
       // console.log(data)
       // data silme işlemleri(store üzerinden yapılacak ise ona göre düzeltilebilir)
@@ -3700,12 +3722,13 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateUserName(newroleData) {
       console.log(newroleData)
       const response = await this.updateUserNameAPI(newroleData)
-      if (response === true) {
+      if (response == true) {
         new Toast(
           'User name and surname updated successfully',
           'success',
@@ -3723,6 +3746,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateDoctorPhone(newroleData) {
@@ -3745,6 +3769,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateDoctorAddress(newroleData) {
@@ -3767,6 +3792,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateDoctorTitle(newDoctorTitle) {
@@ -3789,6 +3815,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateDoctorBranch(newroleData) {
@@ -3811,6 +3838,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateDoctorClinicName(newroleData) {
@@ -3833,6 +3861,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateDoctorDiplomaNo(newroleData) {
@@ -3855,6 +3884,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateDoctorAbout(newroleData) {
@@ -3877,6 +3907,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
 
@@ -3906,6 +3937,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateAcademicInfo(newuserData) {
@@ -3926,19 +3958,21 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteAcademicInfo(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteAcademicInfoAPI(uuid)
       if (response === true) {
-        this.selectedAcademicInfo = {}
         new Toast(
           'Academic info deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getAcademicInfoByDoctor(this.academicInfoTable.serverOptions)
+        this.closeModal('deleteAcademicInfo', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -3946,8 +3980,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteAcademicInfo')
     },
 
     async getCertificateByDoctor(pageOptions) {
@@ -3975,6 +4009,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateCertificate(newuserData) {
@@ -3995,19 +4030,21 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteCertificate(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteCertificateAPI(uuid)
       if (response === true) {
-        this.selectedCertificate = {}
         new Toast(
           'Certificate deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getCertificateByDoctor(this.certificateTable.serverOptions)
+        this.closeModal('deleteCertificate', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -4015,8 +4052,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteCertificate')
     },
 
     async getExperienceByDoctor(pageOptions) {
@@ -4045,6 +4082,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateExperience(newuserData) {
@@ -4065,19 +4103,21 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteExperience(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteExperienceAPI(uuid)
       if (response === true) {
-        this.selectedExperience = {}
         new Toast(
           'Experience deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getExperienceByDoctor(this.experienceTable.serverOptions)
+        this.closeModal('deleteExperience', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -4085,8 +4125,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteExperience')
     },
 
     async getArticlesByDoctor(pageOptions, data) {
@@ -4116,6 +4156,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
       function takeParentListUUIDS() {
         return newArticleData.categoryListForArticle.map((category) => {
@@ -4127,13 +4168,14 @@ export default {
       this.isAbleToPushButton = false
       const response = await this.deleteArticleAPI(uuid)
       if (response === true) {
-        this.selectedArticle = {}
         new Toast(
           'Article deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getArticlesByDoctor(this.articleTable.serverOptions)
+        this.closeModal('deleteArticleModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -4141,8 +4183,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteArticleModal')
     },
 
     // Those three For to filter the selection list by search value //QQ

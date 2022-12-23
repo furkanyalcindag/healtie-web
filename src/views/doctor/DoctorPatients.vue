@@ -6,44 +6,14 @@
           <!-- <CIcon icon="cil-user" /> -->
           <CRow>
             <CCol lg="3" class="text-left mt-3">
-              <h2>Kategori Listesi</h2>
+              <h2>Hastalarım</h2>
             </CCol>
             <CCol lg="9" class="text-right mt-3">
-              <div>
-                <CButtonGroup role="group" size="sm">
-                  <CButton
-                    color="warning"
-                    class="ms-2 text-white align-items-center"
-                    shape="rounded-pill"
-                    size="sm"
-                    v-c-tooltip="{
-                      content: 'Düzenle',
-                      placement: 'top',
-                    }"
-                    @click="showModal('updatePatientAppointmentModal', item)"
-                  >
-                    <CIcon icon="cil-pencil" />
-                  </CButton>
-                  <CButton
-                    color="danger"
-                    class="ms-2 text-white align-items-center"
-                    shape="rounded-pill"
-                    size="sm"
-                    v-c-tooltip="{
-                      content: 'Sil',
-                      placement: 'top',
-                    }"
-                    @click="showModal('deletePatientAppointmentModal', item)"
-                  >
-                    <CIcon icon="cil-trash" />
-                  </CButton>
-                </CButtonGroup>
-              </div>
               <CButton
                 color="primary"
                 class="float-end"
                 shape="rounded-pill"
-                @click="showModal('addPatientAppointmentModal')"
+                @click="showModal('addPatientModal')"
                 >Ekle</CButton
               >
             </CCol>
@@ -63,6 +33,9 @@
             :loading="patientAppointmentsTable.loading"
             :rows-items="patientAppointmentsTable.rowsItem"
           >
+            <template #item-name="{ firstName, lastName }">
+              <div>{{ firstName }} {{ lastName }}</div>
+            </template>
             <template #item-operations="item">
               <div>
                 <CButtonGroup role="group" size="sm">
@@ -75,7 +48,7 @@
                       content: 'Düzenle',
                       placement: 'top',
                     }"
-                    @click="showModal('updatePatientAppointmentModal', item)"
+                    @click="showModal('updatePatientModal', item)"
                   >
                     <CIcon icon="cil-pencil" />
                   </CButton>
@@ -88,7 +61,7 @@
                       content: 'Sil',
                       placement: 'top',
                     }"
-                    @click="showModal('deletePatientAppointmentModal', item)"
+                    @click="showModal('deletePatientModal', item)"
                   >
                     <CIcon icon="cil-trash" />
                   </CButton>
@@ -103,22 +76,18 @@
     <CModal
       backdrop="static"
       size="lg"
-      :visible="openedModals.addPatientAppointmentModal"
-      @close="closeModal('addPatientAppointmentModal')"
+      :visible="openedModals.addPatientModal"
+      @close="closeModal('addPatientModal')"
     >
       <CModalHeader>
-        <CModalTitle>Kategori Ekle</CModalTitle>
+        <CModalTitle>Hasta Ekle</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <CForm
           class="row g-3"
           @submit.prevent="
             isAbleToPushButton
-              ? submitToAPI(
-                  $event,
-                  'addPatientAppointmentModal',
-                  addedItem.data,
-                )
+              ? submitToAPI($event, 'addPatientModal', addedItem.data)
               : null
           "
           needs-validation
@@ -130,7 +99,7 @@
           <CModalFooter class="pe-0">
             <CButton
               color="secondary"
-              @click="closeModal('addPatientAppointmentModal', true)"
+              @click="closeModal('addPatientModal', true)"
               >İptal</CButton
             >
             <CButton
@@ -146,28 +115,26 @@
     <!-- Delete Patient Appointment -->
     <CModal
       size="lg"
-      :visible="openedModals.deletePatientAppointmentModal"
-      @close="closeModal('deletePatientAppointmentModal')"
+      :visible="openedModals.deletePatientModal"
+      @close="closeModal('deletePatientModal')"
     >
       <CModalHeader>
-        <CModalTitle>Kategori <span class="text-danger">Sil</span></CModalTitle>
+        <CModalTitle>Hasta <span class="text-danger">Sil</span></CModalTitle>
       </CModalHeader>
       <CModalBody>
         <h5>
-          Bu işlemi geri alamazsınız. Kategori bilgilerini
+          Bu işlemi geri alamazsınız. Hasta bilgilerini
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton
-            color="secondary"
-            @click="closeModal('deletePatientAppointmentModal')"
+          <CButton color="secondary" @click="closeModal('deletePatientModal')"
             >Kapat</CButton
           >
           <CButton
             color="danger"
             @click="
               isAbleToPushButton
-                ? deletePatientAppointment(selectedPatientAppointment.uuid)
+                ? deletePatient(selectedPatientAppointment.uuid)
                 : null
             "
             >SİL</CButton
@@ -178,22 +145,18 @@
     <!-- Update Patient Appointment -->
     <CModal
       size="lg"
-      :visible="openedModals.updatePatientAppointmentModal"
-      @close="closeModal('updatePatientAppointmentModal')"
+      :visible="openedModals.updatePatientModal"
+      @close="closeModal('updatePatientModal')"
     >
       <CModalHeader>
-        <CModalTitle>Kategori Düzenle</CModalTitle>
+        <CModalTitle>Hasta Düzenle</CModalTitle>
       </CModalHeader>
       <CModalBody>
         <CForm
           class="row g-3"
           @submit.prevent="
             isAbleToPushButton
-              ? submitToAPI(
-                  $event,
-                  'updatePatientAppointmentModal',
-                  editedItem.data,
-                )
+              ? submitToAPI($event, 'updatePatientModal', editedItem.data)
               : null
           "
           needs-validation
@@ -201,9 +164,7 @@
           :validated="validationChecked"
         >
           <CModalFooter class="pe-0">
-            <CButton
-              color="secondary"
-              @click="closeModal('updatePatientAppointmentModal')"
+            <CButton color="secondary" @click="closeModal('updatePatientModal')"
               >Kapat</CButton
             >
             <CButton
@@ -233,9 +194,9 @@ export default {
       avatar: avatar,
       headers: [
         { text: 'Hasta Adı Soyadı', value: 'name', sortable: true },
-        { text: 'Telefon', value: 'articleCount' },
-        { text: 'Telefon', value: 'address' },
-        { text: 'Not', value: 'note' },
+        { text: 'Telefon', value: 'phone' },
+        { text: 'Adres', value: 'address' },
+        { text: 'Not', value: 'description' },
         { text: 'İşlemler', value: 'operations' },
       ],
       items: [],
@@ -247,34 +208,12 @@ export default {
         // Real data
         data: patientDTO.createEmpty(),
       },
-      // Category Selection
-      parentCategoryList: {
-        // The parent category list inside selection in addPatientAppointment
-        options: [],
-        // Parent category Selection server options for getting options in selection in addPatientAppointmentModal
-        parentListSearcherDefaultServerOptions: {
-          page: 1,
-          rowsPerPage: 50,
-        },
-        loading: true,
-      },
-      // Language Selection
-      languageList: {
-        // The language list inside selection in addPatientAppointment
-        options: ['TR', 'EN'],
-        // Language Selection server options for getting options in selection in addPatientAppointment
-        languageSearcherDefaultServerOptions: {
-          page: 1,
-          rowsPerPage: 10,
-        },
-        loading: true,
-      },
       themeColor: '#321fdb',
       itemsSelected: [],
       openedModals: {
-        addPatientAppointmentModal: false,
-        deletePatientAppointmentModal: false,
-        updatePatientAppointmentModal: false,
+        addPatientModal: false,
+        deletePatientModal: false,
+        updatePatientModal: false,
       },
       patientAppointmentsTable: {
         serverItemsLength: 0,
@@ -292,19 +231,18 @@ export default {
   },
   watch: {
     'patientAppointmentsTable.serverOptions'(newvalue) {
-      this.getPatientAppointments(newvalue)
+      this.getPatients(newvalue)
     },
   },
   created() {
-    this.getPatientAppointments(this.patientAppointmentsTable.serverOptions)
+    this.getPatients(this.patientAppointmentsTable.serverOptions)
   },
   methods: {
     ...mapActions({
-      getPatientAppointmentsAPI: 'doctor/getPatientAppointments',
-      getAllLanguages: 'language/getLanguages',
-      addPatientAppointmentAPI: 'doctor/addPatientAppointment',
-      deletePatientAppointmentAPI: 'doctor/deletePatientAppointment',
-      updatePatientAppointmentAPI: 'doctor/updatePatientAppointment',
+      getPatientsAPI: 'doctor/getPatients',
+      addPatientAPI: 'doctor/addPatient',
+      deletePatientAPI: 'doctor/deletePatient',
+      updatePatientAPI: 'doctor/updatePatient',
     }),
     submitToAPI(event, modalname, data) {
       // Response
@@ -318,23 +256,23 @@ export default {
         return
       }
       switch (modalname) {
-        case 'addPatientAppointmentModal':
+        case 'addPatientModal':
           {
-            this.addPatientAppointment(JSON.parse(JSON.stringify(data)))
+            this.addPatient(JSON.parse(JSON.stringify(data)))
           }
           break
-        case 'updatePatientAppointmentModal':
+        case 'updatePatientModal':
           {
-            this.updatePatientAppointment(JSON.parse(JSON.stringify(data)))
+            this.updatePatient(JSON.parse(JSON.stringify(data)))
           }
           break
       }
     },
     async showModal(modalname, data) {
       switch (modalname) {
-        case 'addPatientAppointmentModal':
+        case 'addPatientModal':
           break
-        case 'updatePatientAppointmentModal':
+        case 'updatePatientModal':
           {
             console.log(patientDTO.createEmpty())
             this.selectedPatientAppointment = data
@@ -367,7 +305,7 @@ export default {
       this.validationChecked = false
       if (resetData) {
         switch (modalname) {
-          case 'addPatientAppointmentModal':
+          case 'addPatientModal':
             {
               // Restore added item on clicking "No/Deny"
               this.addedItem = {
@@ -380,19 +318,28 @@ export default {
       this.queueEnableSendButton()
     },
     // eslint-disable-next-line no-unused-vars
-    async getPatientAppointments(pageOptions) {
+    async getPatients(pageOptions) {
       this.patientAppointmentsTable.loading = true
-      /*const response = await this.getPatientAppointmentsAPI({
+      /*const response = await this.getPatientsAPI({
         pageOptions: pageOptions,
         filter: null,
       })
       this.items = response.data
       this.patientAppointmentsTable.serverItemsLength = response.totalElements
       */
+      this.items = [
+        patientDTO.createFromJson({
+          firstName: 'firstName',
+          lastName: 'lastName',
+          address: 'address',
+          description: 'description',
+          phone: 'phone(telNO)',
+        }),
+      ]
       this.patientAppointmentsTable.loading = false
     },
-    async addPatientAppointment(data) {
-      const response = await this.addPatientAppointmentAPI(data)
+    async addPatient(data) {
+      const response = await this.addPatientAPI(data)
       if (response === true) {
         new Toast(
           'Category added successfully',
@@ -401,7 +348,7 @@ export default {
           'text-white align-items-center',
         )
         this.reloadTable()
-        this.closeModal('addPatientAppointmentModal', true)
+        this.closeModal('addPatientModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -409,12 +356,11 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
-    async updatePatientAppointment(newPatientAppointmentData) {
-      const response = await this.updatePatientAppointmentAPI(
-        newPatientAppointmentData,
-      )
+    async updatePatient(newPatientAppointmentData) {
+      const response = await this.updatePatientAPI(newPatientAppointmentData)
       if (response === true) {
         new Toast(
           'Category updated successfully',
@@ -423,7 +369,7 @@ export default {
           'text-white align-items-center',
         )
         this.reloadTable()
-        this.closeModal('updatePatientAppointmentModal')
+        this.closeModal('updatePatientModal')
       } else {
         new Toast(
           'Something went wrong',
@@ -431,11 +377,12 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
-    async deletePatientAppointment(uuid) {
+    async deletePatient(uuid) {
       this.isAbleToPushButton = false
-      const response = await this.deletePatientAppointmentAPI(uuid)
+      const response = await this.deletePatientAPI(uuid)
       if (response === true) {
         this.selectedPatientAppointment = patientDTO.createEmpty()
         new Toast(
@@ -445,7 +392,7 @@ export default {
           'text-white align-items-center',
         )
         this.reloadTable()
-        this.closeModal('deletePatientAppointmentModal')
+        this.closeModal('deletePatientModal')
       } else {
         new Toast(
           'Something went wrong',
@@ -453,6 +400,7 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async queueEnableSendButton() {
@@ -464,9 +412,7 @@ export default {
         // Main table
         default:
           {
-            this.getPatientAppointments(
-              this.patientAppointmentsTable.serverOptions,
-            )
+            this.getPatients(this.patientAppointmentsTable.serverOptions)
           }
           break
       }

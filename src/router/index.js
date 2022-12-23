@@ -347,7 +347,7 @@ const routes = [
           {
             path: '/doctor/appointments',
             name: 'Appointment Doctor',
-            component: () => import('@/views/doctor/AppointmentDoctor.vue'),
+            component: () => import('@/views/doctor/DoctorPatients.vue'),
           },
           {
             path: '/doctor/profile',

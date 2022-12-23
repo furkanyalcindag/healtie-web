@@ -113,6 +113,11 @@ export default [
         name: 'Doctor Article',
         to: '/doctor/article',
       },
+      {
+        component: 'CNavItem',
+        name: 'Doctor Appointments',
+        to: '/doctor/appointments',
+      },
     ],
   },
   /* {

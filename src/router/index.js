@@ -345,11 +345,20 @@ const routes = [
         },
         children: [
           {
+            path: '/doctor/appointments',
+            name: 'Appointment Doctor',
+            component: () => import('@/views/doctor/AppointmentDoctor.vue'),
+          },
+          {
             path: '/doctor/profile',
             name: 'Profile Doctor',
             component: () => import('@/views/doctor/ProfileDoctor.vue'),
           },
-
+          {
+            path: '/doctor/article',
+            name: 'Article Doctor',
+            component: () => import('@/views/doctor/ArticleDoctor.vue'),
+          },
           {
             path: 'login-doctor',
             name: 'Login Doctor',
@@ -360,14 +369,10 @@ const routes = [
             name: 'Register Doctor',
             component: () => import('@/views/doctor/RegisterDoctor.vue'),
           },
-          {
-            path: '/doctor/article',
-            name: 'Article Doctor',
-            component: () => import('@/views/doctor/ArticleDoctor.vue'),
-          },
         ],
       },
     ],
+    // Full size pages(Without navbar or other things. Just page itself)
   },
   {
     path: '/pages',

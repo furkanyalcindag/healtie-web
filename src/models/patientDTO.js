@@ -1,6 +1,6 @@
 export default class patientDTO {
   static createEmpty() {
-    return new patientDTO()
+    return new patientDTO({})
   }
   static createFromJson({
     uuid,
@@ -20,6 +20,17 @@ export default class patientDTO {
       address: address,
       description: description,
     })
+  }
+  static toJson() {
+    return {
+      uuid: this.uuid,
+      firstName: this.firstName,
+      lastName: this.lastName,
+      language: this.language,
+      phone: this.phone,
+      address: this.address,
+      description: this.description,
+    }
   }
   // Need to get language from the localization -----------IMPORTANT
   constructor({

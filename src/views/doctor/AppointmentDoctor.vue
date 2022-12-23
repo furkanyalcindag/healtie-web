@@ -9,11 +9,41 @@
               <h2>Kategori Listesi</h2>
             </CCol>
             <CCol lg="9" class="text-right mt-3">
+              <div>
+                <CButtonGroup role="group" size="sm">
+                  <CButton
+                    color="warning"
+                    class="ms-2 text-white align-items-center"
+                    shape="rounded-pill"
+                    size="sm"
+                    v-c-tooltip="{
+                      content: 'Düzenle',
+                      placement: 'top',
+                    }"
+                    @click="showModal('updatePatientAppointmentModal', item)"
+                  >
+                    <CIcon icon="cil-pencil" />
+                  </CButton>
+                  <CButton
+                    color="danger"
+                    class="ms-2 text-white align-items-center"
+                    shape="rounded-pill"
+                    size="sm"
+                    v-c-tooltip="{
+                      content: 'Sil',
+                      placement: 'top',
+                    }"
+                    @click="showModal('deletePatientAppointmentModal', item)"
+                  >
+                    <CIcon icon="cil-trash" />
+                  </CButton>
+                </CButtonGroup>
+              </div>
               <CButton
                 color="primary"
                 class="float-end"
                 shape="rounded-pill"
-                @click="showModal('addCategoryModal')"
+                @click="showModal('addPatientAppointmentModal')"
                 >Ekle</CButton
               >
             </CCol>
@@ -45,7 +75,7 @@
                       content: 'Düzenle',
                       placement: 'top',
                     }"
-                    @click="showModal('updateCategoryModal', item)"
+                    @click="showModal('updatePatientAppointmentModal', item)"
                   >
                     <CIcon icon="cil-pencil" />
                   </CButton>
@@ -58,7 +88,7 @@
                       content: 'Sil',
                       placement: 'top',
                     }"
-                    @click="showModal('deleteCategoryModal', item)"
+                    @click="showModal('deletePatientAppointmentModal', item)"
                   >
                     <CIcon icon="cil-trash" />
                   </CButton>
@@ -69,12 +99,12 @@
         </CCardBody>
       </CCard>
     </CCol>
-    <!-- Add category -->
+    <!-- Add Patient Appointment -->
     <CModal
       backdrop="static"
       size="lg"
-      :visible="openedModals.addCategoryModal"
-      @close="closeModal('addCategoryModal')"
+      :visible="openedModals.addPatientAppointmentModal"
+      @close="closeModal('addPatientAppointmentModal')"
     >
       <CModalHeader>
         <CModalTitle>Kategori Ekle</CModalTitle>
@@ -84,82 +114,23 @@
           class="row g-3"
           @submit.prevent="
             isAbleToPushButton
-              ? submitToAPI($event, 'addCategoryModal', addedItem.data)
+              ? submitToAPI(
+                  $event,
+                  'addPatientAppointmentModal',
+                  addedItem.data,
+                )
               : null
           "
           needs-validation
           novalidate
           :validated="validationChecked"
         >
-          <CCol md="6">
-            <CFormLabel for="add-category-name"
-              >Kategori Adı<span class="text-danger">*</span></CFormLabel
-            >
-            <CFormInput
-              id="add-category-name"
-              required
-              feedbackInvalid="Lütfen bir kategori adı giriniz"
-              v-model="addedItem.data.name"
-              autocomplete="off"
-            />
-          </CCol>
-          <!-- For category parent list multiple selection -->
-          <CFormLabel for="add-category-parent-category"
-            >Üst kategorileri</CFormLabel
-          >
-          <v-select
-            id="add-category-parent-category"
-            v-model="addedItem.data.parentList"
-            :options="parentCategoryList.options"
-            label="name"
-            multiple
-            :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
-            @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
-            :closeOnSelect="true"
-            :loading="parentCategoryList.loading"
-          >
-            <template v-slot:no-options="{ search, searching }">
-              <template v-if="searching">
-                Sonuç bulunamadı:
-                <em>{{ search }}</em
-                >.
-              </template>
-              <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
-            </template>
-          </v-select>
-          <!-- For language selection -->
-          <CFormLabel for="add-language-to-category"
-            >Kategori Dili<span class="text-danger">*</span></CFormLabel
-          >
-          <v-select
-            id="add-language-to-category"
-            v-model="addedItem.data.language"
-            :options="languageList.options"
-            label="name"
-          >
-            <template v-slot:no-options="{ search, searching }">
-              <template v-if="searching">
-                Sonuç bulunamadı:
-                <em>{{ search }}</em
-                >.
-              </template>
-              <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
-            </template>
-            <template #search="{ attributes, events }">
-              <input
-                class="form-control vs__search"
-                feedbackInvalid="Lütfen bir kategori adı giriniz"
-                :required="!addedItem.data.language"
-                v-bind="attributes"
-                v-on="events"
-              />
-            </template>
-          </v-select>
+          ADD
 
           <CModalFooter class="pe-0">
             <CButton
               color="secondary"
-              @click="closeModal('addCategoryModal', true)"
+              @click="closeModal('addPatientAppointmentModal', true)"
               >İptal</CButton
             >
             <CButton
@@ -172,11 +143,11 @@
         </CForm>
       </CModalBody>
     </CModal>
-    <!-- Delete category -->
+    <!-- Delete Patient Appointment -->
     <CModal
       size="lg"
-      :visible="openedModals.deleteCategoryModal"
-      @close="closeModal('deleteCategoryModal')"
+      :visible="openedModals.deletePatientAppointmentModal"
+      @close="closeModal('deletePatientAppointmentModal')"
     >
       <CModalHeader>
         <CModalTitle>Kategori <span class="text-danger">Sil</span></CModalTitle>
@@ -187,24 +158,28 @@
           <span class="text-danger fw-bolder"> silmek istiyor musunuz? </span>
         </h5>
         <CModalFooter class="pe-0">
-          <CButton color="secondary" @click="closeModal('deleteCategoryModal')"
+          <CButton
+            color="secondary"
+            @click="closeModal('deletePatientAppointmentModal')"
             >Kapat</CButton
           >
           <CButton
             color="danger"
             @click="
-              isAbleToPushButton ? deleteCategory(selectedCategory.uuid) : null
+              isAbleToPushButton
+                ? deletePatientAppointment(selectedPatientAppointment.uuid)
+                : null
             "
             >SİL</CButton
           >
         </CModalFooter>
       </CModalBody>
     </CModal>
-    <!-- Update category -->
+    <!-- Update Patient Appointment -->
     <CModal
       size="lg"
-      :visible="openedModals.updateCategoryModal"
-      @close="closeModal('updateCategoryModal')"
+      :visible="openedModals.updatePatientAppointmentModal"
+      @close="closeModal('updatePatientAppointmentModal')"
     >
       <CModalHeader>
         <CModalTitle>Kategori Düzenle</CModalTitle>
@@ -214,77 +189,21 @@
           class="row g-3"
           @submit.prevent="
             isAbleToPushButton
-              ? submitToAPI($event, 'updateCategoryModal', editedItem.data)
+              ? submitToAPI(
+                  $event,
+                  'updatePatientAppointmentModal',
+                  editedItem.data,
+                )
               : null
           "
           needs-validation
           novalidate
           :validated="validationChecked"
         >
-          <CCol md="6">
-            <CFormLabel for="update-category-name">Kategori Adı</CFormLabel>
-            <CFormInput
-              id="update-category-name"
-              required
-              feedbackInvalid="Lütfen bir kategori adı giriniz"
-              v-model="editedItem.data.name"
-            />
-          </CCol>
-          <!-- For category parent list multiple selection -->
-          <CFormLabel for="edit-category-parent-category"
-            >Üst kategorileri</CFormLabel
-          >
-          <v-select
-            id="edit-category-parent-category"
-            v-model="editedItem.data.parentList"
-            :options="parentCategoryList.options"
-            label="name"
-            multiple
-            @option:selected="(option, opt2) => cancel_Selected_Option(option)"
-            :reduce="(option) => ({ uuid: option.uuid, name: option.name })"
-            @search="(search) => get_Filtered_Parent_List_Options_Data(search)"
-            :loading="parentCategoryList.loading"
-          >
-            <template v-slot:no-options="{ search, searching }">
-              <template v-if="searching">
-                Sonuç bulunamadı:
-                <em>{{ search }}</em
-                >.
-              </template>
-              <em v-else style="opacity: 0.5">Seçmene gerek yok.</em>
-            </template>
-          </v-select>
-          <!-- For language selection -->
-          <CFormLabel for="add-language-to-category">Kategori Dili</CFormLabel>
-          <v-select
-            id="add-language-to-category"
-            v-model="editedItem.data.language"
-            :options="languageList.options"
-            label="name"
-            :loading="languageList.loading"
-          >
-            <template v-slot:no-options="{ search, searching }">
-              <template v-if="searching">
-                Sonuç bulunamadı:
-                <em>{{ search }}</em
-                >.
-              </template>
-              <em v-else style="opacity: 0.5">Bir daha dene.</em>
-            </template>
-            <template #search="{ attributes, events }">
-              <input
-                class="form-control vs__search"
-                feedbackInvalid="Lütfen bir kategori adı giriniz"
-                :required="!editedItem.data.language"
-                v-bind="attributes"
-                v-on="events"
-              />
-            </template>
-          </v-select>
           <CModalFooter class="pe-0">
             <CButton
               color="secondary"
-              @click="closeModal('updateCategoryModal')"
+              @click="closeModal('updatePatientAppointmentModal')"
               >Kapat</CButton
             >
             <CButton
@@ -302,7 +221,7 @@
 <script>
 import avatar from '@/assets/images/avatars/8.jpg'
 import { mapActions } from 'vuex'
-import createCategoryDTO from '@/models/create_CATEGORY_dto'
+import patientDTO from '@/models/patientDTO'
 import Toast from '@/models/create_TOAST_dto'
 export default {
   name: 'Colors',
@@ -322,17 +241,17 @@ export default {
       items: [],
       addedItem: {
         // Real data
-        data: new createCategoryDTO(null, 'TR', []),
+        data: patientDTO.createEmpty(),
       },
       editedItem: {
         // Real data
-        data: new createCategoryDTO(null, null, []),
+        data: patientDTO.createEmpty(),
       },
       // Category Selection
       parentCategoryList: {
-        // The parent category list inside selection in addCategory
+        // The parent category list inside selection in addPatientAppointment
         options: [],
-        // Parent category Selection server options for getting options in selection in addCategoryModal
+        // Parent category Selection server options for getting options in selection in addPatientAppointmentModal
         parentListSearcherDefaultServerOptions: {
           page: 1,
           rowsPerPage: 50,
@@ -341,9 +260,9 @@ export default {
       },
       // Language Selection
       languageList: {
-        // The language list inside selection in addCategory
+        // The language list inside selection in addPatientAppointment
         options: ['TR', 'EN'],
-        // Language Selection server options for getting options in selection in addCategory
+        // Language Selection server options for getting options in selection in addPatientAppointment
         languageSearcherDefaultServerOptions: {
           page: 1,
           rowsPerPage: 10,
@@ -353,9 +272,9 @@ export default {
       themeColor: '#321fdb',
       itemsSelected: [],
       openedModals: {
-        addCategoryModal: false,
-        deleteCategoryModal: false,
-        updateCategoryModal: false,
+        addPatientAppointmentModal: false,
+        deletePatientAppointmentModal: false,
+        updatePatientAppointmentModal: false,
       },
       patientAppointmentsTable: {
         serverItemsLength: 0,
@@ -368,7 +287,7 @@ export default {
       },
       validationChecked: false,
       isAbleToPushButton: true,
-      selectedCategory: {},
+      selectedPatientAppointment: patientDTO.createEmpty(),
     }
   },
   watch: {
@@ -380,30 +299,12 @@ export default {
     this.getPatientAppointments(this.patientAppointmentsTable.serverOptions)
   },
   methods: {
-    // This is when u dont want the user to select something in vue-select (v-select)
-    // ex: u shouldnt be able to select same category when updating parent categories.
-    async cancel_Selected_Option(selectedOptions) {
-      selectedOptions.map((selectedOption) => {
-        if (this.selectedCategory.uuid == selectedOption.uuid) {
-          this.editedItem.data.parentList =
-            this.editedItem.data.parentList.filter(
-              (parentCategory) => selectedOption.uuid != parentCategory.uuid,
-            )
-          new Toast(
-            'You cant select same category as parent List',
-            'danger',
-            true,
-            'text-white -align-items-center',
-          )
-        }
-      })
-    },
     ...mapActions({
       getPatientAppointmentsAPI: 'doctor/getPatientAppointments',
       getAllLanguages: 'language/getLanguages',
-      addCategoryAPI: 'doctor/addCategory',
-      deleteCategoryAPI: 'doctor/deleteCategory',
-      updateCategoryAPI: 'doctor/updateCategory',
+      addPatientAppointmentAPI: 'doctor/addPatientAppointment',
+      deletePatientAppointmentAPI: 'doctor/deletePatientAppointment',
+      updatePatientAppointmentAPI: 'doctor/updatePatientAppointment',
     }),
     submitToAPI(event, modalname, data) {
       // Response
@@ -417,108 +318,45 @@ export default {
         return
       }
       switch (modalname) {
-        case 'addCategoryModal':
+        case 'addPatientAppointmentModal':
           {
-            this.addCategory(JSON.parse(JSON.stringify(data)))
+            this.addPatientAppointment(JSON.parse(JSON.stringify(data)))
           }
           break
-        case 'updateCategoryModal':
+        case 'updatePatientAppointmentModal':
           {
-            this.updateCategory(JSON.parse(JSON.stringify(data)))
+            this.updatePatientAppointment(JSON.parse(JSON.stringify(data)))
           }
           break
       }
     },
-    // This two For to filter the selection list by search value
-    async get_Filtered_Parent_List_Options_Data(searched) {
-      this.parentCategoryList.loading = true
-      // Filtered version(if) and unfiltered version(else)
-      if (searched) {
-        let filterBy = [
-          {
-            key: 'name',
-            operation: ':',
-            type: 'name',
-            value: searched,
-          },
-        ]
-        let searchedFor = {
-          pageOptions:
-            this.parentCategoryList.parentListSearcherDefaultServerOptions,
-          filter: filterBy,
-        }
-        const response = await this.getPatientAppointmentsAPI(searchedFor)
-        this.parentCategoryList.options = reduceDataHeaviless(response.data)
-      } else {
-        let searchedFor = {
-          pageOptions:
-            this.parentCategoryList.parentListSearcherDefaultServerOptions,
-          filter: null,
-        }
-        const response = await this.getPatientAppointmentsAPI(searchedFor)
-        this.parentCategoryList.options = reduceDataHeaviless(response.data)
-      }
-      this.parentCategoryList.loading = false
-      function reduceDataHeaviless(data) {
-        // Reducing if the data is too heavy to handle
-        return data.map((category) => {
-          return { uuid: category.uuid, name: category.name }
-        })
-      }
-    },
-    async get_Filtered_Language_Options_Data(searched) {
-      this.languageList.loading = true
-      if (searched) {
-        let filterBy = [
-          {
-            key: 'title',
-            operation: ':',
-            type: 'title',
-            value: searched,
-          },
-        ]
-        const response = await this.getAllLanguages(
-          this.languageList.languageSearcherDefaultServerOptions,
-          filterBy,
-        )
-        this.languageList.options = response.data
-      } else {
-        const response = await this.getAllLanguages(
-          this.languageList.languageSearcherDefaultServerOptions,
-        )
-        this.languageList.options = response.data
-      }
-      this.languageList.loading = false
-    },
-    // Setting selectedcategory every showmodal trigger is not correct idea. It can cause failures due to this. ------------------IMPORTANT
     async showModal(modalname, data) {
-      this.selectedCategory = data ? JSON.parse(JSON.stringify(data)) : {}
       switch (modalname) {
-        case 'addCategoryModal':
-          {
-            this.parentCategoryList.loading = true
-            this.languageList.loading = true
-            this.get_Filtered_Parent_List_Options_Data()
-            //this.get_Filtered_Language_Options_Data()
-            this.parentCategoryList.loading = false
-            this.languageList.loading = false
-          }
+        case 'addPatientAppointmentModal':
           break
-        case 'updateCategoryModal':
+        case 'updatePatientAppointmentModal':
           {
-            this.editedItem.data = JSON.parse(JSON.stringify(data))
-            // Filter parentlist by uuid and name only.
-            this.editedItem.data.parentList =
-              this.editedItem.data.parentList.map((option) => ({
-                uuid: option.uuid,
-                name: option.name,
-              }))
-            this.parentCategoryList.loading = true
-            this.languageList.loading = true
-            this.get_Filtered_Parent_List_Options_Data()
-            //this.get_Filtered_Language_Options_Data()
-            this.parentCategoryList.loading = false
-            this.languageList.loading = false
+            console.log(patientDTO.createEmpty())
+            this.selectedPatientAppointment = data
+              ? JSON.parse(
+                  JSON.stringify(
+                    patientDTO.createFromJson(JSON.parse(JSON.stringify(data))),
+                  ),
+                )
+              : patientDTO.createEmpty()
+
+            if (data) {
+              this.editedItem.data = patientDTO.createFromJson(
+                JSON.parse(JSON.stringify(data)),
+              )
+            } else {
+              new Toast(
+                'Something went wrong',
+                'danger',
+                true,
+                'text-white align-items-center',
+              )
+            }
           }
           break
       }
@@ -529,11 +367,11 @@ export default {
       this.validationChecked = false
       if (resetData) {
         switch (modalname) {
-          case 'addCategoryModal':
+          case 'addPatientAppointmentModal':
             {
               // Restore added item on clicking "No/Deny"
               this.addedItem = {
-                data: new createCategoryDTO(null, 'TR', []),
+                data: patientDTO.createEmpty(),
               }
             }
             break
@@ -541,7 +379,6 @@ export default {
       }
       this.queueEnableSendButton()
     },
-
     // eslint-disable-next-line no-unused-vars
     async getPatientAppointments(pageOptions) {
       this.patientAppointmentsTable.loading = true
@@ -554,9 +391,8 @@ export default {
       */
       this.patientAppointmentsTable.loading = false
     },
-    async addCategory(data) {
-      data.parentList = await takeParentListUUIDS()
-      const response = await this.addCategoryAPI(data)
+    async addPatientAppointment(data) {
+      const response = await this.addPatientAppointmentAPI(data)
       if (response === true) {
         new Toast(
           'Category added successfully',
@@ -565,7 +401,7 @@ export default {
           'text-white align-items-center',
         )
         this.reloadTable()
-        this.closeModal('addCategoryModal', true)
+        this.closeModal('addPatientAppointmentModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -574,15 +410,11 @@ export default {
           'text-white align-items-center',
         )
       }
-      function takeParentListUUIDS() {
-        return data.parentList.map((parentCategory) => {
-          return parentCategory.uuid
-        })
-      }
     },
-    async updateCategory(newCategoryData) {
-      newCategoryData.parentList = await takeParentListUUIDS()
-      const response = await this.updateCategoryAPI(newCategoryData)
+    async updatePatientAppointment(newPatientAppointmentData) {
+      const response = await this.updatePatientAppointmentAPI(
+        newPatientAppointmentData,
+      )
       if (response === true) {
         new Toast(
           'Category updated successfully',
@@ -591,7 +423,7 @@ export default {
           'text-white align-items-center',
         )
         this.reloadTable()
-        this.closeModal('updateCategoryModal')
+        this.closeModal('updatePatientAppointmentModal')
       } else {
         new Toast(
           'Something went wrong',
@@ -600,24 +432,20 @@ export default {
           'text-white align-items-center',
         )
       }
-      function takeParentListUUIDS() {
-        return newCategoryData.parentList.map((parentCategory) => {
-          return parentCategory.uuid
-        })
-      }
     },
-    async deleteCategory(uuid) {
+    async deletePatientAppointment(uuid) {
       this.isAbleToPushButton = false
-      const response = await this.deleteCategoryAPI(uuid)
+      const response = await this.deletePatientAppointmentAPI(uuid)
       if (response === true) {
-        this.selectedCategory = {}
-        this.reloadTable()
+        this.selectedPatientAppointment = patientDTO.createEmpty()
         new Toast(
           'Category deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.reloadTable()
+        this.closeModal('deletePatientAppointmentModal')
       } else {
         new Toast(
           'Something went wrong',
@@ -626,7 +454,6 @@ export default {
           'text-white -align-items-center',
         )
       }
-      this.closeModal('deleteCategoryModal')
     },
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')

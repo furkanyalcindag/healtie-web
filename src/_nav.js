@@ -115,8 +115,8 @@ export default [
       },
       {
         component: 'CNavItem',
-        name: 'Doctor Appointments',
-        to: '/doctor/appointments',
+        name: 'Doctor Patients',
+        to: '/doctor/patients',
       },
     ],
   },

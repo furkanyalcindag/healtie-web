@@ -24,14 +24,14 @@
             class="m-4"
             show-index
             v-model:itemsSelected="itemsSelected"
-            v-model:server-options="patientAppointmentsTable.serverOptions"
-            :server-items-length="patientAppointmentsTable.serverItemsLength"
+            v-model:server-options="patientTable.serverOptions"
+            :server-items-length="patientTable.serverItemsLength"
             :headers="headers"
             :items="items"
             :theme-color="themeColor"
             buttons-pagination
-            :loading="patientAppointmentsTable.loading"
-            :rows-items="patientAppointmentsTable.rowsItem"
+            :loading="patientTable.loading"
+            :rows-items="patientTable.rowsItem"
           >
             <template #item-name="{ firstName, lastName }">
               <div>{{ firstName }} {{ lastName }}</div>
@@ -39,6 +39,19 @@
             <template #item-operations="item">
               <div>
                 <CButtonGroup role="group" size="sm">
+                  <CButton
+                    color="warning"
+                    class="ms-2 text-white align-items-center"
+                    shape="rounded-pill"
+                    size="sm"
+                    v-c-tooltip="{
+                      content: 'Raporlar',
+                      placement: 'top',
+                    }"
+                    @click="$router.push({ name: 'Patient Sick Report' })"
+                  >
+                    <CIcon icon="cil-address-book" />
+                  </CButton>
                   <CButton
                     color="warning"
                     class="ms-2 text-white align-items-center"
@@ -230,7 +243,7 @@ export default {
         deletePatientModal: false,
         updatePatientModal: false,
       },
-      patientAppointmentsTable: {
+      patientTable: {
         serverItemsLength: 0,
         serverOptions: {
           page: 1,
@@ -245,12 +258,12 @@ export default {
     }
   },
   watch: {
-    'patientAppointmentsTable.serverOptions'(newvalue) {
+    'patientTable.serverOptions'(newvalue) {
       this.getPatients(newvalue)
     },
   },
   created() {
-    this.getPatients(this.patientAppointmentsTable.serverOptions)
+    this.getPatients(this.patientTable.serverOptions)
   },
   methods: {
     ...mapActions({
@@ -334,16 +347,17 @@ export default {
     },
     // eslint-disable-next-line no-unused-vars
     async getPatients(pageOptions) {
-      this.patientAppointmentsTable.loading = true
+      this.patientTable.loading = true
       /*const response = await this.getPatientsAPI({
         pageOptions: pageOptions,
         filter: null,
       })
       this.items = response.data
-      this.patientAppointmentsTable.serverItemsLength = response.totalElements
+      this.patientTable.serverItemsLength = response.totalElements
       */
       this.items = [
         patientDTO.createFromJson({
+          uuid: '123',
           firstName: 'firstName',
           lastName: 'lastName',
           address: 'address',
@@ -351,7 +365,7 @@ export default {
           phone: 'phone(telNO)',
         }),
       ]
-      this.patientAppointmentsTable.loading = false
+      this.patientTable.loading = false
     },
     async addPatient(data) {
       const response = await this.addPatientAPI(data)
@@ -427,7 +441,7 @@ export default {
         // Main table
         default:
           {
-            this.getPatients(this.patientAppointmentsTable.serverOptions)
+            this.getPatients(this.patientTable.serverOptions)
           }
           break
       }

@@ -68,6 +68,21 @@
                 </CButtonGroup>
               </div>
             </template>
+            <template #item-description="{ description }">
+              <div class="position-relative d-inline-block">
+                <CTooltip :content="description" placement="top">
+                  <template #toggler="{ on }">
+                    <div
+                      v-on="on"
+                      style="max-width: 200px"
+                      class="d-inline-block text-truncate"
+                    >
+                      {{ description }}
+                    </div>
+                  </template>
+                </CTooltip>
+              </div>
+            </template>
           </easy-data-table>
         </CCardBody>
       </CCard>

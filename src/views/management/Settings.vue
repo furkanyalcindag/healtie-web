@@ -376,7 +376,6 @@ export default {
         pageOptions,
         //  {pageOptions: pageOptions filter: null,}
       )
-
       this.items = response.data
       this.settingsTable.serverItemsLength = response.totalElements
       this.settingsTable.loading = false

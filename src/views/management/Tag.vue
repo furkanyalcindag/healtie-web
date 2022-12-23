@@ -409,6 +409,11 @@ export default {
               }
             }
             break
+          case 'deleteTagModal':
+            {
+              this.selectedTag = {}
+            }
+            break
         }
       }
       this.queueEnableSendButton()
@@ -425,7 +430,7 @@ export default {
     },
     async addTag(data) {
       const response = await this.addTagAPI(data)
-      if (response === true) {
+      if (response == true) {
         new Toast(
           'Tag added successfully',
           'success',
@@ -441,6 +446,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateTag(newTagData) {
@@ -461,19 +467,21 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteTag(uuid) {
       this.isAbleToPushButton = false
       const response = await this.deleteTagAPI(uuid)
       if (response === true) {
-        this.selectedTag = {}
         new Toast(
           'Tag deleted successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getTag(this.tagTable.serverOptions)
+        this.closeModal('deleteTagModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -481,8 +489,8 @@ export default {
           true,
           'text-white -align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteTagModal')
     },
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')

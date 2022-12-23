@@ -451,6 +451,11 @@ export default {
               this.selectedUser = {}
             }
             break
+          case 'updateUserModal':
+            {
+              this.editedItem = userInfoDTO.createEmpty()
+            }
+            break
         }
       }
       this.queueEnableSendButton()
@@ -465,14 +470,14 @@ export default {
     async addUser(data) {
       const response = await this.addUserAPI(data)
       if (response === true) {
-        this.closeModal('addUserModal', true)
-        this.getUsers(this.userTable.serverOptions)
         new Toast(
           'New user ' + data.userName + ' added successfully',
           'success',
           true,
           'text-white align-items-center',
         )
+        this.getUsers(this.userTable.serverOptions)
+        this.closeModal('addUserModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -480,6 +485,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async updateUser(newuserData) {
@@ -493,7 +499,6 @@ export default {
         )
         this.getUsers(this.userTable.serverOptions)
         this.closeModal('updateUserModal')
-        this.editedItem = userInfoDTO.createEmpty()
       } else {
         new Toast(
           'Something went wrong',
@@ -501,6 +506,7 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
     },
     async deleteUser(uuid) {
@@ -508,8 +514,9 @@ export default {
       console.log(uuid)
       const response = await this.deleteUserAPI(uuid)
       if (response === true) {
-        this.selectedUser = {}
         new Toast('Silindi', 'success', true, 'text-white align-items-center')
+        this.getUsers(this.userTable.serverOptions)
+        this.closeModal('deleteUserModal', true)
       } else {
         new Toast(
           'Something went wrong',
@@ -517,8 +524,8 @@ export default {
           true,
           'text-white align-items-center',
         )
+        this.queueEnableSendButton()
       }
-      this.closeModal('deleteUserModal')
     },
     async queueEnableSendButton() {
       await this.$store.dispatch('invokeSendButtonDelay')
